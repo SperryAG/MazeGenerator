@@ -61,6 +61,28 @@ class Maze {
 	}
 	
 	// Methods
+	// Get & Set Methods
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	
+	// ...add all the other get and set methods here.
+	
+	// Calculation Methods
+	public double calcBranchFactor() {
+		if(this.nodeArray == null || this.nodeArray.length == 0)
+			return (double)0;
+		else
+			return 0; // <- Not yet implemented 
+	}
+	
+	// Randomization Method
+	public void randomizeMaze() {
+		
+	}
+	
+	// Output Methods
+	// Output to String
 	public String toString() {
 		String output = "";
 		
@@ -70,10 +92,11 @@ class Maze {
 		else
 			output += ("<Title>" + this.title + "</Title>" + '\n');
 		// Created
-		if(!created)
+		if(created == null)
 			output += ("<Created>" + "Not Assigned" + "</Created>" + '\n');
 		else
 			output += ("<Created>" + this.created.toString() + "</Created>" + '\n');
+		
 		output += ("<GridSize>" + Integer.toString(this.gridSize) + "</GridSize>" + '\n');
 		output += ("<ActiveNodeCount>" + Integer.toString(this.activeNodeCount) + "</ActiveNodeCount>" + '\n');
 		output += ("<BranchFactor>" + Integer.toString(this.gridSize) + "</GridSize>" + '\n');
@@ -81,5 +104,6 @@ class Maze {
 		
 	}
 	
-	public Double calcBranchFactor()
+	// Output to file
+	
 }
