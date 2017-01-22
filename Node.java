@@ -1,0 +1,5 @@
+package MazeGenerator;
+
+class Node {
+
+}
