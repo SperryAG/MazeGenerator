@@ -16,6 +16,7 @@ class Result {
 	}
 	
 	// Methods
+	// Helper Methods
 	public void setRobotCount(int robotCount) {
 		this.robotCount = robotCount;
 	}
@@ -28,7 +29,7 @@ class Result {
 	public int getCompletionTime() {
 		return completionTime;
 	}
-	
+	// Output Methods
 	public String toString() {
 		String output = "";
 		

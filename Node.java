@@ -34,6 +34,7 @@ class Node {
 	}
 	
 	// Methods
+	// Helper Methods
 	public void setXCoord(int xCoord) {
 		this.xCoord = xCoord;
 	}
@@ -89,6 +90,7 @@ class Node {
 		return isWall_West;
 	}
 	
+	// Output Methods
 	public String toString() {
 		String output = "";
 		

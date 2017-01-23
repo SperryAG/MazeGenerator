@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 class Maze {
 	// Variables
@@ -24,6 +25,11 @@ class Maze {
 	private int loopCount;
 	private Node[] nodeArray;
 	private ArrayList<Result> resultArray;
+	private boolean[][] north;     // is there a wall to north of cell i, j
+    private boolean[][] east;
+    private boolean[][] south;
+    private boolean[][] west;
+    private boolean[][] visited;
 	
 	// Constructors
 	public Maze() {
@@ -37,7 +43,7 @@ class Maze {
 		this.deadendCount = -1;
 		this.loopCount = -1;
 		this.nodeArray = null;
-		this.resultArray = null;
+		this.resultArray = new ArrayList<Result>();;
 	}
 	
 	public Maze(String title, int gridSize) {
@@ -51,7 +57,7 @@ class Maze {
 		this.deadendCount = -1;
 		this.loopCount = -1;
 		this.nodeArray = null;
-		this.resultArray = null;
+		this.resultArray = new ArrayList<Result>();;
 	}
 	
 	public Maze(String title, int gridSize, int activeNodeCount) {
@@ -65,7 +71,7 @@ class Maze {
 		this.deadendCount = -1;
 		this.loopCount = -1;
 		this.nodeArray = new Node[activeNodeCount];
-		this.resultArray = null;
+		this.resultArray = new ArrayList<Result>();
 	}
 	
 	// Methods
@@ -194,9 +200,75 @@ class Maze {
 	}
 	
 	// Randomization Method
-	public void randomizeMaze() {
+	public void randomizeMaze(){
+		double nSquare = Math.sqrt(activeNodeCount);
+		int n = (int) Math.ceil(nSquare);
+		//initialization time. 
+		visited = new boolean[n+2][n+2];
 		
+        for (int x = 0; x < n+2; x++) {
+            visited[x][0] = true;
+            visited[x][n+1] = true;
+        }
+        for (int y = 0; y < n+2; y++) {
+            visited[0][y] = true;
+            visited[n+1][y] = true;
+        }
+
+        // initialize all walls as present
+        north = new boolean[n+2][n+2];
+        east  = new boolean[n+2][n+2];
+        south = new boolean[n+2][n+2];
+        west  = new boolean[n+2][n+2];
+        for (int x = 0; x < n+2; x++) {
+            for (int y = 0; y < n+2; y++) {
+                north[x][y] = true;
+                east[x][y]  = true;
+                south[x][y] = true;
+                west[x][y]  = true;
+            }
+        }
+		//Goal is to randomize a maze.    
 	}
+	
+	private void generate(int x, int y) {
+        Random rand = new Random();
+		visited[x][y] = true;
+
+        // while there is an unvisited neighbor
+        while (!visited[x][y+1] || !visited[x+1][y] || !visited[x][y-1] || !visited[x-1][y]) {
+
+            // pick random neighbor (could use Knuth's trick instead)
+            while (true) {
+                double r = rand.nextInt(4);
+                if (r == 0 && !visited[x][y+1]) {
+                    north[x][y] = false;
+                    south[x][y+1] = false;
+                    generate(x, y + 1);
+                    break;
+                }
+                else if (r == 1 && !visited[x+1][y]) {
+                    east[x][y] = false;
+                    west[x+1][y] = false;
+                    generate(x+1, y);
+                    break;
+                }
+                else if (r == 2 && !visited[x][y-1]) {
+                    south[x][y] = false;
+                    north[x][y-1] = false;
+                    generate(x, y-1);
+                    break;
+                }
+                else if (r == 3 && !visited[x-1][y]) {
+                    west[x][y] = false;
+                    east[x-1][y] = false;
+                    generate(x-1, y);
+                    break;
+                }
+            }
+            //Comment here just to see if I'm committing properly
+        }
+    }
 	
 	// Output Methods
 	// Output to String
@@ -248,15 +320,27 @@ class Maze {
 			output += ("<LoopCount>" + "Not Calculated" + "</LoopCount>" + '\n');
 		else
 			output += ("<LoopCount>" + Integer.toString(loopCount) + "</LoopCount>" + '\n');
+		
 		// Nodes
 		output += "<Nodes>" + '\n';
-		for(Node n : nodeArray)
-			output += ('\t' + n.toString() + '\n');
+		if(nodeArray != null && nodeArray.length > 0) {
+			for(Node n : nodeArray) {
+				if(n != null) {
+					output += ('\t' + n.toString() + '\n');
+				}
+			}	
+		}
 		output += "</Nodes>" + '\n';
-		// Nodes
+		
+		// Results
 		output += "<Results>" + '\n';
-		//for(Result r : resultArray)
-		//	output += ('\t' + r.toString() + '\n');
+		if(resultArray != null && resultArray.size() > 0) {
+			for(Result r : resultArray) {
+				if(r != null) {
+					output += ('\t' + r.toString() + '\n');
+				}
+			}	
+		}
 		output += "</Results>" + '\n';
 		
 		return output;
