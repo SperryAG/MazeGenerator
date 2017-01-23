@@ -89,6 +89,7 @@ class Node {
 		return isWall_West;
 	}
 	
+	
 	public String toString() {
 		String output = "";
 		

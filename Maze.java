@@ -37,7 +37,7 @@ class Maze {
 		this.deadendCount = -1;
 		this.loopCount = -1;
 		this.nodeArray = null;
-		this.resultArray = null;
+		this.resultArray = new ArrayList<Result>();;
 	}
 	
 	public Maze(String title, int gridSize) {
@@ -51,7 +51,7 @@ class Maze {
 		this.deadendCount = -1;
 		this.loopCount = -1;
 		this.nodeArray = null;
-		this.resultArray = null;
+		this.resultArray = new ArrayList<Result>();;
 	}
 	
 	public Maze(String title, int gridSize, int activeNodeCount) {
@@ -65,7 +65,7 @@ class Maze {
 		this.deadendCount = -1;
 		this.loopCount = -1;
 		this.nodeArray = new Node[activeNodeCount];
-		this.resultArray = null;
+		this.resultArray = new ArrayList<Result>();
 	}
 	
 	// Methods
@@ -188,15 +188,28 @@ class Maze {
 			output += ("<LoopCount>" + "Not Calculated" + "</LoopCount>" + '\n');
 		else
 			output += ("<LoopCount>" + Integer.toString(loopCount) + "</LoopCount>" + '\n');
+		
 		// Nodes
 		output += "<Nodes>" + '\n';
-		for(Node n : nodeArray)
-			output += ('\t' + n.toString() + '\n');
+		if(nodeArray != null && nodeArray.length > 0) {
+			for(Node n : nodeArray) {
+				if(n != null) {
+					output += ('\t' + n.toString() + '\n');
+				}
+			}
+					
+		}
 		output += "</Nodes>" + '\n';
-		// Nodes
+		
+		// Results
 		output += "<Results>" + '\n';
-		//for(Result r : resultArray)
-		//	output += ('\t' + r.toString() + '\n');
+		if(resultArray != null && resultArray.size() > 0) {
+			for(Result r : resultArray) {
+				if(r != null) {
+					output += ('\t' + r.toString() + '\n');
+				}
+			}	
+		}
 		output += "</Results>" + '\n';
 		
 		return output;
