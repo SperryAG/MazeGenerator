@@ -155,6 +155,7 @@ class Maze {
                     break;
                 }
             }
+            //Comment here just to see if I'm committing properly
         }
     }
 	
