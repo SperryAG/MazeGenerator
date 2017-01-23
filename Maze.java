@@ -74,6 +74,88 @@ class Maze {
 		this.title = title;
 	}
 	
+	public void getTitle() {
+		return title;
+	}
+	
+	public void setCreated(String created) {
+		this.created = created;
+	}
+	
+	public void getCreated {
+		return created;
+	}
+	
+	public void setGridSize(int gridSize) {
+		this.gridSize = gridSize;
+	}
+	
+	public void getGridSize {
+		return gridSize;
+	}
+	
+	public void setActiveNodeCount(int activeNodeCount) {
+		this.activeNodeCount = activeNodeCount;
+	}
+	
+	public void getActiveNodeCount {
+		return activeNodeCount;
+	};-
+	
+	public void setbranchFactor(double branchFactor) {
+		this.branchFactor = branchFactor;
+	}
+	
+	public void getbranchFactor {
+		return branchFactor;
+	}
+	
+	public void setcomplexityr(double complexity) {
+		this.complexity = complexity;
+	}
+	
+	public void setcomplexity {
+		return complexity;
+	}
+	
+	public void setGridSize(int gridSize) {
+		this.gridSize = gridSize;
+	}
+	
+	public void getGridSize {
+		return gridSize;
+	}
+	
+	
+	public void setintersectionCount(int intersectionCount) {
+		this.intersectionCount = intersectionCount;
+	}
+	
+	public void getintersectionCount {
+		return intersectionCount;
+	}
+	
+	public void setdeadendCount(int deadendCount) {
+		this.deadendCount = deadendCount;
+	}
+	
+	public void getdeadendCount {
+		return deadendCount;
+	}
+	
+	public void setloopCount(int loopCount) {
+		this.loopCount = loopCount;
+	}
+	
+	public void getloopCount {
+		return loopCount;
+	}
+	
+
+
+	
+	
+	
 	// ...add all the other get and set methods here.
 	
 	// Calculation Methods
