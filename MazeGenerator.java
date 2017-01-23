@@ -4,7 +4,7 @@ public class MazeGenerator {
 	public static void main(String[] args) {
 		Maze maze;
 		
-		maze = new Maze("FirstMaze",11,42);
+		maze = new Maze("FirstMaze",12,42);
 		System.out.println(maze.toString());
 		maze.toFile();
 	}
