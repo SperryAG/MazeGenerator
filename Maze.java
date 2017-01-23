@@ -127,10 +127,70 @@ class Maze {
 	
 	// Calculation Methods
 	public double calcBranchFactor() {
-		if(this.nodeArray == null || this.nodeArray.length == 0)
+		if(this.nodeArray == null || this.nodeArray.length == 0){
 			return (double)0;
-		else
-			return 0; // <- Not yet implemented 
+			}
+		else{
+			int temp;
+			int walls; 
+			int intersection; 
+			for (Node i  : nodeArray){
+					if(i.getEastWall() == true){
+						temp ++; 
+					}
+					if(i.getNorthWall() == true){
+						temp ++; 
+					}
+					if(i.getWestWall() == true){
+						temp ++; 
+					}
+					if(i.getSouthWall() == true){
+						temp ++; 
+					}
+					
+					if(temp >= 3 || i.isStartNode  == true){ //Intersection 
+						temp = 4 - temp;
+						walls =+ temp; 
+						intersection++;
+					}
+				
+				
+			}
+			branchFactor  =( walls/ intersection ) * 4 ;
+			return branchFactor; // <- Not yet implemented 
+		}
+	}
+	
+	
+	public double calcIntersection() {
+		if(this.nodeArray == null || this.nodeArray.length == 0){
+			return (double)0;
+			}
+		else{
+			int temp;
+			int intersection; 
+			for (Node i  : nodeArray){
+					if(i.getEastWall() == true){
+						temp ++; 
+					}
+					if(i.getNorthWall() == true){
+						temp ++; 
+					}
+					if(i.getWestWall() == true){
+						temp ++; 
+					}
+					if(i.getSouthWall() == true){
+						temp ++; 
+					}
+		
+					if(temp >= 3 || i.isStartNode  == true){ //Intersection 
+						intersection++;
+					}
+				
+				
+			}
+			return intersection; // <- Not yet implemented 
+		}
 	}
 	
 	// Randomization Method
