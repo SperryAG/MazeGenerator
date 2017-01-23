@@ -73,90 +73,57 @@ class Maze {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	
-	public void getTitle() {
+	public String getTitle() {
 		return title;
 	}
-	
 	public void setCreated(String created) {
 		this.created = created;
 	}
-	
-	public void getCreated {
+	public String getCreated() {
 		return created;
 	}
-	
 	public void setGridSize(int gridSize) {
 		this.gridSize = gridSize;
 	}
-	
-	public void getGridSize {
+	public int getGridSize() {
 		return gridSize;
 	}
-	
 	public void setActiveNodeCount(int activeNodeCount) {
 		this.activeNodeCount = activeNodeCount;
 	}
-	
-	public void getActiveNodeCount {
+	public int getActiveNodeCount() {
 		return activeNodeCount;
-	};-
-	
-	public void setbranchFactor(double branchFactor) {
+	}
+	public void setBranchFactor(double branchFactor) {
 		this.branchFactor = branchFactor;
 	}
-	
-	public void getbranchFactor {
+	public double getBranchFactor() {
 		return branchFactor;
 	}
-	
-	public void setcomplexityr(double complexity) {
+	public void setComplexity(double complexity) {
 		this.complexity = complexity;
 	}
-	
-	public void setcomplexity {
+	public double getComplexity() {
 		return complexity;
 	}
-	
-	public void setGridSize(int gridSize) {
-		this.gridSize = gridSize;
-	}
-	
-	public void getGridSize {
-		return gridSize;
-	}
-	
-	
-	public void setintersectionCount(int intersectionCount) {
+	public void setIntersectionCount(int intersectionCount) {
 		this.intersectionCount = intersectionCount;
 	}
-	
-	public void getintersectionCount {
+	public int getIntersectionCount() {
 		return intersectionCount;
 	}
-	
-	public void setdeadendCount(int deadendCount) {
+	public void setDeadendCount(int deadendCount) {
 		this.deadendCount = deadendCount;
 	}
-	
-	public void getdeadendCount {
+	public int getDeadendCount() {
 		return deadendCount;
 	}
-	
-	public void setloopCount(int loopCount) {
+	public void setLoopCount(int loopCount) {
 		this.loopCount = loopCount;
 	}
-	
-	public void getloopCount {
+	public int getLoopCount() {
 		return loopCount;
 	}
-	
-
-
-	
-	
-	
-	// ...add all the other get and set methods here.
 	
 	// Calculation Methods
 	public double calcBranchFactor() {

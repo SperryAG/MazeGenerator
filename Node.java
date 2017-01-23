@@ -4,10 +4,10 @@ class Node {
 	// Variables
 	private int xCoord;
 	private int yCoord;
-	boolean isStartNode;
-	boolean isEndIntersection;
-	boolean isEndNode;
-	boolean isWall_North, isWall_East, isWall_South, isWall_West;
+	private boolean isStartNode;
+	private boolean isEndIntersection;
+	private boolean isEndNode;
+	private boolean isWall_North, isWall_East, isWall_South, isWall_West;
 	
 	// Constructors
 	public Node() {
