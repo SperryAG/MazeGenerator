@@ -5,7 +5,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -142,8 +141,8 @@ class Maze {
 			output += ("<LoopCount>" + Integer.toString(loopCount) + "</LoopCount>" + '\n');
 		// Nodes
 		output += "<Nodes>" + '\n';
-		//for(Node n : nodeArray)
-		//	output += ('\t' + n.toString() + '\n');
+		for(Node n : nodeArray)
+			output += ('\t' + n.toString() + '\n');
 		output += "</Nodes>" + '\n';
 		// Nodes
 		output += "<Results>" + '\n';
