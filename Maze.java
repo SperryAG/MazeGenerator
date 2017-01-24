@@ -154,7 +154,7 @@ class Maze {
 						temp ++; 
 					}
 					
-					if(temp >= 3 || i.isStartNode  == true){ //Intersection 
+					if(temp >= 3 || i.getIsStartNode()  == true){ //Intersection 
 						temp = 4 - temp;
 						walls =+ temp; 
 						intersection++;
@@ -189,7 +189,7 @@ class Maze {
 						temp ++; 
 					}
 		
-					if(temp >= 3 || i.isStartNode  == true){ //Intersection 
+					if(temp >= 3 || i.getIsStartNode() == true){ //Intersection 
 						intersection++;
 					}
 				

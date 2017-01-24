@@ -90,6 +90,10 @@ class Node {
 		return isWall_West;
 	}
 	
+	public boolean getIsStartNode(){
+		return isStartNode;
+	}
+	
 	// Output Methods
 	public String toString() {
 		String output = "";
