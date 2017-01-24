@@ -239,6 +239,23 @@ class Maze {
 	
 	// Randomization Method
 	public void randomizeMaze(){
+		//Randomize if needed 
+		
+		//Generate random nodes 
+		
+		//Generate random start and end nodes
+		
+		//Calculate required variables
+			//Add Branch factor
+			//Dead end Count
+			//Intersection
+			//Longest Tail
+			//Optimal Path
+			//Loop Count? 
+		
+		//Calculate Complexity
+		
+		
 		double nSquare = Math.sqrt(activeNodeCount);
 		int n = (int) Math.ceil(nSquare);
 		//initialization time. 
