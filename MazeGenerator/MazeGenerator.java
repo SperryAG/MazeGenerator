@@ -5,6 +5,7 @@ public class MazeGenerator {
 		Maze maze;
 		//Oh test commit
 		//Steven's test commit again
+		//A third steven's comment
 		maze = new Maze("FirstMaze",12,42);
 		System.out.println(maze.toString());
 		maze.toFile();
