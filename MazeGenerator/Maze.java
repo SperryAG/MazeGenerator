@@ -25,11 +25,6 @@ class Maze {
 	private int loopCount;
 	private Node[] nodeArray;
 	private ArrayList<Result> resultArray;
-	private boolean[][] north;     // is there a wall to north of cell i, j
-    private boolean[][] east;
-    private boolean[][] south;
-    private boolean[][] west;
-    private boolean[][] visited;
 	
 	// Constructors
 	public Maze() {
@@ -230,7 +225,7 @@ class Maze {
 		}
 	}
 	
-	public double calcComplexity() { //This for Steven 
+	public double calcComplexity() { //Incomplete
 		
 		complexity = 2 * activeNodeCount + branchFactor - deadendCount - loopCount  ;		
 		return complexity ; 
@@ -238,76 +233,68 @@ class Maze {
 	}
 	
 	// Randomization Method
-	public void randomizeMaze(){
-		double nSquare = Math.sqrt(activeNodeCount);
-		int n = (int) Math.ceil(nSquare);
-		//initialization time. 
-		visited = new boolean[n+2][n+2];
-		
-        for (int x = 0; x < n+2; x++) {
-            visited[x][0] = true;
-            visited[x][n+1] = true;
-        }
-        for (int y = 0; y < n+2; y++) {
-            visited[0][y] = true;
-            visited[n+1][y] = true;
-        }
+	public void randomizeMaze(){//this will call generate
 
-        // initialize all walls as present
-        north = new boolean[n+2][n+2];
-        east  = new boolean[n+2][n+2];
-        south = new boolean[n+2][n+2];
-        west  = new boolean[n+2][n+2];
-        for (int x = 0; x < n+2; x++) {
-            for (int y = 0; y < n+2; y++) {
-                north[x][y] = true;
-                east[x][y]  = true;
-                south[x][y] = true;
-                west[x][y]  = true;
-            }
-        }
 		//Goal is to randomize a maze.    
 	}
 	
-	private void generate(int x, int y) {
-        Random rand = new Random();
-		visited[x][y] = true;
-
-        // while there is an unvisited neighbor
-        while (!visited[x][y+1] || !visited[x+1][y] || !visited[x][y-1] || !visited[x-1][y]) {
-
-            // pick random neighbor (could use Knuth's trick instead)
-            while (true) {
-                double r = rand.nextInt(4);
-                if (r == 0 && !visited[x][y+1]) {
-                    north[x][y] = false;
-                    south[x][y+1] = false;
-                    generate(x, y + 1);
-                    break;
-                }
-                else if (r == 1 && !visited[x+1][y]) {
-                    east[x][y] = false;
-                    west[x+1][y] = false;
-                    generate(x+1, y);
-                    break;
-                }
-                else if (r == 2 && !visited[x][y-1]) {
-                    south[x][y] = false;
-                    north[x][y-1] = false;
-                    generate(x, y-1);
-                    break;
-                }
-                else if (r == 3 && !visited[x-1][y]) {
-                    west[x][y] = false;
-                    east[x-1][y] = false;
-                    generate(x-1, y);
-                    break;
-                }
-            }
-            //Comment here just to see if I'm committing properly
-        }
+	private void generate() {
+		int count = 0;
+		ArrayList<Node> tempArray = new ArrayList<Node>();
+		for(int times = 0; times < this.activeNodeCount; times++){
+			if(times == 0){
+			   Node toAdd = new Node();
+			   toAdd.setXCoord(this.gridSize/2);
+			   toAdd.setYCoord(this.gridSize/2);
+			   tempArray.add(toAdd);    		   
+			}
+			else{
+			   Node toAdd = new Node();
+			   Random rand = new Random();
+			   int  randomPick = rand.nextInt(tempArray.size()-1);
+			   Node randomNode = tempArray.get(randomPick);
+			   while(randomNode.isFull()){
+				   this.nodeArray[count] = randomNode;
+				   count++;
+				   tempArray.remove(randomPick);
+				   randomPick = rand.nextInt(tempArray.size()-1);
+				   randomNode = tempArray.get(randomPick);
+			   }
+			   int randomDirection = rand.nextInt(3);
+			   if(randomDirection == 0){//this is north
+				   toAdd.setXCoord(randomNode.getXCoord());
+				   toAdd.setYCoord(randomNode.getYCoord() + 1);
+				   toAdd.setSouthWall(false);
+				   randomNode.setNorthWall(false);
+				   tempArray.set(randomPick, randomNode);
+			   }
+			   else if(randomDirection == 1){ //this is east
+				   toAdd.setXCoord(randomNode.getXCoord()+1);
+				   toAdd.setYCoord(randomNode.getYCoord());
+				   toAdd.setWestWall(false);
+				   randomNode.setEastWall(false);
+				   tempArray.set(randomPick, randomNode);
+			   }
+			   else if(randomDirection == 2){ //this is south
+				   toAdd.setXCoord(randomNode.getXCoord());
+				   toAdd.setYCoord(randomNode.getYCoord()-1);
+				   toAdd.setNorthWall(false);
+				   randomNode.setSouthWall(false);
+				   tempArray.set(randomPick, randomNode);
+			   }
+			   else{//this is west
+				   toAdd.setXCoord(randomNode.getXCoord()-1);
+				   toAdd.setYCoord(randomNode.getYCoord());
+				   toAdd.setEastWall(false);
+				   randomNode.setWestWall(false);
+				   tempArray.set(randomPick, randomNode);
+			   }
+			   tempArray.add(toAdd);
+		   }
+       }//end for for loop
+		//String[] both = (String[])ArrayUtils.addAll(first, second);
     }
-	
+
 	// Output Methods
 	// Output to String
 	public String toString() {
