@@ -168,9 +168,9 @@ class Maze {
 	}
 	
 	
-	public double calcIntersection() {
+	public int calcIntersection() {
 		if(this.nodeArray == null || this.nodeArray.length == 0){
-			return (double)0;
+			return (int)0;
 			}
 		else{
 			int temp;
@@ -197,6 +197,44 @@ class Maze {
 			}
 			return intersection; // <- Not yet implemented 
 		}
+	}
+	
+	public int calcDeadend() {
+		if(this.nodeArray == null || this.nodeArray.length == 0){
+			return (int)0;
+			}
+		else{
+			int temp;
+			int deadend; 
+			for (Node i  : nodeArray){
+					if(i.getEastWall() == true){
+						temp ++; 
+					}
+					if(i.getNorthWall() == true){
+						temp ++; 
+					}
+					if(i.getWestWall() == true){
+						temp ++; 
+					}
+					if(i.getSouthWall() == true){
+						temp ++; 
+					}
+		
+					if(temp < 2 && i.getIsStartNode() == false && i.getIsEndNode() == false ){ //Intersection 
+						deadend++;
+					}
+				
+				
+			}
+			return deadend; // <- Not yet implemented 
+		}
+	}
+	
+	public double calcComplexity() { //Incomplete
+		
+		complexity = 2 * activeNodeCount + branchFactor - deadendCount - loopCount  ;		
+		return complexity ; 
+		
 	}
 	
 	// Randomization Method

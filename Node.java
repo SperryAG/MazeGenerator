@@ -94,6 +94,10 @@ class Node {
 		return isStartNode;
 	}
 	
+	public boolean getIsEndNode(){
+		return isEndNode;
+	}
+	
 	// Output Methods
 	public String toString() {
 		String output = "";
