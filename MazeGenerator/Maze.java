@@ -234,11 +234,11 @@ class Maze {
 	
 	// Randomization Method
 	public void randomizeMaze(){//this will call generate
-
-		//Goal is to randomize a maze.    
-	}
-	
-	private void generate() {
+		//Randomize if needed 
+		double nSquare = Math.sqrt(activeNodeCount);
+  		int n = (int) Math.ceil(nSquare);
+  		//initialization time.
+		//Generate random nodes 
 		int count = 0;
 		ArrayList<Node> tempArray = new ArrayList<Node>();
 		for(int times = 0; times < this.activeNodeCount; times++){
@@ -293,6 +293,22 @@ class Maze {
 		   }
        }//end for for loop
 		//String[] both = (String[])ArrayUtils.addAll(first, second);
+		
+		//Generate random start and end nodes
+		
+		//Calculate required variables
+			//Add Branch factor
+			//Dead end Count
+			//Intersection
+			//Longest Tail
+			//Optimal Path
+			//Loop Count? 
+		
+		//Calculate Complexity
+		
+		 			}
+	
+	private void generate() {
     }
 
 	// Output Methods

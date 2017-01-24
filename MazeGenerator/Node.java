@@ -18,6 +18,14 @@ class Node {
 		isEndNode = false;
 		isWall_North = isWall_East = isWall_South = isWall_West = true;
 	}
+	public Node(int xCoord, int yCoord, boolean isStartNode){
+		this.xCoord = xCoord;
+		this.yCoord = yCoord;
+		this.isStartNode = isStartNode;
+		isEndIntersection = false;
+		isEndNode = false;
+		isWall_North = isWall_East = isWall_South = isWall_West = false;
+	}
 	
 	public Node(int xCoord, int yCoord, boolean isStartNode, boolean isEndIntersection,
 			    boolean isEndNode, boolean isWall_North, boolean isWall_East, boolean isWall_South,
@@ -96,6 +104,10 @@ class Node {
 	
 	public boolean getIsEndNode(){
 		return isEndNode;
+	}
+	
+	public boolean isFull(){
+		return !(this.isWall_East || this.isWall_North || this.isWall_South || this.isWall_West);
 	}
 	
 	// Output Methods
