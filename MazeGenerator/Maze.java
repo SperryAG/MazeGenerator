@@ -230,7 +230,7 @@ class Maze {
 		}
 	}
 	
-	public double calcComplexity() { //Incomplete
+	public double calcComplexity() { //This for Steven 
 		
 		complexity = 2 * activeNodeCount + branchFactor - deadendCount - loopCount  ;		
 		return complexity ; 
