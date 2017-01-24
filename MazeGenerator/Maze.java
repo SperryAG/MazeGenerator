@@ -137,9 +137,9 @@ class Maze {
 			return (double)0;
 			}
 		else{
-			int temp;
-			int walls; 
-			int intersection; 
+			int temp = 0;
+			int walls = 0; 
+			int intersection = 0 ; 
 			for (Node i  : nodeArray){
 					if(i.getEastWall() == true){
 						temp ++; 
@@ -173,8 +173,8 @@ class Maze {
 			return (int)0;
 			}
 		else{
-			int temp;
-			int intersection; 
+			int temp = 0;
+			int intersection = 0; 
 			for (Node i  : nodeArray){
 					if(i.getEastWall() == true){
 						temp ++; 
@@ -204,8 +204,8 @@ class Maze {
 			return (int)0;
 			}
 		else{
-			int temp;
-			int deadend; 
+			int temp = 0;
+			int deadend = 0; 
 			for (Node i  : nodeArray){
 					if(i.getEastWall() == true){
 						temp ++; 
