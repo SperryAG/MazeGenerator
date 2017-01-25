@@ -303,9 +303,11 @@ class Maze {
 		//Generate random start and end nodes
 		
 		//Calculate required variables
-			//Add Branch factor
-			//Dead end Count
-			//Intersection
+		branchFactor = calcBranchFactor();// Branch factor
+			
+		deadendCount = calcDeadend();//Dead end Count
+		
+		intersectionCount = calcIntersection();	//Intersection
 			//Longest Tail
 			//Optimal Path
 			//Loop Count? 
