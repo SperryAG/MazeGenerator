@@ -292,6 +292,12 @@ class Maze {
 			   tempArray.add(toAdd);
 		   }
        }//end for for loop
+		Node[] nodeArr = new Node[tempArray.size()];
+		nodeArr = tempArray.toArray(nodeArr);
+		for(Node node : nodeArr){
+			this.nodeArray[count] = node;
+			count++;
+		}
 		//String[] both = (String[])ArrayUtils.addAll(first, second);
 		
 		//Generate random start and end nodes
@@ -306,7 +312,7 @@ class Maze {
 		
 		//Calculate Complexity
 		
-		 			}
+	}
 	
 	private void generate() {
     }
