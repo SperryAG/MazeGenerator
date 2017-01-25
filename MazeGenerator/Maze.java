@@ -302,6 +302,13 @@ class Maze {
 		
 		//Generate random start and end nodes
 		
+		Random rand = new Random();
+		int  randnode = rand.nextInt(nodeArray.length) + 1;
+		nodeArray[randnode].setStartNode(true);
+		
+		randnode = rand.nextInt(nodeArray.length) + 2;
+		nodeArray[randnode].setEndNode(true);
+		
 		//Calculate required variables
 		branchFactor = calcBranchFactor();// Branch factor
 			
