@@ -29,7 +29,7 @@ public class MazeGenerator {
 			
 		
 		maze = new Maze(title,gridsize,activenode);
-		
+		maze.randomizeMaze();
 	//	maze = new Maze("FirstMaze",12,42);
 		System.out.println(maze.toString());
 		maze.toFile();

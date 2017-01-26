@@ -1,5 +1,9 @@
 package MazeGenerator;
 
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.Set;
+
 class Node {
 	// Variables
 	private int xCoord;
@@ -98,6 +102,25 @@ class Node {
 		return isWall_West;
 	}
 	
+	public ArrayList<Integer> getWalls(Set<Pair> coords, int gridSize){
+		ArrayList<Integer> toReturn = new ArrayList<Integer>();
+		
+		if(this.getNorthWall() && !coords.contains(new Pair(this.getXCoord(), this.getYCoord() + 1)) && this.getYCoord() + 1 <= gridSize){
+			toReturn.add(0);
+		}
+		if(this.getEastWall() && !coords.contains(new Pair(this.getXCoord() + 1, this.getYCoord())) && this.getXCoord()+1 <= gridSize){
+			toReturn.add(1);
+		}
+		if(this.getSouthWall() && !coords.contains(new Pair(this.getXCoord(), this.getYCoord() -1 )) && this.getYCoord()-1 >= 0){
+			toReturn.add(2);
+		}
+		if(this.getWestWall() && !coords.contains(new Pair(this.getXCoord() -1 , this.getYCoord())) && this.getXCoord() -1 >= 0){
+			toReturn.add(3);
+		}
+		
+		return toReturn;
+	}
+	
 	public boolean getIsStartNode(){
 		return isStartNode;
 	}
@@ -127,5 +150,32 @@ class Node {
 		output += "</Node>";
 		
 		return output;
+	}
+	public void updateWalls(Set<Pair> coords) {
+		Random rand = new Random();
+		if(this.getNorthWall() == true && coords.contains(new Pair(this.getXCoord(), this.getYCoord()+1))){
+			int percent = rand.nextInt(2);
+			if(percent == 0){
+				this.setNorthWall(false);
+			}
+		}
+		if(this.getEastWall() == true && coords.contains(new Pair(this.getXCoord() +1, this.getYCoord()))){
+			int percent = rand.nextInt(2);
+			if(percent == 0){
+				this.setEastWall(false);
+			}
+		}
+		if(this.getSouthWall() == true && coords.contains(new Pair(this.getXCoord(), this.getYCoord() -1))){
+			int percent = rand.nextInt(2);
+			if(percent == 0){
+				this.setSouthWall(false);
+			}
+		}
+		if(this.getWestWall() == true && coords.contains(new Pair(this.getXCoord() -1, this.getYCoord()))){
+			int percent = rand.nextInt(2);
+			if(percent == 0){
+				this.setWestWall(false);
+			}
+		}
 	}
 }

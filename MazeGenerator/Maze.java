@@ -9,8 +9,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 class Maze {
 	// Variables
@@ -225,6 +227,84 @@ class Maze {
 		}
 	}
 	
+	public int calcLongestTail() {
+		int lowX = 0, highX = 0, lowY = 0, highY = 0;
+		int startX = 0, startY = 0;
+		for (Node n: nodeArray) {
+			if (n.getEndIntersection()) {
+				startX = n.getXCoord();
+				startY = n.getYCoord();
+				lowX = n.getXCoord();
+				highX = n.getXCoord();
+				lowY = n.getYCoord();
+				highY = n.getYCoord();
+				break;
+			}
+		}
+		System.out.println(lowX + " " + highY);
+		int count = 0, currentCount = 0;
+		boolean isEnd = false;
+		while (!isEnd) {
+			for (Node n: nodeArray) {
+				System.out.println(n.getXCoord() + " " + n.getYCoord());
+				System.out.println(lowX + " " + highX + " " + lowY + " " + highY);	
+				if (n.getXCoord() == startX || n.getXCoord() == startY) {
+					if (n.getIsEndNode()) {
+						isEnd = true;
+						break;
+					}
+				}
+				if (n.getXCoord() == highX + 1 || n.getXCoord() == lowX - 1 || n.getYCoord() == highY + 1 || n.getYCoord() == lowY - 1  ) {
+					count += 1;
+					if (n.getIsEndNode()) {
+						isEnd = true;
+						currentCount = count;
+						break;
+					}
+				}
+			}
+			lowX--;
+			highX++;
+			lowY--;
+			highY++;
+		}
+		return currentCount;
+	}
+	
+	public int calcOptimalPath() {
+		int lowX = 0, highX = 0, lowY = 0, highY = 0;
+		for (Node n: nodeArray) {
+			if (n.getStartNode()) {
+				lowX = n.getXCoord();
+				highX = n.getXCoord();
+				lowY = n.getYCoord();
+				highY = n.getYCoord();
+				break;
+			}
+		}
+		System.out.println(lowX + " " + highY);
+		int count = 0;
+		boolean isEnd = false;
+		while (!isEnd) {
+			for (Node n: nodeArray) {
+				System.out.println(n.getXCoord() + " " + n.getYCoord());
+				System.out.println(lowX + " " + highX + " " + lowY + " " + highY);
+				if (n.getXCoord() == highX + 1 || n.getXCoord() == lowX - 1 || n.getYCoord() == highY + 1 || n.getYCoord() == lowY - 1  ) {
+					count += 1;
+					if (n.getIsEndNode()) {
+						isEnd = true;
+						break;
+					}
+				}
+			}
+			lowX--;
+			highX++;
+			lowY--;
+			highY++;
+		}
+		return count;
+	}
+	
 	public double calcComplexity() { //Incomplete
 		
 		complexity = 2 * activeNodeCount + branchFactor - deadendCount - loopCount  ;		
@@ -241,26 +321,31 @@ class Maze {
 		//Generate random nodes 
 		int count = 0;
 		ArrayList<Node> tempArray = new ArrayList<Node>();
+		Set<Pair> coords = new HashSet<Pair>();
 		for(int times = 0; times < this.activeNodeCount; times++){
 			if(times == 0){
 			   Node toAdd = new Node();
 			   toAdd.setXCoord(this.gridSize/2);
 			   toAdd.setYCoord(this.gridSize/2);
-			   tempArray.add(toAdd);    		   
+			   tempArray.add(toAdd);
+			   coords.add(new Pair(this.gridSize/2, this.gridSize/2));
 			}
 			else{
 			   Node toAdd = new Node();
 			   Random rand = new Random();
-			   int  randomPick = rand.nextInt(tempArray.size()-1);
+			   int  randomPick = rand.nextInt(tempArray.size());
 			   Node randomNode = tempArray.get(randomPick);
 			   while(randomNode.isFull()){
 				   this.nodeArray[count] = randomNode;
 				   count++;
-				   tempArray.remove(randomPick);
-				   randomPick = rand.nextInt(tempArray.size()-1);
+//				   tempArray.remove(randomPick);
+				   randomPick = rand.nextInt(tempArray.size());
 				   randomNode = tempArray.get(randomPick);
 			   }
-			   int randomDirection = rand.nextInt(3);
+			   ArrayList<Integer> dirArray = new ArrayList<Integer>();
+			   dirArray = randomNode.getWalls(coords, this.gridSize);
+			   int randomDirection = rand.nextInt(dirArray.size());
+			   randomDirection = dirArray.get(randomDirection);
 			   if(randomDirection == 0){//this is north
 				   toAdd.setXCoord(randomNode.getXCoord());
 				   toAdd.setYCoord(randomNode.getYCoord() + 1);
@@ -289,35 +374,42 @@ class Maze {
 				   randomNode.setWestWall(false);
 				   tempArray.set(randomPick, randomNode);
 			   }
+			   coords.add(new Pair(toAdd.getXCoord(), toAdd.getYCoord()));
 			   tempArray.add(toAdd);
 		   }
        }//end for for loop
+		System.out.println(coords);
 		Node[] nodeArr = new Node[tempArray.size()];
-		nodeArr = tempArray.toArray(nodeArr);
-		for(Node node : nodeArr){
+		nodeArray = tempArray.toArray(nodeArr);
+		/*for(Node node : nodeArr){
 			this.nodeArray[count] = node;
 			count++;
+		}*/
+		System.out.println("after loop");
+		for(Node node: nodeArray){
+			node.updateWalls(coords);
 		}
 		//String[] both = (String[])ArrayUtils.addAll(first, second);
 		
 		//Generate random start and end nodes
 		
 		//Calculate required variables
-		branchFactor = calcBranchFactor();// Branch factor
-			
-		deadendCount = calcDeadend();//Dead end Count
-		
-		intersectionCount = calcIntersection();	//Intersection
-			//Longest Tail
-			//Optimal Path
-			//Loop Count? 
+//		branchFactor = calcBranchFactor();// Branch factor
+//			
+//		deadendCount = calcDeadend();//Dead end Count
+//		
+//		intersectionCount = calcIntersection();	//Intersection
+		//Longest Tail
+//		int longestTail = calcLongestTail();
+//		System.out.println(longestTail);
+		//Optimal Path
+//		int optimalPath = calcOptimalPath();
+//		System.out.println(optimalPath);
+		//Loop Count? 
 		
 		//Calculate Complexity
 		
 	}
-	
-	private void generate() {
-    }
 
 	// Output Methods
 	// Output to String
