@@ -9,8 +9,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -272,37 +274,85 @@ class Maze {
 	}
 	
 	public int calcOptimalPath() {
-		int lowX = 0, highX = 0, lowY = 0, highY = 0;
+		Map<Integer, Set<Pair>> BFS = new HashMap<Integer, Set<Pair>>();
+		Set<Pair> availableCoords = new HashSet<Pair>();
 		for (Node n: nodeArray) {
-			if (n.getStartNode()) {
-				lowX = n.getXCoord();
-				highX = n.getXCoord();
-				lowY = n.getYCoord();
-				highY = n.getYCoord();
+			System.out.println(n.getIsStartNode());
+			if (n.getIsStartNode()) {
+				BFS.put(0, n.getCoords());
+				availableCoords = n.isPath();
 				break;
 			}
 		}
-		System.out.println(lowX + " " + highY);
-		int count = 0;
+		int count = 1;
 		boolean isEnd = false;
-		while (!isEnd) {
-			for (Node n: nodeArray) {
-				System.out.println(n.getXCoord() + " " + n.getYCoord());
-				System.out.println(lowX + " " + highX + " " + lowY + " " + highY);
-				if (n.getXCoord() == highX + 1 || n.getXCoord() == lowX - 1 || n.getYCoord() == highY + 1 || n.getYCoord() == lowY - 1  ) {
-					count += 1;
+		while(!isEnd) {
+			Set<Pair> temp = new HashSet<Pair>();
+			for (Pair p : availableCoords) {
+				for (Node n : nodeArray) {
+					if (n.getXCoord() == p.getXCoord() && n.getYCoord() == p.getYCoord()) {
+						Set<Pair> toAdd = new HashSet<Pair>();
+						if (BFS.containsKey(count)) {
+							toAdd = BFS.get(count);	
+						}
+						System.out.println("toAdd: " + toAdd + " " + n.getCoords());
+						if (!toAdd.isEmpty()) {
+							toAdd.addAll(n.getCoords());
+						}
+						else {
+							toAdd = n.getCoords();
+						}
+						BFS.put(count, toAdd);
+						temp.addAll(n.isPath());
+					}
 					if (n.getIsEndNode()) {
 						isEnd = true;
-						break;
+						//count++;
+						return count;
+						//break;
 					}
 				}
 			}
-			lowX--;
-			highX++;
-			lowY--;
-			highY++;
+			count++;
+			availableCoords = temp;
 		}
 		return count;
+//		boolean isEnd = false;
+//		while (!isEnd) {
+//			
+//		}
+		
+//		int lowX = 0, highX = 0, lowY = 0, highY = 0;
+//		for (Node n: nodeArray) {
+//			if (n.getStartNode()) {
+//				lowX = n.getXCoord();
+//				highX = n.getXCoord();
+//				lowY = n.getYCoord();
+//				highY = n.getYCoord();
+//				break;
+//			}
+//		} 
+//		System.out.println(lowX + " " + highY);
+//		int count = 0;
+//		boolean isEnd = false;
+//		while (!isEnd) {
+//			for (Node n: nodeArray) {
+//				System.out.println(n.getXCoord() + " " + n.getYCoord());
+//				System.out.println(lowX + " " + highX + " " + lowY + " " + highY);
+//				if (n.getXCoord() == highX + 1 || n.getXCoord() == lowX - 1 || n.getYCoord() == highY + 1 || n.getYCoord() == lowY - 1  ) {
+//					count += 1;
+//					if (n.getIsEndNode()) {
+//						isEnd = true;
+//						break;
+//					}
+//				}
+//			}
+//			lowX--;
+//			highX++;
+//			lowY--;
+//			highY++;
+//		}
+//		return count;
 	}
 	
 	public double calcComplexity() { //Incomplete
@@ -378,28 +428,25 @@ class Maze {
 			   tempArray.add(toAdd);
 		   }
        }//end for for loop
-		System.out.println(coords);
 		Node[] nodeArr = new Node[tempArray.size()];
 		nodeArray = tempArray.toArray(nodeArr);
 		/*for(Node node : nodeArr){
 			this.nodeArray[count] = node;
 			count++;
 		}*/
-		System.out.println("after loop");
 		for(Node node: nodeArray){
 			node.updateWalls(coords);
 		}
+		System.out.println("after loop");
 		//String[] both = (String[])ArrayUtils.addAll(first, second);
 		
 		//Generate random start and end nodes
-		
 		Random rand = new Random();
-		int  randnode = rand.nextInt(nodeArray.length) + 1;
+		int  randnode = rand.nextInt(nodeArray.length);
 		nodeArray[randnode].setStartNode(true);
 		
-		randnode = rand.nextInt(nodeArray.length) + 2;
+		randnode = rand.nextInt(nodeArray.length);
 		nodeArray[randnode].setEndNode(true);
-		
 		//Calculate required variables
 //		branchFactor = calcBranchFactor();// Branch factor
 //			
@@ -410,8 +457,8 @@ class Maze {
 //		int longestTail = calcLongestTail();
 //		System.out.println(longestTail);
 		//Optimal Path
-//		int optimalPath = calcOptimalPath();
-//		System.out.println(optimalPath);
+		int optimalPath = calcOptimalPath();
+		System.out.println(optimalPath);
 		//Loop Count? 
 		
 		//Calculate Complexity
