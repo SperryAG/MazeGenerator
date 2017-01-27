@@ -323,34 +323,41 @@ class Maze {
 	// Given gridSize and activeNodeCount, generate a random maze
 	private void populateNodeArray()
 	{
-		Random rand = new Random();
+		//Randomize if needed 
+		double nSquare = Math.sqrt(activeNodeCount);
+  		int n = (int) Math.ceil(nSquare);
+  		//initialization time.
+		//Generate random nodes 
 		int count = 0;
 		ArrayList<Node> tempArray = new ArrayList<Node>();
+		Set<Pair> coords = new HashSet<Pair>();
 		for(int times = 0; times < this.activeNodeCount; times++)
 		{
-			
 			if(times == 0)
-			// Generate the first node at the center of the grid
 			{
 			   Node toAdd = new Node();
 			   toAdd.setXCoord(this.gridSize/2);
 			   toAdd.setYCoord(this.gridSize/2);
-			   tempArray.add(toAdd);    		   
-			} 
+			   tempArray.add(toAdd);
+			   coords.add(new Pair(this.gridSize/2, this.gridSize/2));
+			}
 			else
-			// Generate activeNodeCount - 1 nodes
 			{
 			   Node toAdd = new Node();
+			   Random rand = new Random();
 			   int  randomPick = rand.nextInt(tempArray.size());
 			   Node randomNode = tempArray.get(randomPick);
 			   while(randomNode.isFull()){
 				   this.nodeArray[count] = randomNode;
 				   count++;
-				   tempArray.remove(randomPick);
+//				   tempArray.remove(randomPick);
 				   randomPick = rand.nextInt(tempArray.size());
 				   randomNode = tempArray.get(randomPick);
 			   }
-			   int randomDirection = rand.nextInt(3);
+			   ArrayList<Integer> dirArray = new ArrayList<Integer>();
+			   dirArray = randomNode.getWalls(coords, this.gridSize);
+			   int randomDirection = rand.nextInt(dirArray.size());
+			   randomDirection = dirArray.get(randomDirection);
 			   if(randomDirection == 0){//this is north
 				   toAdd.setXCoord(randomNode.getXCoord());
 				   toAdd.setYCoord(randomNode.getYCoord() + 1);
@@ -358,42 +365,87 @@ class Maze {
 				   randomNode.setNorthWall(false);
 				   tempArray.set(randomPick, randomNode);
 			   }
-			   else if(randomDirection == 1){ // this is east
+			   else if(randomDirection == 1){ //this is east
 				   toAdd.setXCoord(randomNode.getXCoord()+1);
 				   toAdd.setYCoord(randomNode.getYCoord());
 				   toAdd.setWestWall(false);
 				   randomNode.setEastWall(false);
 				   tempArray.set(randomPick, randomNode);
 			   }
-			   else if(randomDirection == 2){ // this is south
+			   else if(randomDirection == 2){ //this is south
 				   toAdd.setXCoord(randomNode.getXCoord());
 				   toAdd.setYCoord(randomNode.getYCoord()-1);
 				   toAdd.setNorthWall(false);
 				   randomNode.setSouthWall(false);
 				   tempArray.set(randomPick, randomNode);
 			   }
-			   else{ // this is west
+			   else{//this is west
 				   toAdd.setXCoord(randomNode.getXCoord()-1);
 				   toAdd.setYCoord(randomNode.getYCoord());
 				   toAdd.setEastWall(false);
 				   randomNode.setWestWall(false);
 				   tempArray.set(randomPick, randomNode);
 			   }
+			   coords.add(new Pair(toAdd.getXCoord(), toAdd.getYCoord()));
 			   tempArray.add(toAdd);
 		   }
-       }
+       }//end for for loop
 		Node[] nodeArr = new Node[tempArray.size()];
-		nodeArr = tempArray.toArray(nodeArr);
-		for(Node node : nodeArr){
+		nodeArray = tempArray.toArray(nodeArr);
+		/*for(Node node : nodeArr){
 			this.nodeArray[count] = node;
 			count++;
+		}*/
+		for(Node node: nodeArray){
+			node.updateWalls(coords);
 		}
 		//String[] both = (String[])ArrayUtils.addAll(first, second);
 	}
 	// Find and Set the nodes involved in the optimal path(s)
 	private void setOptimalPathNodes()
 	{
-		// Need To Implement This
+		Map<Integer, Set<Pair>> BFS = new HashMap<Integer, Set<Pair>>();
+		Set<Pair> availableCoords = new HashSet<Pair>();
+		for (Node n: nodeArray) {
+			if (n.getIsStartNode()) {
+				BFS.put(0, n.getCoords());
+				availableCoords = n.isPath();
+				break;
+			}
+		}
+		int count = 1;
+		boolean isEnd = false;
+		while(!isEnd) {
+			Set<Pair> temp = new HashSet<Pair>();
+//			System.out.println("availableCoords: " + availableCoords);
+			for (Pair p : availableCoords) {
+				for (Node n : this.nodeArray) {
+					if (n.getXCoord() == p.getXCoord() && n.getYCoord() == p.getYCoord()) { // n.getXYCoords() == p) {
+						if (n.getIsEndNode()) {
+							isEnd = true;
+							return count;
+						}
+						Set<Pair> toAdd = new HashSet<Pair>();
+						if (BFS.containsKey(count)) {
+							for (Pair i : BFS.get(count)) {
+								if (!toAdd.contains(i)) {
+									toAdd.add(i);
+								}
+							}
+//							toAdd = BFS.get(count);
+						}
+						if (!toAdd.contains(n.getCoords())) {
+							toAdd.addAll(n.getCoords());	
+						}
+						BFS.put(count, toAdd);
+						temp.addAll(n.isPath());
+					}
+				}
+			}
+			count++;
+			availableCoords = temp;
+		}
+		return count;
 	}
 	// Find and Set the end intersection node
 	private void setEndIntersectionNode()
@@ -529,7 +581,48 @@ class Maze {
 	// Set longest tail nodes and longestTailCount
 	public int setLongestTailNodes()
 	{
-		return 0;
+//		Map<Integer, Set<Pair>> BFS = new HashMap<Integer, Set<Pair>>();
+//		Set<Pair> availableCoords = new HashSet<Pair>();
+//		for (Node n: nodeArray) {
+//			if (n.getEndIntersection()) {
+//				BFS.put(0, n.getCoords());
+//				availableCoords = n.isPath();
+//				break;
+//			}
+//		}
+		int count = 1, currentCount = 1;
+//		boolean isEnd = false;
+//		while(!isEnd) {
+//			Set<Pair> temp = new HashSet<Pair>();
+//			System.out.println("availableCoords: " + availableCoords);
+//			for (Pair p : availableCoords) {
+//				for (Node n : this.nodeArray) {
+//					if (n.getXCoord() == p.getXCoord() && n.getYCoord() == p.getYCoord()) { // n.getXYCoords() == p) {
+//						if (n.getIsEndNode()) {
+//							isEnd = true;
+//							count = currentCount;
+//						}
+//						Set<Pair> toAdd = new HashSet<Pair>();
+//						if (BFS.containsKey(count)) {
+//							for (Pair i : BFS.get(count)) {
+//								if (!toAdd.contains(i)) {
+//									toAdd.add(i);
+//								}
+//							}
+////							toAdd = BFS.get(count);
+//						}
+//						if (!toAdd.contains(n.getCoords())) {
+//							toAdd.addAll(n.getCoords());	
+//						}
+//						BFS.put(count, toAdd);
+//						temp.addAll(n.isPath());
+//					}
+//				}
+//			}
+//			currentCount++;
+//			availableCoords = temp;
+//		}
+		return count;
 	}
 	// Calculate the branch factor for the maze
 	public double calcBranchFactor() 
@@ -555,7 +648,6 @@ class Maze {
 					if(i.getSouthWall() == true){
 						temp ++; 
 					}
-					
 					if(temp >= 3 || i.getIsStartNode()  == true){ //Intersection 
 						temp = 4 - temp;
 						walls =+ temp; 

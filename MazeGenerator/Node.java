@@ -1,5 +1,10 @@
 package MazeGenerator;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
+
 class Node {
 	// Variables
 	private int xCoord;
@@ -132,6 +137,16 @@ class Node {
 	public int getYCoord() {
 		return yCoord;
 	}
+	public Pair getXYCoords() {
+		return new Pair(this.getXCoord(), this.getYCoord());
+	}
+	// Returns (x,y) coordinates of this node
+	public Set<Pair> getCoords() {
+		Set<Pair> coords = new HashSet<Pair>();
+		Pair newPair = new Pair(this.getXCoord(), this.getYCoord());
+		coords.add(newPair);
+		return coords;
+	}
 	public boolean getStartNode() {
 		return isStartNode;
 	}
@@ -177,7 +192,68 @@ class Node {
 	public boolean getWestWall() {
 		return isWall_West;
 	}
-	
+	public ArrayList<Integer> getWalls(Set<Pair> coords, int gridSize){
+		ArrayList<Integer> toReturn = new ArrayList<Integer>();
+		
+		if(this.getNorthWall() && !coords.contains(new Pair(this.getXCoord(), this.getYCoord() + 1)) && this.getYCoord() + 1 <= gridSize){
+			toReturn.add(0);
+		}
+		if(this.getEastWall() && !coords.contains(new Pair(this.getXCoord() + 1, this.getYCoord())) && this.getXCoord()+1 <= gridSize){
+			toReturn.add(1);
+		}
+		if(this.getSouthWall() && !coords.contains(new Pair(this.getXCoord(), this.getYCoord() -1 )) && this.getYCoord()-1 > 0){
+			toReturn.add(2);
+		}
+		if(this.getWestWall() && !coords.contains(new Pair(this.getXCoord() -1 , this.getYCoord())) && this.getXCoord() -1 > 0){
+			toReturn.add(3);
+		}
+		
+		return toReturn;
+	}
+	public void updateWalls(Set<Pair> coords) {
+		Random rand = new Random();
+		if(this.getNorthWall() == true && coords.contains(new Pair(this.getXCoord(), this.getYCoord()+1))){
+			int percent = rand.nextInt(2);
+			if(percent == 0){
+				this.setNorthWall(false);
+			}
+		}
+		if(this.getEastWall() == true && coords.contains(new Pair(this.getXCoord() +1, this.getYCoord()))){
+			int percent = rand.nextInt(2);
+			if(percent == 0){
+				this.setEastWall(false);
+			}
+		}
+		if(this.getSouthWall() == true && coords.contains(new Pair(this.getXCoord(), this.getYCoord() -1))){
+			int percent = rand.nextInt(2);
+			if(percent == 0){
+				this.setSouthWall(false);
+			}
+		}
+		if(this.getWestWall() == true && coords.contains(new Pair(this.getXCoord() -1, this.getYCoord()))){
+			int percent = rand.nextInt(2);
+			if(percent == 0){
+				this.setWestWall(false);
+			}
+		}
+	}
+	// Returns which directions can be travelled from this node
+	public Set<Pair> isPath() {
+		Set<Pair> toReturn = new HashSet<Pair>();
+		if (!this.getNorthWall()) {
+			toReturn.add(new Pair(this.getXCoord(), this.getYCoord() + 1));
+		}
+		if (!this.getEastWall()) {
+			toReturn.add(new Pair(this.getXCoord() + 1, this.getYCoord()));
+		}
+		if (!this.getSouthWall()) {
+			toReturn.add(new Pair(this.getXCoord(), this.getYCoord() - 1));
+		}
+		if (!this.getWestWall()) {
+			toReturn.add(new Pair(this.getXCoord() - 1, this.getYCoord()));
+		}
+		return toReturn;
+	}
 	public boolean getIsStartNode(){
 		return isStartNode;
 	}
@@ -201,8 +277,8 @@ class Node {
 		output += '\t' + "<EndIntersection>" + Boolean.toString(isEndIntersection) + "</EndIntersection>" + '\n';
 		output += '\t' + "<EndNode>" + Boolean.toString(isEndNode) + "</EndNode>" + '\n';
 		output += '\t' + "<WallNorth>" + Boolean.toString(isWall_North) + "</WallNorth>" + '\n';
-		output += '\t' + "<WallSouth>" + Boolean.toString(isWall_East) + "</WallEast>" + '\n';
-		output += '\t' + "<WallEast>" + Boolean.toString(isWall_South) + "</WallSouth>" + '\n';
+		output += '\t' + "<WallEast>" + Boolean.toString(isWall_East) + "</WallEast>" + '\n';
+		output += '\t' + "<WallSouth>" + Boolean.toString(isWall_South) + "</WallSouth>" + '\n';
 		output += '\t' + "<WallWest>" + Boolean.toString(isWall_West) + "</WallWest>" + '\n';
 		output += "</Node>";
 		
