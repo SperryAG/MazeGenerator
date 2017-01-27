@@ -81,6 +81,10 @@ class Node {
 	public int getYCoord() {
 		return yCoord;
 	}
+	public Pair getXYCoords() {
+		return new Pair(this.getXCoord(), this.getYCoord());
+	}
+	// Returns (x,y) coordinates of this node
 	public Set<Pair> getCoords() {
 		Set<Pair> coords = new HashSet<Pair>();
 		Pair newPair = new Pair(this.getXCoord(), this.getYCoord());
@@ -117,10 +121,10 @@ class Node {
 		if(this.getEastWall() && !coords.contains(new Pair(this.getXCoord() + 1, this.getYCoord())) && this.getXCoord()+1 <= gridSize){
 			toReturn.add(1);
 		}
-		if(this.getSouthWall() && !coords.contains(new Pair(this.getXCoord(), this.getYCoord() -1 )) && this.getYCoord()-1 >= 0){
+		if(this.getSouthWall() && !coords.contains(new Pair(this.getXCoord(), this.getYCoord() -1 )) && this.getYCoord()-1 > 0){
 			toReturn.add(2);
 		}
-		if(this.getWestWall() && !coords.contains(new Pair(this.getXCoord() -1 , this.getYCoord())) && this.getXCoord() -1 >= 0){
+		if(this.getWestWall() && !coords.contains(new Pair(this.getXCoord() -1 , this.getYCoord())) && this.getXCoord() -1 > 0){
 			toReturn.add(3);
 		}
 		
@@ -153,6 +157,7 @@ class Node {
 			}
 		}
 	}
+	// Returns which directions can be travelled from this node
 	public Set<Pair> isPath() {
 		Set<Pair> toReturn = new HashSet<Pair>();
 		if (!this.getNorthWall()) {
@@ -192,8 +197,8 @@ class Node {
 		output += '\t' + "<EndIntersection>" + Boolean.toString(isEndIntersection) + "</EndIntersection>" + '\n';
 		output += '\t' + "<EndNode>" + Boolean.toString(isEndNode) + "</EndNode>" + '\n';
 		output += '\t' + "<WallNorth>" + Boolean.toString(isWall_North) + "</WallNorth>" + '\n';
-		output += '\t' + "<WallSouth>" + Boolean.toString(isWall_East) + "</WallEast>" + '\n';
-		output += '\t' + "<WallEast>" + Boolean.toString(isWall_South) + "</WallSouth>" + '\n';
+		output += '\t' + "<WallEast>" + Boolean.toString(isWall_East) + "</WallEast>" + '\n';
+		output += '\t' + "<WallSouth>" + Boolean.toString(isWall_South) + "</WallSouth>" + '\n';
 		output += '\t' + "<WallWest>" + Boolean.toString(isWall_West) + "</WallWest>" + '\n';
 		output += "</Node>";
 		

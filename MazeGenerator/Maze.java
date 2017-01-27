@@ -157,9 +157,7 @@ class Maze {
 						temp = 4 - temp;
 						walls =+ temp; 
 						intersection++;
-					}
-				
-				
+					}				
 			}
 			branchFactor  =( walls/ intersection ) * 4 ;
 			return branchFactor; // <- Not yet implemented 
@@ -230,54 +228,54 @@ class Maze {
 	}
 	
 	public int calcLongestTail() {
-		int lowX = 0, highX = 0, lowY = 0, highY = 0;
-		int startX = 0, startY = 0;
-		for (Node n: nodeArray) {
-			if (n.getEndIntersection()) {
-				startX = n.getXCoord();
-				startY = n.getYCoord();
-				lowX = n.getXCoord();
-				highX = n.getXCoord();
-				lowY = n.getYCoord();
-				highY = n.getYCoord();
-				break;
-			}
-		}
-		System.out.println(lowX + " " + highY);
-		int count = 0, currentCount = 0;
-		boolean isEnd = false;
-		while (!isEnd) {
-			for (Node n: nodeArray) {
-				System.out.println(n.getXCoord() + " " + n.getYCoord());
-				System.out.println(lowX + " " + highX + " " + lowY + " " + highY);	
-				if (n.getXCoord() == startX || n.getXCoord() == startY) {
-					if (n.getIsEndNode()) {
-						isEnd = true;
-						break;
-					}
-				}
-				if (n.getXCoord() == highX + 1 || n.getXCoord() == lowX - 1 || n.getYCoord() == highY + 1 || n.getYCoord() == lowY - 1  ) {
-					count += 1;
-					if (n.getIsEndNode()) {
-						isEnd = true;
-						currentCount = count;
-						break;
-					}
-				}
-			}
-			lowX--;
-			highX++;
-			lowY--;
-			highY++;
-		}
-		return currentCount;
+//		Map<Integer, Set<Pair>> BFS = new HashMap<Integer, Set<Pair>>();
+//		Set<Pair> availableCoords = new HashSet<Pair>();
+//		for (Node n: nodeArray) {
+//			if (n.getEndIntersection()) {
+//				BFS.put(0, n.getCoords());
+//				availableCoords = n.isPath();
+//				break;
+//			}
+//		}
+		int count = 1, currentCount = 1;
+//		boolean isEnd = false;
+//		while(!isEnd) {
+//			Set<Pair> temp = new HashSet<Pair>();
+//			System.out.println("availableCoords: " + availableCoords);
+//			for (Pair p : availableCoords) {
+//				for (Node n : this.nodeArray) {
+//					if (n.getXCoord() == p.getXCoord() && n.getYCoord() == p.getYCoord()) { // n.getXYCoords() == p) {
+//						if (n.getIsEndNode()) {
+//							isEnd = true;
+//							count = currentCount;
+//						}
+//						Set<Pair> toAdd = new HashSet<Pair>();
+//						if (BFS.containsKey(count)) {
+//							for (Pair i : BFS.get(count)) {
+//								if (!toAdd.contains(i)) {
+//									toAdd.add(i);
+//								}
+//							}
+////							toAdd = BFS.get(count);
+//						}
+//						if (!toAdd.contains(n.getCoords())) {
+//							toAdd.addAll(n.getCoords());	
+//						}
+//						BFS.put(count, toAdd);
+//						temp.addAll(n.isPath());
+//					}
+//				}
+//			}
+//			currentCount++;
+//			availableCoords = temp;
+//		}
+		return count;
 	}
 	
 	public int calcOptimalPath() {
 		Map<Integer, Set<Pair>> BFS = new HashMap<Integer, Set<Pair>>();
 		Set<Pair> availableCoords = new HashSet<Pair>();
 		for (Node n: nodeArray) {
-			System.out.println(n.getIsStartNode());
 			if (n.getIsStartNode()) {
 				BFS.put(0, n.getCoords());
 				availableCoords = n.isPath();
@@ -288,28 +286,28 @@ class Maze {
 		boolean isEnd = false;
 		while(!isEnd) {
 			Set<Pair> temp = new HashSet<Pair>();
+//			System.out.println("availableCoords: " + availableCoords);
 			for (Pair p : availableCoords) {
-				for (Node n : nodeArray) {
-					if (n.getXCoord() == p.getXCoord() && n.getYCoord() == p.getYCoord()) {
+				for (Node n : this.nodeArray) {
+					if (n.getXCoord() == p.getXCoord() && n.getYCoord() == p.getYCoord()) { // n.getXYCoords() == p) {
+						if (n.getIsEndNode()) {
+							isEnd = true;
+							return count;
+						}
 						Set<Pair> toAdd = new HashSet<Pair>();
 						if (BFS.containsKey(count)) {
-							toAdd = BFS.get(count);	
+							for (Pair i : BFS.get(count)) {
+								if (!toAdd.contains(i)) {
+									toAdd.add(i);
+								}
+							}
+//							toAdd = BFS.get(count);
 						}
-						System.out.println("toAdd: " + toAdd + " " + n.getCoords());
-						if (!toAdd.isEmpty()) {
-							toAdd.addAll(n.getCoords());
-						}
-						else {
-							toAdd = n.getCoords();
+						if (!toAdd.contains(n.getCoords())) {
+							toAdd.addAll(n.getCoords());	
 						}
 						BFS.put(count, toAdd);
 						temp.addAll(n.isPath());
-					}
-					if (n.getIsEndNode()) {
-						isEnd = true;
-						//count++;
-						return count;
-						//break;
 					}
 				}
 			}
@@ -317,42 +315,6 @@ class Maze {
 			availableCoords = temp;
 		}
 		return count;
-//		boolean isEnd = false;
-//		while (!isEnd) {
-//			
-//		}
-		
-//		int lowX = 0, highX = 0, lowY = 0, highY = 0;
-//		for (Node n: nodeArray) {
-//			if (n.getStartNode()) {
-//				lowX = n.getXCoord();
-//				highX = n.getXCoord();
-//				lowY = n.getYCoord();
-//				highY = n.getYCoord();
-//				break;
-//			}
-//		} 
-//		System.out.println(lowX + " " + highY);
-//		int count = 0;
-//		boolean isEnd = false;
-//		while (!isEnd) {
-//			for (Node n: nodeArray) {
-//				System.out.println(n.getXCoord() + " " + n.getYCoord());
-//				System.out.println(lowX + " " + highX + " " + lowY + " " + highY);
-//				if (n.getXCoord() == highX + 1 || n.getXCoord() == lowX - 1 || n.getYCoord() == highY + 1 || n.getYCoord() == lowY - 1  ) {
-//					count += 1;
-//					if (n.getIsEndNode()) {
-//						isEnd = true;
-//						break;
-//					}
-//				}
-//			}
-//			lowX--;
-//			highX++;
-//			lowY--;
-//			highY++;
-//		}
-//		return count;
 	}
 	
 	public double calcComplexity() { //Incomplete
@@ -437,7 +399,6 @@ class Maze {
 		for(Node node: nodeArray){
 			node.updateWalls(coords);
 		}
-		System.out.println("after loop");
 		//String[] both = (String[])ArrayUtils.addAll(first, second);
 		
 		//Generate random start and end nodes
@@ -446,19 +407,22 @@ class Maze {
 		nodeArray[randnode].setStartNode(true);
 		
 		randnode = rand.nextInt(nodeArray.length);
+		while (nodeArray[randnode].getIsStartNode()) {
+			randnode = rand.nextInt(nodeArray.length);
+		}
 		nodeArray[randnode].setEndNode(true);
 		//Calculate required variables
-//		branchFactor = calcBranchFactor();// Branch factor
-//			
-//		deadendCount = calcDeadend();//Dead end Count
-//		
-//		intersectionCount = calcIntersection();	//Intersection
+		branchFactor = calcBranchFactor();// Branch factor
+			
+		deadendCount = calcDeadend();//Dead end Count
+		
+		intersectionCount = calcIntersection();	//Intersection
 		//Longest Tail
 //		int longestTail = calcLongestTail();
 //		System.out.println(longestTail);
 		//Optimal Path
 		int optimalPath = calcOptimalPath();
-		System.out.println(optimalPath);
+		System.out.println("Optimal: " + optimalPath);
 		//Loop Count? 
 		
 		//Calculate Complexity

@@ -4,6 +4,9 @@ public class Pair {
 	  final int x;
 	  final int y;
 	  Pair(int x, int y) {this.x=x;this.y=y;}
+	  public boolean isEquals(int x, int y) {
+		  return this.x == x && this.y == y;
+	  }
 	  public int getXCoord() {
 		  return this.x;
 	  }
