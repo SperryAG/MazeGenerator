@@ -9,38 +9,47 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 class Maze {
-	// Variables
+	/* Variables */
 	private String title;
 	private String created;
 	private int gridSize;
 	private int activeNodeCount;
+	private int coreActiveNodeCount; // Complexity Formula (N)
+	private int coreOptimalPathCount; // Complexity Formula (O)
+	private int intersectionCount;
+	private int coreIntersectionCount; // Complexity Formula (I)
+	private int deadendCount;
+	private int coreDeadendCount; // Complexity Formula (D)
+	private int loopCount;
+	private int coreLoopCount; // Complexity Formula (L)
+	private int longestTailCount;
 	private double branchFactor;
 	private double complexity;
-	private int intersectionCount;
-	private int deadendCount;
-	private int loopCount;
+	
 	private Node[] nodeArray;
 	private ArrayList<Result> resultArray;
 	
-	// Constructors
+	/* Constructors */
 	public Maze() {
 		this.title = "";
 		this.created = new SimpleDateFormat("YYYY-MM-DD-hh-mm-ss").format(new Date());
 		this.gridSize = -1;
 		this.activeNodeCount = -1;
+		this.coreActiveNodeCount = -1; 
+		this.coreOptimalPathCount = -1;
+		this.intersectionCount = -1;
+		this.coreIntersectionCount = -1;
+		this.deadendCount = -1;
+		this.coreDeadendCount = -1;
+		this.loopCount = -1;
+		this.coreLoopCount = -1;
+		this.longestTailCount = -1;
 		this.branchFactor = -1;
 		this.complexity = -1;
-		this.intersectionCount = -1;
-		this.deadendCount = -1;
-		this.loopCount = -1;
 		this.nodeArray = null;
 		this.resultArray = new ArrayList<Result>();;
 	}
@@ -50,11 +59,17 @@ class Maze {
 		this.created = new SimpleDateFormat("YYYY-MM-DD-hh-mm-ss").format(new Date());
 		this.gridSize = gridSize;
 		this.activeNodeCount = -1;
+		this.coreActiveNodeCount = -1; 
+		this.coreOptimalPathCount = -1;
+		this.intersectionCount = -1;
+		this.coreIntersectionCount = -1;
+		this.deadendCount = -1;
+		this.coreDeadendCount = -1;
+		this.loopCount = -1;
+		this.coreLoopCount = -1;
+		this.longestTailCount = -1;
 		this.branchFactor = -1;
 		this.complexity = -1;
-		this.intersectionCount = -1;
-		this.deadendCount = -1;
-		this.loopCount = -1;
 		this.nodeArray = null;
 		this.resultArray = new ArrayList<Result>();;
 	}
@@ -64,17 +79,22 @@ class Maze {
 		this.created = new SimpleDateFormat("YYYY-MM-DD-hh-mm-ss").format(new Date());
 		this.gridSize = gridSize;
 		this.activeNodeCount = activeNodeCount;
+		this.coreActiveNodeCount = -1; 
+		this.coreOptimalPathCount = -1;
+		this.intersectionCount = -1;
+		this.coreIntersectionCount = -1;
+		this.deadendCount = -1;
+		this.coreDeadendCount = -1;
+		this.loopCount = -1;
+		this.coreLoopCount = -1;
+		this.longestTailCount = -1;
 		this.branchFactor = -1;
 		this.complexity = -1;
-		this.intersectionCount = -1;
-		this.deadendCount = -1;
-		this.loopCount = -1;
 		this.nodeArray = new Node[activeNodeCount];
 		this.resultArray = new ArrayList<Result>();
 	}
 	
-	// Methods
-	// Get & Set Methods
+	/* General Methods */
 	public void setTitle(String title) {
 		this.title = title;
 	}
@@ -99,6 +119,54 @@ class Maze {
 	public int getActiveNodeCount() {
 		return activeNodeCount;
 	}
+	public void setCoreActiveNodeCount(int coreActiveNodeCount) {
+		this.coreActiveNodeCount = coreActiveNodeCount;
+	}
+	public int getCoreActiveNodeCount() {
+		return coreActiveNodeCount;
+	}
+	public void setCoreOptimalPathCount(int coreOptimalPathCount) {
+		this.coreOptimalPathCount = coreOptimalPathCount;
+	}
+	public int getCoreOptimalPathCount() {
+		return coreOptimalPathCount;
+	}
+	public void setintersectionCount(int intersectionCount) {
+		this.intersectionCount = intersectionCount;
+	}
+	public int getintersectionCount() {
+		return intersectionCount;
+	}
+	public void setCoreIntersectionCount(int coreIntersectionCount) {
+		this.coreIntersectionCount = coreIntersectionCount;
+	}
+	public int getCoreIntersectionCount() {
+		return coreIntersectionCount;
+	}
+	public void setDeadendCount(int deadendCount) {
+		this.deadendCount = deadendCount;
+	}
+	public int getDeadendCount() {
+		return deadendCount;
+	}
+	public void setCoreDeadendCount(int coreDeadendCount) {
+		this.coreDeadendCount = coreDeadendCount;
+	}
+	public int getCoreDeadendCount() {
+		return coreDeadendCount;
+	}
+	public void setLoopCount(int loopCount) {
+		this.loopCount = loopCount;
+	}
+	public int getLoopCount() {
+		return loopCount;
+	}
+	public void setCoreLoopCount(int coreLoopCount) {
+		this.coreLoopCount = coreLoopCount;
+	}
+	public int getCoreLoopCount() {
+		return coreLoopCount;
+	}
 	public void setBranchFactor(double branchFactor) {
 		this.branchFactor = branchFactor;
 	}
@@ -111,221 +179,150 @@ class Maze {
 	public double getComplexity() {
 		return complexity;
 	}
-	public void setIntersectionCount(int intersectionCount) {
-		this.intersectionCount = intersectionCount;
+	// Return the endNode in nodeArray
+	private Node getEndNode()
+	{
+		for(Node n : nodeArray)
+			if(n.getIsEndNode())
+				return n;
+		return null;
 	}
-	public int getIntersectionCount() {
-		return intersectionCount;
+	// Return a node in nodeArray based on coordinates
+	private Node getCoordNode(int x, int y)
+	{
+		for(Node n : nodeArray)
+			if(n.getXCoord() == x && n.getYCoord() == y)
+				return n;
+		return null;
 	}
-	public void setDeadendCount(int deadendCount) {
-		this.deadendCount = deadendCount;
-	}
-	public int getDeadendCount() {
-		return deadendCount;
-	}
-	public void setLoopCount(int loopCount) {
-		this.loopCount = loopCount;
-	}
-	public int getLoopCount() {
-		return loopCount;
-	}
-	
-	// Calculation Methods
-	public double calcBranchFactor() {
-		if(this.nodeArray == null || this.nodeArray.length == 0){
-			return (double)0;
-			}
-		else{
-			int temp = 0;
-			int walls = 0; 
-			int intersection = 0 ; 
-			for (Node i  : nodeArray){
-					if(i.getEastWall() == true){
-						temp ++; 
-					}
-					if(i.getNorthWall() == true){
-						temp ++; 
-					}
-					if(i.getWestWall() == true){
-						temp ++; 
-					}
-					if(i.getSouthWall() == true){
-						temp ++; 
-					}
-					
-					if(temp >= 3 || i.getIsStartNode()  == true){ //Intersection 
-						temp = 4 - temp;
-						walls =+ temp; 
-						intersection++;
-					}				
-			}
-			branchFactor  =( walls/ intersection ) * 4 ;
-			return branchFactor; // <- Not yet implemented 
+	// Get the next node based on the current node and desired direction
+	private Node getNextNode(Node node, char direction)
+	{
+		switch (Character.toUpperCase(direction))
+		{
+			case 'N':
+				return getCoordNode(node.getXCoord(),node.getYCoord() + 1);
+			case 'E':
+				return getCoordNode(node.getXCoord() + 1,node.getYCoord());
+			case 'S':
+				return getCoordNode(node.getXCoord(),node.getYCoord() - 1);
+			case 'W':
+				return getCoordNode(node.getXCoord() - 1,node.getYCoord());
+			default:
+				return null;
 		}
 	}
-	
-	
-	public int calcIntersection() {
-		if(this.nodeArray == null || this.nodeArray.length == 0){
-			return (int)0;
-			}
-		else{
-			int temp = 0;
-			int intersection = 0; 
-			for (Node i  : nodeArray){
-					if(i.getEastWall() == true){
-						temp ++; 
-					}
-					if(i.getNorthWall() == true){
-						temp ++; 
-					}
-					if(i.getWestWall() == true){
-						temp ++; 
-					}
-					if(i.getSouthWall() == true){
-						temp ++; 
-					}
-		
-					if(temp >= 3 || i.getIsStartNode() == true){ //Intersection 
-						intersection++;
-					}
-				
-				
-			}
-			return intersection; // <- Not yet implemented 
-		}
-	}
-	
-	public int calcDeadend() {
-		if(this.nodeArray == null || this.nodeArray.length == 0){
-			return (int)0;
-			}
-		else{
-			int temp = 0;
-			int deadend = 0; 
-			for (Node i  : nodeArray){
-					if(i.getEastWall() == true){
-						temp ++; 
-					}
-					if(i.getNorthWall() == true){
-						temp ++; 
-					}
-					if(i.getWestWall() == true){
-						temp ++; 
-					}
-					if(i.getSouthWall() == true){
-						temp ++; 
-					}
-		
-					if(temp < 2 && i.getIsStartNode() == false && i.getIsEndNode() == false ){ //Intersection 
-						deadend++;
-					}
-				
-				
-			}
-			return deadend; // <- Not yet implemented 
-		}
-	}
-	
-	public int calcLongestTail() {
-//		Map<Integer, Set<Pair>> BFS = new HashMap<Integer, Set<Pair>>();
-//		Set<Pair> availableCoords = new HashSet<Pair>();
-//		for (Node n: nodeArray) {
-//			if (n.getEndIntersection()) {
-//				BFS.put(0, n.getCoords());
-//				availableCoords = n.isPath();
-//				break;
-//			}
-//		}
-		int count = 1, currentCount = 1;
-//		boolean isEnd = false;
-//		while(!isEnd) {
-//			Set<Pair> temp = new HashSet<Pair>();
-//			System.out.println("availableCoords: " + availableCoords);
-//			for (Pair p : availableCoords) {
-//				for (Node n : this.nodeArray) {
-//					if (n.getXCoord() == p.getXCoord() && n.getYCoord() == p.getYCoord()) { // n.getXYCoords() == p) {
-//						if (n.getIsEndNode()) {
-//							isEnd = true;
-//							count = currentCount;
-//						}
-//						Set<Pair> toAdd = new HashSet<Pair>();
-//						if (BFS.containsKey(count)) {
-//							for (Pair i : BFS.get(count)) {
-//								if (!toAdd.contains(i)) {
-//									toAdd.add(i);
-//								}
-//							}
-////							toAdd = BFS.get(count);
-//						}
-//						if (!toAdd.contains(n.getCoords())) {
-//							toAdd.addAll(n.getCoords());	
-//						}
-//						BFS.put(count, toAdd);
-//						temp.addAll(n.isPath());
-//					}
-//				}
-//			}
-//			currentCount++;
-//			availableCoords = temp;
-//		}
-		return count;
-	}
-	
-	public int calcOptimalPath() {
-		Map<Integer, Set<Pair>> BFS = new HashMap<Integer, Set<Pair>>();
-		Set<Pair> availableCoords = new HashSet<Pair>();
-		for (Node n: nodeArray) {
-			if (n.getIsStartNode()) {
-				BFS.put(0, n.getCoords());
-				availableCoords = n.isPath();
-				break;
-			}
-		}
-		int count = 1;
-		boolean isEnd = false;
-		while(!isEnd) {
-			Set<Pair> temp = new HashSet<Pair>();
-//			System.out.println("availableCoords: " + availableCoords);
-			for (Pair p : availableCoords) {
-				for (Node n : this.nodeArray) {
-					if (n.getXCoord() == p.getXCoord() && n.getYCoord() == p.getYCoord()) { // n.getXYCoords() == p) {
-						if (n.getIsEndNode()) {
-							isEnd = true;
-							return count;
-						}
-						Set<Pair> toAdd = new HashSet<Pair>();
-						if (BFS.containsKey(count)) {
-							for (Pair i : BFS.get(count)) {
-								if (!toAdd.contains(i)) {
-									toAdd.add(i);
-								}
-							}
-//							toAdd = BFS.get(count);
-						}
-						if (!toAdd.contains(n.getCoords())) {
-							toAdd.addAll(n.getCoords());	
-						}
-						BFS.put(count, toAdd);
-						temp.addAll(n.isPath());
-					}
-				}
-			}
+	// Get the number of outgoing paths based on an incoming direction.
+	private int getOutPathCount(Node node, char inFrom)
+	{
+		int count = 0;
+		if(!node.getNorthWall() && Character.toUpperCase(inFrom) != 'N')
 			count++;
-			availableCoords = temp;
-		}
+		if(!node.getEastWall() && Character.toUpperCase(inFrom) != 'E')
+			count++;
+		if(!node.getSouthWall() && Character.toUpperCase(inFrom) != 'S')
+			count++;
+		if(!node.getWestWall() && Character.toUpperCase(inFrom) != 'W')
+			count++;
 		return count;
 	}
-	
-	public double calcComplexity() { //Incomplete
-		
-		complexity = 2 * activeNodeCount + branchFactor - deadendCount - loopCount  ;		
-		return complexity ; 
-		
+	// If a node has a branching factor of 2/4, return the out direction based on the
+	// in direction.
+	private char getOutPathDirection(Node node, char inFrom)
+	{
+		if(!node.getNorthWall() && Character.toUpperCase(inFrom) != 'N')
+			return 'N';
+		else if(!node.getEastWall() && Character.toUpperCase(inFrom) != 'E')
+			return 'E';
+		else if(!node.getSouthWall() && Character.toUpperCase(inFrom) != 'S')
+			return 'S';
+		else if(!node.getWestWall() && Character.toUpperCase(inFrom) != 'W')
+			return 'W';
+		else
+			return 'X';
+	}
+	// Get the opposite direction of a given direction
+	private char getOppositeDirection(char direction)
+	{
+		switch(Character.toUpperCase(direction))
+		{
+			case 'N':
+				return 'S';
+			case 'E':
+				return 'W';
+			case 'S':
+				return 'N';
+			case 'W':
+				return 'E';
+			default:
+				return 'X'; // Undefined
+		}
 	}
 	
-	// Randomization Method
-	public void randomizeMaze(){//this will call generate
+	/* Maze Methods */
+	public void generateMaze()
+	{
+		Random rand = new Random();
+		boolean[][] maze = new boolean[gridSize][gridSize];
+		
+		/* Randomize gridSize if needed */
+		if(gridSize == -1)
+			gridSize = rand.nextInt(48) + 2; // random Integer from 2-50
+		
+		/* Randomize activeNodeCount if needed */
+		if(activeNodeCount == -1)
+			activeNodeCount = rand.nextInt(gridSize*gridSize) + 1;
+		
+		/* Generate random maze nodes and store in nodeArray */
+		populateNodeArray();
+		
+		/* Generate random start Node */
+		int randNode = rand.nextInt(nodeArray.length);
+		nodeArray[randNode].setStartNode(true);
+		
+		/* Generate random end Node different from start Node */
+		do {randNode = rand.nextInt(nodeArray.length);}
+		while(nodeArray[randNode].getIsStartNode());
+		nodeArray[randNode].setEndNode(true);
+		
+		/* Find the full optimal path(s) and set isOptimalPath = true for involved nodes */
+		setOptimalPathNodes();
+		
+		/* Find and Set the isEndIntersection Node */
+		setEndIntersectionNode();
+		
+		/* Set isCoreNode = true for every core node and calculate coreActiveNodeCount */
+		coreActiveNodeCount = setCoreNodes();
+		
+		/* Find and Set isCoreOptimalPath = true for coreOptimalPath nodes and set coreOptimalPathCount */
+		coreOptimalPathCount = setCoreOptimalPath();
+		
+		/* Find and Set isIntersection / isCoreIntersection and IntersectionCount / coreIntersectionCount.
+		   coreIntersections includes start and I_end nodes */
+		intersectionCount = setIntersectionNodes();
+		coreIntersectionCount = setCoreIntersectionNodes();
+		
+		/* Find and Set isDeadend / isCoreDeadend for last node of a deadend path and set
+		   deadendCount / coreDeadendCount */
+		deadendCount = setDeadendNodes();
+		coreDeadendCount = setCoreDeadendNodes();
+		
+		/* Loops - Not sure how to do this - Can just adjust this value manually in the maze file for now. */
+		
+		/* Find and Set isLongestTail and longestTailCount */
+		longestTailCount = setLongestTailNodes();
+		
+		/* Calculate and Set branchFactor */
+		branchFactor = calcBranchFactor();
+		
+		/* Calculate and Set complexity */
+		complexity = calcComplexity();
+	}
+	
+	/* Generation Methods */
+	// Given gridSize and activeNodeCount, generate a random maze
+	private void populateNodeArray()
+	{
 		//Randomize if needed 
 		double nSquare = Math.sqrt(activeNodeCount);
   		int n = (int) Math.ceil(nSquare);
@@ -334,15 +331,18 @@ class Maze {
 		int count = 0;
 		ArrayList<Node> tempArray = new ArrayList<Node>();
 		Set<Pair> coords = new HashSet<Pair>();
-		for(int times = 0; times < this.activeNodeCount; times++){
-			if(times == 0){
+		for(int times = 0; times < this.activeNodeCount; times++)
+		{
+			if(times == 0)
+			{
 			   Node toAdd = new Node();
 			   toAdd.setXCoord(this.gridSize/2);
 			   toAdd.setYCoord(this.gridSize/2);
 			   tempArray.add(toAdd);
 			   coords.add(new Pair(this.gridSize/2, this.gridSize/2));
 			}
-			else{
+			else
+			{
 			   Node toAdd = new Node();
 			   Random rand = new Random();
 			   int  randomPick = rand.nextInt(tempArray.size());
@@ -400,38 +400,274 @@ class Maze {
 			node.updateWalls(coords);
 		}
 		//String[] both = (String[])ArrayUtils.addAll(first, second);
-		
-		//Generate random start and end nodes
-		Random rand = new Random();
-		int  randnode = rand.nextInt(nodeArray.length);
-		nodeArray[randnode].setStartNode(true);
-		
-		randnode = rand.nextInt(nodeArray.length);
-		while (nodeArray[randnode].getIsStartNode()) {
-			randnode = rand.nextInt(nodeArray.length);
+	}
+	// Find and Set the nodes involved in the optimal path(s)
+	private void setOptimalPathNodes()
+	{
+		Map<Integer, Set<Pair>> BFS = new HashMap<Integer, Set<Pair>>();
+		Set<Pair> availableCoords = new HashSet<Pair>();
+		for (Node n: nodeArray) {
+			if (n.getIsStartNode()) {
+				BFS.put(0, n.getCoords());
+				availableCoords = n.isPath();
+				break;
+			}
 		}
-		nodeArray[randnode].setEndNode(true);
-		//Calculate required variables
-		branchFactor = calcBranchFactor();// Branch factor
-			
-		deadendCount = calcDeadend();//Dead end Count
+		int count = 1;
+		boolean isEnd = false;
+		while(!isEnd) {
+			Set<Pair> temp = new HashSet<Pair>();
+//			System.out.println("availableCoords: " + availableCoords);
+			for (Pair p : availableCoords) {
+				for (Node n : this.nodeArray) {
+					if (n.getXCoord() == p.getXCoord() && n.getYCoord() == p.getYCoord()) { // n.getXYCoords() == p) {
+						if (n.getIsEndNode()) {
+							isEnd = true;
+							return count;
+						}
+						Set<Pair> toAdd = new HashSet<Pair>();
+						if (BFS.containsKey(count)) {
+							for (Pair i : BFS.get(count)) {
+								if (!toAdd.contains(i)) {
+									toAdd.add(i);
+								}
+							}
+//							toAdd = BFS.get(count);
+						}
+						if (!toAdd.contains(n.getCoords())) {
+							toAdd.addAll(n.getCoords());	
+						}
+						BFS.put(count, toAdd);
+						temp.addAll(n.isPath());
+					}
+				}
+			}
+			count++;
+			availableCoords = temp;
+		}
+		return count;
+	}
+	// Find and Set the end intersection node
+	private void setEndIntersectionNode()
+	{
+		// Get the endNode from nodeArray
+		Node endNode = getEndNode();
 		
-		intersectionCount = calcIntersection();	//Intersection
-		//Longest Tail
-//		int longestTail = calcLongestTail();
-//		System.out.println(longestTail);
-		//Optimal Path
-		int optimalPath = calcOptimalPath();
-		System.out.println("Optimal: " + optimalPath);
-		//Loop Count? 
+		// Get the coordinates of the intersections directly connected to the end node
+		Node tempNode;
+		char direction;
+		ArrayList<Integer[]> coordArray = new ArrayList<Integer[]>();
+		// Get the North path direct end intersection if it exists
+		if(!endNode.getNorthWall()) 
+		{
+			direction = 'N';
+			tempNode = getNextNode(endNode,direction);
+			while(getOutPathCount(tempNode,getOppositeDirection(direction)) == 1)
+			{
+				direction = getOutPathDirection(tempNode,direction);
+				tempNode = getNextNode(tempNode,direction);
+			}
+		}
 		
-		//Calculate Complexity
+			// Follow end node back to first intersection(s) and store them temporarily
+			// Follow optimal path from start.
+				// Choose the first intersection stepped on out of the following:
+					// Any of the direct end intersections found in step one.
+					// An optimal path split.
+	}
+	// Set core nodes and coreActiveNodeCount
+	private int setCoreNodes()
+	{
+		return 0;
+	}
+	// Set core optimal path nodes and coreOptimalPathCount
+	private int setCoreOptimalPath()
+	{
+		int count = 0;
+		for(Node n : nodeArray)
+			if(n.getIsOptimalPath() && n.getIsCoreNode())
+			{
+				n.setIsCoreOptimalPath(true);
+				count++;
+			}
+		return count;
+	}
+	// Set intersection nodes and return intersection count
+	public int setIntersectionNodes()
+	{
+		if(this.nodeArray == null || this.nodeArray.length == 0)
+			return (int)0;
+		else
+		{
+			int temp = 0;
+			int intersection = 0; 
+			for (Node i  : nodeArray)
+			{
+					if(i.getEastWall() == true){
+						temp ++; 
+					}
+					if(i.getNorthWall() == true){
+						temp ++; 
+					}
+					if(i.getWestWall() == true){
+						temp ++; 
+					}
+					if(i.getSouthWall() == true){
+						temp ++; 
+					}
 		
+					if(temp >= 3 || i.getIsStartNode() == true){ //Intersection 
+						intersection++;
+					}
+			}
+			return intersection; // <- Not yet implemented 
+		}
+	}
+	// Set core intersection nodes and coreIntersectionCount
+	public int setCoreIntersectionNodes() 
+	{
+		int count = 0;
+		for(Node n : nodeArray)
+			if(n.getIsIntersection() && n.getIsCoreNode())
+			{
+				n.setIsCoreIntersection(true);
+				count++;
+			}
+		return count;
+	}
+	// Set deadend nodes and deadendCount
+	public int setDeadendNodes()
+	{
+		if(this.nodeArray == null || this.nodeArray.length == 0)
+			return (int)0;
+		else
+		{
+			int temp = 0;
+			int deadend = 0; 
+			for (Node i  : nodeArray)
+			{
+					if(i.getEastWall() == true){
+						temp ++; 
+					}
+					if(i.getNorthWall() == true){
+						temp ++; 
+					}
+					if(i.getWestWall() == true){
+						temp ++; 
+					}
+					if(i.getSouthWall() == true){
+						temp ++; 
+					}
+		
+					if(temp < 2 && i.getIsStartNode() == false && i.getIsEndNode() == false ){ //Intersection 
+						deadend++;
+					}
+			}
+			return deadend; // <- Not yet implemented 
+		}
+	}
+	// Set core deadend nodes and coreDeadendCount
+	public int setCoreDeadendNodes() 
+	{
+		int count = 0;
+		for(Node n : nodeArray)
+			if(n.getIsDeadend() && n.getIsCoreNode())
+			{
+				n.setIsCoreDeadend(true);
+				count++;
+			}
+		return count;
+	}
+	// Set longest tail nodes and longestTailCount
+	public int setLongestTailNodes()
+	{
+//		Map<Integer, Set<Pair>> BFS = new HashMap<Integer, Set<Pair>>();
+//		Set<Pair> availableCoords = new HashSet<Pair>();
+//		for (Node n: nodeArray) {
+//			if (n.getEndIntersection()) {
+//				BFS.put(0, n.getCoords());
+//				availableCoords = n.isPath();
+//				break;
+//			}
+//		}
+		int count = 1, currentCount = 1;
+//		boolean isEnd = false;
+//		while(!isEnd) {
+//			Set<Pair> temp = new HashSet<Pair>();
+//			System.out.println("availableCoords: " + availableCoords);
+//			for (Pair p : availableCoords) {
+//				for (Node n : this.nodeArray) {
+//					if (n.getXCoord() == p.getXCoord() && n.getYCoord() == p.getYCoord()) { // n.getXYCoords() == p) {
+//						if (n.getIsEndNode()) {
+//							isEnd = true;
+//							count = currentCount;
+//						}
+//						Set<Pair> toAdd = new HashSet<Pair>();
+//						if (BFS.containsKey(count)) {
+//							for (Pair i : BFS.get(count)) {
+//								if (!toAdd.contains(i)) {
+//									toAdd.add(i);
+//								}
+//							}
+////							toAdd = BFS.get(count);
+//						}
+//						if (!toAdd.contains(n.getCoords())) {
+//							toAdd.addAll(n.getCoords());	
+//						}
+//						BFS.put(count, toAdd);
+//						temp.addAll(n.isPath());
+//					}
+//				}
+//			}
+//			currentCount++;
+//			availableCoords = temp;
+//		}
+		return count;
+	}
+	// Calculate the branch factor for the maze
+	public double calcBranchFactor() 
+	{
+		if(this.nodeArray == null || this.nodeArray.length == 0)
+			return (double)0;
+		else
+		{
+			int temp = 0;
+			int walls = 0; 
+			int intersection = 0 ; 
+			for (Node i : nodeArray)
+			{
+					if(i.getEastWall() == true){
+						temp ++; 
+					}
+					if(i.getNorthWall() == true){
+						temp ++; 
+					}
+					if(i.getWestWall() == true){
+						temp ++; 
+					}
+					if(i.getSouthWall() == true){
+						temp ++; 
+					}
+					if(temp >= 3 || i.getIsStartNode()  == true){ //Intersection 
+						temp = 4 - temp;
+						walls =+ temp; 
+						intersection++;
+					}
+			}
+			branchFactor = (walls/intersection) * 4;
+			return branchFactor; // <- Not yet implemented 
+		}
+	}
+	// Calculate the complexity for the maze
+	public double calcComplexity() 
+	{
+		return 2 * activeNodeCount + /*branchSum*/ - coreDeadendCount - coreLoopCount + longestTailCount;		
 	}
 
-	// Output Methods
+	/* Output Methods */
 	// Output to String
-	public String toString() {
+	public String toString() 
+	{
 		String output = "";
 		
 		// Title
@@ -504,9 +740,9 @@ class Maze {
 		
 		return output;
 	}
-	
 	// Output to file
-	public void toFile() {
+	public void toFile() 
+	{
 		try {
 			List<String> output = Arrays.asList(this.toString());
 			Path file = Paths.get(title + "_" + Integer.toString(gridSize) + "x" + Integer.toString(gridSize) + "_" +

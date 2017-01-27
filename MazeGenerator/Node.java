@@ -10,8 +10,16 @@ class Node {
 	private int xCoord;
 	private int yCoord;
 	private boolean isStartNode;
-	private boolean isEndIntersection;
 	private boolean isEndNode;
+	private boolean isEndIntersection;
+	private boolean isOptimalPath;
+	private boolean isCoreOptimalPath;
+	private boolean isIntersection;
+	private boolean isCoreIntersection;
+	private boolean isDeadend;
+	private boolean isCoreDeadend;
+	private boolean isCoreNode;
+	private boolean isLongestTail;
 	private boolean isWall_North, isWall_East, isWall_South, isWall_West;
 	
 	// Constructors
@@ -19,16 +27,32 @@ class Node {
 		xCoord = -1;
 		yCoord = -1;
 		isStartNode = false;
-		isEndIntersection = false;
 		isEndNode = false;
+		isEndIntersection = false;
+		isOptimalPath = false;
+		isCoreOptimalPath = false;
+		isIntersection = false;
+		isCoreIntersection = false;
+		isDeadend = false;
+		isCoreDeadend = false;
+		isCoreNode = false;
+		isLongestTail = false;
 		isWall_North = isWall_East = isWall_South = isWall_West = true;
 	}
 	public Node(int xCoord, int yCoord, boolean isStartNode){
 		this.xCoord = xCoord;
 		this.yCoord = yCoord;
 		this.isStartNode = isStartNode;
-		isEndIntersection = false;
 		isEndNode = false;
+		isEndIntersection = false;
+		isOptimalPath = false;
+		isCoreOptimalPath = false;
+		isIntersection = false;
+		isCoreIntersection = false;
+		isDeadend = false;
+		isCoreDeadend = false;
+		isCoreNode = false;
+		isLongestTail = false;
 		isWall_North = isWall_East = isWall_South = isWall_West = false;
 	}
 	
@@ -38,8 +62,16 @@ class Node {
 		this.xCoord = xCoord;
 		this.yCoord = yCoord;
 		this.isStartNode = isStartNode;
-		this.isEndIntersection = isEndIntersection;
 		this.isEndNode = isEndNode;
+		this.isEndIntersection = isEndIntersection;
+		isOptimalPath = false;
+		isCoreOptimalPath = false;
+		isIntersection = false;
+		isCoreIntersection = false;
+		isDeadend = false;
+		isCoreDeadend = false;
+		isCoreNode = false;
+		isLongestTail = false;
 		this.isWall_North = isWall_North;
 		this.isWall_East = isWall_East;
 		this.isWall_South = isWall_South;
@@ -57,11 +89,35 @@ class Node {
 	public void setStartNode(boolean x) {
 		this.isStartNode = x;
 	}
+	public void setEndNode(boolean x) {
+		this.isEndNode = x;
+	}
 	public void setEndIntersection(boolean x) {
 		this.isEndIntersection = x;
 	}
-	public void setEndNode(boolean x) {
-		this.isEndNode = x;
+	public void setIsOptimalPath(boolean x) {
+		this.isOptimalPath = x;
+	}
+	public void setIsCoreOptimalPath(boolean x) {
+		this.isCoreOptimalPath = x;
+	}
+	public void setIsIntersection(boolean x) {
+		this.isIntersection = x;
+	}
+	public void setIsCoreIntersection(boolean x) {
+		this.isCoreIntersection = x;
+	}
+	public void setIsDeadend(boolean x) {
+		this.isDeadend = x;
+	}
+	public void setIsCoreDeadend(boolean x) {
+		this.isCoreDeadend = x;
+	}
+	public void setIsCoreNode(boolean x) {
+		this.isCoreNode = x;
+	}
+	public void setIsLongestTail(boolean x) {
+		this.isLongestTail = x;
 	}
 	public void setNorthWall(boolean x) {
 		this.isWall_North = x;
@@ -94,11 +150,35 @@ class Node {
 	public boolean getStartNode() {
 		return isStartNode;
 	}
+	public boolean getEndNode() {
+		return isEndNode;
+	}
 	public boolean getEndIntersection() {
 		return isEndIntersection;
 	}
-	public boolean getEndNode() {
-		return isEndNode;
+	public boolean getIsOptimalPath() {
+		return isOptimalPath;
+	}
+	public boolean getIsCoreOptimalPath() {
+		return isCoreOptimalPath;
+	}
+	public boolean getIsIntersection() {
+		return isIntersection;
+	}
+	public boolean getIsCoreIntersection() {
+		return isCoreIntersection;
+	}
+	public boolean getIsDeadend() {
+		return isDeadend;
+	}
+	public boolean getIsCoreDeadend() {
+		return isCoreDeadend;
+	}
+	public boolean getIsCoreNode() {
+		return isCoreNode;
+	}
+	public boolean getIsLongestTail() {
+		return isLongestTail;
 	}
 	public boolean getNorthWall() {
 		return isWall_North;

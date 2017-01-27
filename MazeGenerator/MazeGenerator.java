@@ -7,7 +7,7 @@ public class MazeGenerator {
 		//Oh test commit
 		//Steven's test commit again
 		//A third steven's comment
-		Scanner user_input = new Scanner(System.in);;
+		Scanner user_input = new Scanner(System.in);
 		
 		String title;
 		int gridsize;
@@ -29,7 +29,7 @@ public class MazeGenerator {
 			
 		
 		maze = new Maze(title,gridsize,activenode);
-		maze.randomizeMaze();
+		maze.generateMaze();
 	//	maze = new Maze("FirstMaze",12,42);
 		System.out.println(maze.toString());
 		maze.toFile();
