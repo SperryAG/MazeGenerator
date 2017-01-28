@@ -4,9 +4,6 @@ import java.util.Scanner;
 public class MazeGenerator {
 	public static void main(String[] args) {
 		Maze maze;
-		//Oh test commit
-		//Steven's test commit again
-		//A third steven's comment
 		Scanner user_input = new Scanner(System.in);
 		
 		String title;
