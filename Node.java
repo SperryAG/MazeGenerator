@@ -1,11 +1,13 @@
 package MazeGenerator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-class Node {
+public class Node {
 	// Variables
 	private int xCoord;
 	private int yCoord;
@@ -230,6 +232,22 @@ class Node {
 		}
 		if (!this.getWestWall()) {
 			toReturn.add(new Pair(this.getXCoord() - 1, this.getYCoord()));
+		}
+		return toReturn;
+	}
+	public Map<String, Pair> paths() {
+		Map<String, Pair> toReturn = new HashMap<String, Pair>();
+		if (!this.getNorthWall()) {
+			toReturn.put("North", new Pair(this.getXCoord(), this.getYCoord() + 1));
+		}
+		if (!this.getEastWall()) {
+			toReturn.put("East", new Pair(this.getXCoord() + 1, this.getYCoord()));
+		}
+		if (!this.getSouthWall()) {
+			toReturn.put("South", new Pair(this.getXCoord(), this.getYCoord() - 1));
+		}
+		if (!this.getWestWall()) {
+			toReturn.put("West", new Pair(this.getXCoord() - 1, this.getYCoord()));
 		}
 		return toReturn;
 	}
