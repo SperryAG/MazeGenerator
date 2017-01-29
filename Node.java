@@ -250,19 +250,19 @@ class Node {
 		String output = "";
 		
 		output += "<Node>" + '\n';
-		output += '\t' + "<Coordinates>(" + Integer.toString(xCoord) + "," + Integer.toString(yCoord) + ")</Coordinates>" + '\n';
-		output += '\t' + "<StartNode>" + Boolean.toString(isStartNode) + "</StartNode>" + '\n';
-		output += '\t' + "<EndNode>" + Boolean.toString(isEndNode) + "</EndNode>" + '\n';
-		output += '\t' + "<EndIntersectionNode>" + Boolean.toString(isEndIntersection) + "</EndIntersectionNode>" + '\n';
-		output += '\t' + "<OptimalPathNode>" + Boolean.toString(isOptimalPath) + "</OptimalPathNode>" + '\n';
-		output += '\t' + "<IntersectionNode>" + Boolean.toString(isIntersection) + "</IntersectionNode>" + '\n';
-		output += '\t' + "<DeadendNode>" + Boolean.toString(isDeadend) + "</DeadendNode>" + '\n';
-		output += '\t' + "<CoreNode>" + Boolean.toString(isCoreNode) + "</CoreNode>" + '\n';
-		output += '\t' + "<LongestTailNode>" + Boolean.toString(isLongestTailNode) + "</LongestTailNode>" + '\n';
-		output += '\t' + "<WallNorth>" + Boolean.toString(isWall_North) + "</WallNorth>" + '\n';
-		output += '\t' + "<WallEast>" + Boolean.toString(isWall_East) + "</WallEast>" + '\n';
-		output += '\t' + "<WallSouth>" + Boolean.toString(isWall_South) + "</WallSouth>" + '\n';
-		output += '\t' + "<WallWest>" + Boolean.toString(isWall_West) + "</WallWest>" + '\n';
+		output +=  "<Coordinates>(" + Integer.toString(xCoord) + "," + Integer.toString(yCoord) + ")</Coordinates>" + '\n';
+		output += "<StartNode>" + Boolean.toString(isStartNode) + "</StartNode>" + '\n';
+		output +=   "<EndNode>" + Boolean.toString(isEndNode) + "</EndNode>" + '\n';
+		output +=  "<EndIntersectionNode>" + Boolean.toString(isEndIntersection) + "</EndIntersectionNode>" + '\n';
+		output +=  "<OptimalPathNode>" + Boolean.toString(isOptimalPath) + "</OptimalPathNode>" + '\n';
+		output +=  "<IntersectionNode>" + Boolean.toString(isIntersection) + "</IntersectionNode>" + '\n';
+		output += "<DeadendNode>" + Boolean.toString(isDeadend) + "</DeadendNode>" + '\n';
+		output +=  "<CoreNode>" + Boolean.toString(isCoreNode) + "</CoreNode>" + '\n';
+		output +=  "<LongestTailNode>" + Boolean.toString(isLongestTailNode) + "</LongestTailNode>" + '\n';
+		output +=  "<WallNorth>" + Boolean.toString(isWall_North) + "</WallNorth>" + '\n';
+		output +=  "<WallEast>" + Boolean.toString(isWall_East) + "</WallEast>" + '\n';
+		output +=  "<WallSouth>" + Boolean.toString(isWall_South) + "</WallSouth>" + '\n';
+		output +=  "<WallWest>" + Boolean.toString(isWall_West) + "</WallWest>" + '\n';
 		output += "</Node>";
 		
 		return output;
