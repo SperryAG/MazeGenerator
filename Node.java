@@ -162,6 +162,14 @@ class Node {
 	public boolean getWestWall() {
 		return isWall_West;
 	}
+	
+	public void printWalls(){
+		if(this.getNorthWall()){System.out.print("North ");}
+		if(this.getEastWall()){System.out.print("East ");}
+		if(this.getSouthWall()){System.out.print("South ");}
+		if(this.getWestWall()){System.out.print("west");}
+	}
+	
 	public ArrayList<Integer> getWalls(Set<Pair> coords, int gridSize){
 		ArrayList<Integer> toReturn = new ArrayList<Integer>();
 		
@@ -208,6 +216,7 @@ class Node {
 		}
 	}
 	// Returns which directions can be traveled from this node
+	//Returns it as a set of Pair(x,y) coordinates
 	public Set<Pair> isPath() {
 		Set<Pair> toReturn = new HashSet<Pair>();
 		if (!this.getNorthWall()) {

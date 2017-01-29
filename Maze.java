@@ -1,6 +1,7 @@
 package MazeGenerator;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,8 +10,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 class Maze {
 	/* Variables */
@@ -468,7 +473,7 @@ class Maze {
 		deadendCount = setDeadendNodes();
 		
 		/* Find and Set the isEndIntersection Node */
-		setEndIntersectionNode();
+		//setEndIntersectionNode();
 		
 		/* Set isCoreNode = true for every core node and calculate coreActiveNodeCount */
 		coreActiveNodeCount = setCoreNodes();
@@ -572,51 +577,119 @@ class Maze {
 		}
 		//String[] both = (String[])ArrayUtils.addAll(first, second);
 	}
-	// Find and Set the nodes involved in the optimal path(s)
-	private void setOptimalPathNodes()
-	{
+	
+	private Map<Integer, Set<Pair>> optimalPathCoords(){
 		Map<Integer, Set<Pair>> BFS = new HashMap<Integer, Set<Pair>>();
 		Set<Pair> availableCoords = new HashSet<Pair>();
 		for (Node n: nodeArray) {
 			if (n.getIsStartNode()) {
 				BFS.put(0, n.getCoords());
-				availableCoords = n.isPath();
+				availableCoords = n.isPath();//isPath returns the set of x,y coordinates that it can travel to
+				System.out.println("Available Coords from the start node: " + BFS);
 				break;
 			}
 		}
 		int count = 1;
 		boolean isEnd = false;
-		while(!isEnd) {
-			Set<Pair> temp = new HashSet<Pair>();
+		while(isEnd == false) {
+			Set<Pair> updateAvailableCoords = new HashSet<Pair>();
 //			System.out.println("availableCoords: " + availableCoords);
 			for (Pair p : availableCoords) {
 				for (Node n : this.nodeArray) {
 					if (n.getXCoord() == p.getXCoord() && n.getYCoord() == p.getYCoord()) { // n.getXYCoords() == p) {
-						if (n.getIsEndNode()) {
+						if (n.getIsEndNode()) {//if the next coordinate is the end node. 
 							isEnd = true;
-							return count;
+							BFS.remove(count);
+							BFS.put(count, n.getCoords());//leave the end node in its own array. 
+							return BFS;
 						}
-						Set<Pair> toAdd = new HashSet<Pair>();
+						Set<Pair> toAdd = new HashSet<Pair>(); //toAdd is the next level of coordinates that can be reached. 
 						if (BFS.containsKey(count)) {
-							for (Pair i : BFS.get(count)) {
-								if (!toAdd.contains(i)) {
+							for (Pair i : BFS.get(count)) { //get all the available coordinates already that can be reached?
+								if (toAdd.contains(i) == false) {
 									toAdd.add(i);
 								}
 							}
-//							toAdd = BFS.get(count);
 						}
-						if (!toAdd.contains(n.getCoords())) {
+						if (toAdd.contains(n.getCoords()) == false) {
 							toAdd.addAll(n.getCoords());	
 						}
 						BFS.put(count, toAdd);
-						temp.addAll(n.isPath());
+						updateAvailableCoords.addAll(n.isPath());
+					}
+				}
+			}//end of for loop of availableCoords. 
+			count++;
+			availableCoords = updateAvailableCoords;
+		}
+		return BFS;
+	}
+	
+	//this will update and replace a Node
+	private void updateNode(Node toUpdate){
+		for(int i = 0; i < this.nodeArray.length; i++){
+			Node temp = nodeArray[i];
+			if(temp.getXYCoords() == toUpdate.getXYCoords()){
+				nodeArray[i] = toUpdate;
+			}
+		}
+	}
+	
+	private void isNeighbor(Node toCheck){
+		
+	}
+	// Find and Set the nodes involved in the optimal path(s)
+	private void setOptimalPathNodes()
+	{
+		Node setOptLocal = new Node();
+		Map<Integer, Set<Pair>> optimalPathCoords = optimalPathCoords();
+		System.out.println("optimalPathCoords: " + optimalPathCoords);
+		Set<Pair> endCoords = optimalPathCoords.get(optimalPathCoords.size()-1);
+		System.out.println("endCoordsSet: " + endCoords + " endCoords:");//print statement of end coords
+		for(int i = optimalPathCoords.size()-1; i >= 0;i--){
+			Set<Pair> coordinates = optimalPathCoords.get(i);
+			System.out.println("coordinates: " + coordinates);
+			for(Pair p: coordinates){
+				System.out.println("p: " + coordinates);
+				Node temp = this.getCoordNode(p.getXCoord(), p.getYCoord());
+				//System.out.println(temp);
+				if(temp.getIsEndNode()){
+					temp.setIsOptimalPath(true);
+					//System.out.println("endNode " + temp);
+					setOptLocal = temp;
+					updateNode(temp);
+				}
+				else{
+					System.out.print("printWalls: ");
+					temp.printWalls();
+					System.out.print("\n");
+					if(setOptLocal.getNorthWall() && temp.getSouthWall()){
+						temp.setIsOptimalPath(true);
+						setOptLocal = temp;
+						updateNode(temp);
+					}
+					else if(setOptLocal.getEastWall() && temp.getWestWall()){
+						temp.setIsOptimalPath(true);
+						setOptLocal = temp;
+						updateNode(temp);
+					}
+					else if(setOptLocal.getSouthWall() && temp.getNorthWall()){						
+						temp.setIsOptimalPath(true);
+						setOptLocal = temp;
+						updateNode(temp);
+					}
+					else if(setOptLocal.getWestWall() && temp.getEastWall()){						
+						temp.setIsOptimalPath(true);
+						setOptLocal = temp;
+						updateNode(temp);
 					}
 				}
 			}
-			count++;
-			availableCoords = temp;
 		}
-		return count;
+		for(Node n: this.nodeArray){
+			System.out.print(n.getXYCoords()+ " " + n.getIsOptimalPath() + " ");
+		}
+		System.out.println("\n" + optimalPathCoords);
 	}
 	// Find and Set the end intersection node
 	private void setEndIntersectionNode()
