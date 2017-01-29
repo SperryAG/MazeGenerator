@@ -173,6 +173,12 @@ class Maze {
 	public int getCoreLoopCount() {
 		return coreLoopCount;
 	}
+	public void setLongestTailCount(int longestTailCount) {
+		this.longestTailCount = longestTailCount;
+	}
+	public int getLongestTailCount() {
+		return longestTailCount;
+	}
 	public void setBranchFactor(double branchFactor) {
 		this.branchFactor = branchFactor;
 	}
@@ -185,16 +191,24 @@ class Maze {
 	public double getComplexity() {
 		return complexity;
 	}
+	public void setNodeArray(Node[] nodeArray)
+	{
+		this.nodeArray = nodeArray;
+	}
+	public Node[] getNodeArray()
+	{
+		return this.nodeArray;
+	}
 	// Return the startNode in nodeArray
-		private Node getStartNode()
-		{
-			for(Node n : nodeArray)
-				if(n.getIsStartNode())
-					return n;
-			return null;
-		}
+	Node getStartNode()
+	{
+		for(Node n : nodeArray)
+			if(n.getIsStartNode())
+				return n;
+		return null;
+	}
 	// Return the endNode in nodeArray
-	private Node getEndNode()
+	Node getEndNode()
 	{
 		for(Node n : nodeArray)
 			if(n.getIsEndNode())
