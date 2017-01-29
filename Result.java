@@ -29,6 +29,8 @@ class Result {
 	public int getCompletionTime() {
 		return completionTime;
 	}
+	
+	
 	// Output Methods
 	public String toString() {
 		String output = "";

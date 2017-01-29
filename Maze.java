@@ -1,7 +1,5 @@
 package MazeGenerator;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.nio.charset.Charset;
@@ -18,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.Stack;
 
 class Maze {
 	/* Variables */
@@ -637,9 +636,6 @@ class Maze {
 		}
 	}
 	
-	private void isNeighbor(Node toCheck){
-		
-	}
 	// Find and Set the nodes involved in the optimal path(s)
 	private void setOptimalPathNodes()
 	{
@@ -949,6 +945,40 @@ class Maze {
 		return temp;		
 	}
 
+	public int dfsStep(){
+		int steps = 0;
+		Random rand = new Random();
+		Pair currentPair = this.getStartNode().getXYCoords();
+		Stack<Pair> pathTraveled = new Stack<Pair>();
+		pathTraveled.push(currentPair);
+		boolean foundEnd = false;
+		while(foundEnd == false){
+			currentPair = pathTraveled.peek();
+			Node currentNode = this.getCoordNode(currentPair.getXCoord(), currentPair.getYCoord());
+			ArrayList<Pair> neighbors = currentNode.getNeighbors(pathTraveled);
+			if(neighbors.size() != 0){
+				Pair newPair = neighbors.get(rand.nextInt(neighbors.size()));
+				Node newNode = this.getCoordNode(newPair.getXCoord(), newPair.getYCoord());
+				if(newNode.getIsEndNode()){
+					foundEnd = true;
+				}
+				else{
+					pathTraveled.push(newPair);
+				}
+			}
+			else{//hit deadend
+				pathTraveled.pop();//pops the deadend.
+				while(currentNode.getIsIntersection() == false){
+					Pair tempPair = pathTraveled.pop();
+					currentNode = this.getCoordNode(tempPair.getXCoord(), tempPair.getYCoord());
+					steps++;
+				}
+			}
+			steps++;
+		}
+		return steps;
+	}
+	
 	/* Output Methods */
 	// Output to String
 	public String toString() 
@@ -1036,178 +1066,6 @@ class Maze {
 			Files.write(file, output, Charset.forName("UTF-8"));
 		} catch (IOException e) {
 			System.out.println(e.toString());
-		}
-	}
-	//File Reader
-	public void MazeReader(String Filename){
-		BufferedReader br = null;
-		FileReader fr = null;
-		String[] tokens ;
-		Node temp = null ;
-		Node[] tempNodeArray;
-		temp = new Node();
-		ArrayList<Node> tempArray = new ArrayList<Node>();
-		
-		try {
-
-			fr = new FileReader(Filename);
-			br = new BufferedReader(fr);
-			String sCurrentLine;
-			Maze maze;
-			maze = new Maze(); 
-			double dtemp;
-			int itemp = 0;
-			boolean btemp;
-			br = new BufferedReader(new FileReader(Filename));
-			while ((sCurrentLine = br.readLine()) != null) { //Filereader
-				String delims = "[<>,.()]";
-				tokens = sCurrentLine.split(delims);
-				for (int i = 0; i < tokens.length; i++){
-			        switch (tokens[i]) {
-		            	case "Title":
-		            		i++;
-			            	maze.title = tokens[i];
-			            	break;
-		            	case "Created":
-		            		i++; 
-		            		maze.created = tokens[i];
-			            	break;
-			            
-		            	case "Gridsize":
-		            		i++;
-		            		itemp = Integer.parseInt(tokens[i]);
-		            		maze.gridSize= itemp;
-		            		break;	
-		            		
-		            	case "ActiveNodeCount":
-		            		i++;
-		            		itemp = Integer.parseInt(tokens[i]);
-		            		maze.activeNodeCount= itemp;
-		            		break;	
-		            		
-		            	case "BranchFactor":
-		            		i++;
-		            		dtemp = Double.parseDouble(tokens[i]);
-		            		maze.branchFactor = dtemp;
-		            		break;
-		            	case "Complexity":
-		            		i++;
-		            		itemp = Integer.parseInt(tokens[i]);
-		            		maze.complexity = itemp;
-		            		break;
-		            	case "DeadendCount":
-		            		i++;
-		            		itemp = Integer.parseInt(tokens[i]);
-		            		maze.deadendCount= itemp;
-		            		break;	
-		            		
-		            	case "LoopCount":
-		            		i++;
-		            		if(tokens[i].equals("Not Calculated")){
-		            			maze.loopCount= -1;
-		            		}
-		            		else{
-		            			itemp = Integer.parseInt(tokens[i]);
-		            			maze.loopCount= itemp;
-		            		}
-		            		break;		
-		            	case "Nodes":
-		            		i++;
-		            		break;
-		            	case "Node":
-		            		i++;
-		            		break;
-		            		
-		            	case "Coordinates":  
-		                    		i= i+2;
-		                    		itemp = Integer.parseInt(tokens[i]);
-		                    		temp.setXCoord(itemp);
-		                    		i++;
-		                    		itemp = Integer.parseInt(tokens[i]);
-		                    		temp.setYCoord(itemp);
-		                            break;
-		            	case "StartNode":  
-				                    		i++;
-				                    		btemp = Boolean.parseBoolean(tokens[i]);
-				                    		temp.setStartNode(btemp);
-				                            break;		                            
-				                 case "EndNode":  
-			                    		i++;
-			                    		btemp = Boolean.parseBoolean(tokens[i]);
-			                    		temp.setEndNode(btemp);
-			                            break;	 
-				                 case "EndIntersectionNode":  
-			                    		i++;
-			                    		btemp = Boolean.parseBoolean(tokens[i]);
-			                    		temp.setEndIntersection(btemp);
-			                            break;
-				                 case "CoreNode":  
-			                    		i++;
-			                    		btemp = Boolean.parseBoolean(tokens[i]);
-			                    		temp.setIsCoreNode(btemp);
-
-			                            break;		                            
-				                 case "LongestTailNode":  
-			                    		i++;
-			                    		btemp = Boolean.parseBoolean(tokens[i]);
-			                    		temp.setIsLongestTailNode(btemp);
-		                    		break;	 
-				                 case "WallNorth":  
-			                    		i++;
-			                    		btemp = Boolean.parseBoolean(tokens[i]);
-			                    		temp.setNorthWall(btemp);
-			                            break;	  
-				                 case "WallEast":  
-			                    		i++;
-			                    		btemp = Boolean.parseBoolean(tokens[i]);
-			                    		temp.setEastWall(btemp);
-			                            break;		                            
-					              case "WallSouth":  
-			                    		i++;
-			                    		btemp = Boolean.parseBoolean(tokens[i]);
-			                    		temp.setSouthWall(btemp);
-			                    		break;	 
-					          	 case "WallWest":  
-			                    		i++;
-			                    		btemp = Boolean.parseBoolean(tokens[i]);
-			                    		temp.setWestWall(btemp);
-			                            break;	      
-			                            
-				                 default:
-				                	 break;
-		                }
-		            	tempArray.add(temp);	
-		            		
-			        
-			        
-			        
-				}
-				
-				
-			}
-
-		} catch (IOException e) {
-
-			e.printStackTrace();
-
-		} finally {
-
-			try {
-
-				if (br != null)
-					br.close();
-
-				if (fr != null)
-					fr.close();
-
-			} catch (IOException ex) {
-
-				ex.printStackTrace();
-
-			}
-
-
-		    
 		}
 	}
 }
