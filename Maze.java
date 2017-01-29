@@ -172,6 +172,12 @@ class Maze {
 	public int getCoreLoopCount() {
 		return coreLoopCount;
 	}
+	public void setLongestTailCount(int longestTailCount) {
+		this.longestTailCount = longestTailCount;
+	}
+	public int getLongestTailCount() {
+		return longestTailCount;
+	}
 	public void setBranchFactor(double branchFactor) {
 		this.branchFactor = branchFactor;
 	}
@@ -184,16 +190,24 @@ class Maze {
 	public double getComplexity() {
 		return complexity;
 	}
+	public void setNodeArray(Node[] nodeArray)
+	{
+		this.nodeArray = nodeArray;
+	}
+	public Node[] getNodeArray()
+	{
+		return this.nodeArray;
+	}
 	// Return the startNode in nodeArray
-		private Node getStartNode()
-		{
-			for(Node n : nodeArray)
-				if(n.getIsStartNode())
-					return n;
-			return null;
-		}
+	Node getStartNode()
+	{
+		for(Node n : nodeArray)
+			if(n.getIsStartNode())
+				return n;
+		return null;
+	}
 	// Return the endNode in nodeArray
-	private Node getEndNode()
+	Node getEndNode()
 	{
 		for(Node n : nodeArray)
 			if(n.getIsEndNode())
@@ -239,8 +253,7 @@ class Maze {
 			count++;
 		return count;
 	}
-	// If a node has a branching factor of 2/4, return the out direction based on the
-	// in direction.
+	// If a node has a branching factor of 2/4, return the out direction based on the in direction.
 	private char getOutPathDirection(Node node, char inFrom)
 	{
 		if(!node.getNorthWall() && Character.toUpperCase(inFrom) != 'N')
@@ -329,7 +342,7 @@ class Maze {
 			}
 		}
 	}
-	// Traverse paths out of endIntersection that havnt beed visited and mark deadend paths visited.
+	// Traverse paths out of endIntersection that haven't been visited and mark deadend paths visited.
 	private void stepDeadEnd(Node node, boolean[][] visited)
 	{
 		Node temp;
