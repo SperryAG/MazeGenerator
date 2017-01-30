@@ -7,40 +7,22 @@ import java.awt.Toolkit;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.Color;
-import javax.swing.border.EtchedBorder;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-
-import java.awt.FlowLayout;
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import javax.swing.JButton;
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Random;
-
-import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JSlider;
-import java.awt.event.InputMethodListener;
-import java.awt.event.InputMethodEvent;
 import javax.swing.SwingConstants;
-import javax.swing.JSplitPane;
 import javax.swing.SpringLayout;
 import javax.swing.JScrollPane;
-
 
 public class MazeGeneratorUI {
 	
@@ -68,7 +50,9 @@ public class MazeGeneratorUI {
 	/*Launch the application. */
 	public static void main(String[] args) {
 		Maze maze = new Maze();
-		
+		String filename = "TestMaze_9x9_46_0.7142857142857143_75.0_2017-01-29-02-17-19.txt";
+		maze.MazeReader(filename);
+		maze.toFile();
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -79,7 +63,7 @@ public class MazeGeneratorUI {
 				}
 			}
 		});
-		
+		/*
 		// Create a test maze variable
 		maze.setTitle("TestMaze");
 		maze.setGridSize(9);
@@ -194,7 +178,7 @@ public class MazeGeneratorUI {
 		maze.setCoreLoopCount(2);
 		maze.setLongestTailCount(3);
 		maze.setBranchFactor((double)20/28);
-		maze.setComplexity(75);
+		maze.setComplexity(75);*/
 	
 	}
 
