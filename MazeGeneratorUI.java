@@ -7,6 +7,8 @@ import java.awt.Toolkit;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.Color;
+import javax.swing.border.EtchedBorder;
+import javax.swing.text.MaskFormatter;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.JLabel;
@@ -14,15 +16,34 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Random;
+import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JList;
 import javax.swing.JSlider;
+import java.awt.event.InputMethodListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputMethodEvent;
 import javax.swing.SwingConstants;
 import javax.swing.SpringLayout;
 import javax.swing.JScrollPane;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
 
 public class MazeGeneratorUI {
 	
@@ -33,7 +54,7 @@ public class MazeGeneratorUI {
 	private final int    FRAMEWIDTH         = 800;
 	private final int    FRAMEHEIGHT        = 600;
 	
-	private JTextField inpMazeTitle;
+	private JFormattedTextField inpMazeTitle;
 	private JTextField inpMazeTitle2;
 	private JTextField inpEndNodeX;
 	private JTextField inpEndNodeY;
@@ -51,8 +72,7 @@ public class MazeGeneratorUI {
 	public static void main(String[] args) {
 		Maze maze = new Maze();
 		String filename = "TestMaze_9x9_46_0.7142857142857143_75.0_2017-01-29-02-17-19.txt";
-		maze.MazeReader(filename);
-		maze.toFile();
+    
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -63,7 +83,6 @@ public class MazeGeneratorUI {
 				}
 			}
 		});
-		/*
 		// Create a test maze variable
 		maze.setTitle("TestMaze");
 		maze.setGridSize(9);
@@ -178,8 +197,7 @@ public class MazeGeneratorUI {
 		maze.setCoreLoopCount(2);
 		maze.setLongestTailCount(3);
 		maze.setBranchFactor((double)20/28);
-		maze.setComplexity(75);*/
-	
+		maze.setComplexity(75);
 	}
 
 	/* Create the application. */
@@ -221,7 +239,13 @@ public class MazeGeneratorUI {
 		pnlleftTopPanel.add(lblGridSize);
 		lblGridSize.setFont(new Font("Tahoma", Font.BOLD, 12));
 		
-		inpMazeTitle = new JTextField();
+		MaskFormatter formatter = null;
+		  try {
+		    formatter = new MaskFormatter("AAAAAAAAAAAA");
+		  } catch (ParseException e) {
+		    e.printStackTrace();
+		  }
+		inpMazeTitle = new JFormattedTextField(formatter);
 		inpMazeTitle.setBackground(Color.WHITE);
 		inpMazeTitle.setBounds(10, 26, 197, 20);
 		pnlleftTopPanel.add(inpMazeTitle);
@@ -233,6 +257,25 @@ public class MazeGeneratorUI {
 		lblMazeTitle.setFont(new Font("Tahoma", Font.BOLD, 12));
 		
 		JSlider sldGridSize = new JSlider();
+		sldGridSize.addChangeListener(new ChangeListener() {
+			JSlider sldActiveNodeCount = null;
+			public void stateChanged(ChangeEvent arg0) {
+				int newValue = sldGridSize.getValue();
+				if(sldActiveNodeCount != null)
+					pnlleftTopPanel.remove(sldActiveNodeCount);
+				sldActiveNodeCount = new JSlider();
+				sldActiveNodeCount.setBounds(10, 143, 197, 48);
+				pnlleftTopPanel.add(sldActiveNodeCount);
+				sldActiveNodeCount.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+				sldActiveNodeCount.setFont(new Font("Tahoma", Font.PLAIN, 10));
+				sldActiveNodeCount.setMinorTickSpacing(1);
+				sldActiveNodeCount.setPaintLabels(true);
+				sldActiveNodeCount.setSnapToTicks(true);
+				sldActiveNodeCount.setPaintTicks(true);
+				sldActiveNodeCount.setMaximum(newValue*newValue);
+				sldActiveNodeCount.setMajorTickSpacing((int)(((newValue*newValue)/5 < 5)?1:(newValue*newValue)/5));
+			}
+		});
 		sldGridSize.setBounds(10, 70, 197, 48);
 		pnlleftTopPanel.add(sldGridSize);
 		sldGridSize.setSnapToTicks(true);
@@ -249,18 +292,6 @@ public class MazeGeneratorUI {
 		pnlleftTopPanel.add(lblActiveNodeCount);
 		lblActiveNodeCount.setFont(new Font("Tahoma", Font.BOLD, 12));
 		
-		JSlider sldActiveNodeCount = new JSlider();
-		sldActiveNodeCount.setBounds(10, 143, 197, 48);
-		pnlleftTopPanel.add(sldActiveNodeCount);
-		sldActiveNodeCount.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		sldActiveNodeCount.setMajorTickSpacing(10);
-		sldActiveNodeCount.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		sldActiveNodeCount.setMinorTickSpacing(1);
-		sldActiveNodeCount.setMaximum(50);
-		sldActiveNodeCount.setPaintLabels(true);
-		sldActiveNodeCount.setSnapToTicks(true);
-		sldActiveNodeCount.setPaintTicks(true);
-		
 		JPanel pnlLeftBottomPanel = new JPanel();
 		pnlLeftBottomPanel.setBackground(Color.decode("#92CD00"));
 		pnlLeftBottomPanel.setBounds(10, 258, 217, 302);
@@ -271,7 +302,20 @@ public class MazeGeneratorUI {
 		fileListScrollPane.setBounds(10, 11, 197, 88);
 		pnlLeftBottomPanel.add(fileListScrollPane);
 		
-		JList list = new JList(fileList);
+		JList list = new JList();
+		DefaultListModel model1 = new DefaultListModel();
+	    File o = new File(".");
+	    
+	    File[] yourFileList = o.listFiles(new FilenameFilter() {
+	    	@Override
+	    	public boolean accept(File dir, String name) {
+	    		return name.endsWith(".txt");
+	    	}
+	    });
+	    for(File f : yourFileList) {
+	        model1.addElement(f.getName());
+	    }
+	    list.setModel(model1);
 		fileListScrollPane.setViewportView(list);
 		list.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		list.setVisibleRowCount(6);

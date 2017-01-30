@@ -3,7 +3,6 @@ package MazeGenerator;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -1182,12 +1181,12 @@ class Maze {
 		                    temp.setYCoord(itemp);
 		                    break;
 		            	case "StartNode":  
-				            i++;
+				                i++;
                     		btemp = Boolean.parseBoolean(tokens[i]);
                     		temp.setStartNode(btemp);
                             break;		                            
 				        case "EndNode":  
-				        	i++;
+				        	      i++;
 	                    	btemp = Boolean.parseBoolean(tokens[i]);
 	                    	temp.setEndNode(btemp);
 	                        break;	 
