@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.Stack;
 
 class Maze {
 	/* Variables */
@@ -254,8 +255,7 @@ class Maze {
 			count++;
 		return count;
 	}
-	// If a node has a branching factor of 2/4, return the out direction based on the
-	// in direction.
+	// If a node has a branching factor of 2/4, return the out direction based on the in direction.
 	private char getOutPathDirection(Node node, char inFrom)
 	{
 		if(!node.getNorthWall() && Character.toUpperCase(inFrom) != 'N')
@@ -344,7 +344,7 @@ class Maze {
 			}
 		}
 	}
-	// Traverse paths out of endIntersection that havnt beed visited and mark deadend paths visited.
+	// Traverse paths out of endIntersection that haven't been visited and mark deadend paths visited.
 	private void stepDeadEnd(Node node, boolean[][] visited)
 	{
 		Node temp;
@@ -651,9 +651,6 @@ class Maze {
 		}
 	}
 	
-	private void isNeighbor(Node toCheck){
-		
-	}
 	// Find and Set the nodes involved in the optimal path(s)
 	private void setOptimalPathNodes()
 	{
@@ -963,6 +960,40 @@ class Maze {
 		return temp;		
 	}
 
+	public int dfsStep(){
+		int steps = 0;
+		Random rand = new Random();
+		Pair currentPair = this.getStartNode().getXYCoords();
+		Stack<Pair> pathTraveled = new Stack<Pair>();
+		pathTraveled.push(currentPair);
+		boolean foundEnd = false;
+		while(foundEnd == false){
+			currentPair = pathTraveled.peek();
+			Node currentNode = this.getCoordNode(currentPair.getXCoord(), currentPair.getYCoord());
+			ArrayList<Pair> neighbors = currentNode.getNeighbors(pathTraveled);
+			if(neighbors.size() != 0){
+				Pair newPair = neighbors.get(rand.nextInt(neighbors.size()));
+				Node newNode = this.getCoordNode(newPair.getXCoord(), newPair.getYCoord());
+				if(newNode.getIsEndNode()){
+					foundEnd = true;
+				}
+				else{
+					pathTraveled.push(newPair);
+				}
+			}
+			else{//hit deadend
+				pathTraveled.pop();//pops the deadend.
+				while(currentNode.getIsIntersection() == false){
+					Pair tempPair = pathTraveled.pop();
+					currentNode = this.getCoordNode(tempPair.getXCoord(), tempPair.getYCoord());
+					steps++;
+				}
+			}
+			steps++;
+		}
+		return steps;
+	}
+	
 	/* Output Methods */
 	// Output to String
 	public String toString() 
@@ -1180,14 +1211,14 @@ class Maze {
 	                    	break;
 			        }
 		            tempArray.add(temp);	    		
-				}
+				}		
 			}
-		}
-		catch (IOException e) {e.printStackTrace();} 
-		finally 
-		{
-			try 
-			{
+			Node[] nodeArr = new Node[tempArray.size()];
+			nodeArray = tempArray.toArray(nodeArr);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
 				if (br != null)
 					br.close();
 
