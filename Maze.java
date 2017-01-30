@@ -509,6 +509,9 @@ class Maze {
 		
 		/* Calculate and Set complexity */
 		complexity = calcComplexity();
+		
+		/*Testing out DFSSTEP */
+		System.out.println("DFS STEP: " + this.dfsStep());
 	}
 	
 	/* Generation Methods */
@@ -961,19 +964,22 @@ class Maze {
 	}
 
 	public int dfsStep(){
+		boolean[][] visited = new boolean[this.gridSize+1][this.gridSize+1];
 		int steps = 0;
 		Random rand = new Random();
-		Pair currentPair = this.getStartNode().getXYCoords();
 		Stack<Pair> pathTraveled = new Stack<Pair>();
-		pathTraveled.push(currentPair);
-		boolean foundEnd = false;
+		Pair currentPair = this.getStartNode().getXYCoords();
+		visited[currentPair.getXCoord()][currentPair.getYCoord()] = true;//always set to visited after touching
+		pathTraveled.push(currentPair);//add new path to stack.
+		boolean foundEnd = false; //initialize while loop to keep going until we hit endNode.
 		while(foundEnd == false){
-			currentPair = pathTraveled.peek();
-			Node currentNode = this.getCoordNode(currentPair.getXCoord(), currentPair.getYCoord());
-			ArrayList<Pair> neighbors = currentNode.getNeighbors(pathTraveled);
-			if(neighbors.size() != 0){
+			currentPair = pathTraveled.peek();//check the current 
+			Node currentNode = this.getCoordNode(currentPair.getXCoord(), currentPair.getYCoord());//current node from top of stack
+			ArrayList<Pair> neighbors = currentNode.getNeighbors(visited);
+			if(neighbors.isEmpty() == false){ //there's directions to go. 
 				Pair newPair = neighbors.get(rand.nextInt(neighbors.size()));
 				Node newNode = this.getCoordNode(newPair.getXCoord(), newPair.getYCoord());
+				visited[newPair.getXCoord()][newPair.getYCoord()] = true;
 				if(newNode.getIsEndNode()){
 					foundEnd = true;
 				}
@@ -981,12 +987,25 @@ class Maze {
 					pathTraveled.push(newPair);
 				}
 			}
-			else{//hit deadend
+			else{//hit deadend or no other direction to go
 				pathTraveled.pop();//pops the deadend.
-				while(currentNode.getIsIntersection() == false){
-					Pair tempPair = pathTraveled.pop();
+				while(currentNode.getIsIntersection() == false && neighbors.isEmpty()){
+					Pair tempPair = pathTraveled.peek();					
 					currentNode = this.getCoordNode(tempPair.getXCoord(), tempPair.getYCoord());
+					neighbors = currentNode.getNeighbors(visited);
+					if(neighbors.isEmpty()){
+						pathTraveled.pop();//no empty still. 
+					}
 					steps++;
+				}
+				Pair newPair = neighbors.get(rand.nextInt(neighbors.size()));
+				Node newNode = this.getCoordNode(newPair.getXCoord(), newPair.getYCoord());
+				visited[newPair.getXCoord()][newPair.getYCoord()] = true;
+				if(newNode.getIsEndNode()){
+					foundEnd = true;
+				}
+				else{
+					pathTraveled.push(newPair);
 				}
 			}
 			steps++;

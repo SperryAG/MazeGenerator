@@ -286,31 +286,19 @@ public class Node {
 		
 		return output;
 	}
-	public ArrayList<Pair> getNeighbors(Stack<Pair> pathTraveled) {
+	public ArrayList<Pair> getNeighbors(boolean[][] visited) {
 		ArrayList<Pair> toReturn = new ArrayList<Pair>();
-		if(this.isWall_North == false){
-			Pair toAdd = new Pair(this.xCoord, this.yCoord+1);
-			if(pathTraveled.contains(toAdd) == false){
-				toReturn.add(new Pair(this.xCoord, this.yCoord +1));
-			}
+		if(this.isWall_North == false && visited[this.xCoord][this.yCoord+1] == false){
+			toReturn.add(new Pair(this.xCoord, this.yCoord +1));
 		}
-		if(this.isWall_East == false){
-			Pair toAdd = new Pair(this.xCoord +1, this.yCoord);
-			if(pathTraveled.contains(toAdd) == false){
-				toReturn.add(new Pair(this.xCoord +1, this.yCoord));
-			}
+		if(this.isWall_East == false && visited[this.xCoord+1][this.yCoord] == false){
+			toReturn.add(new Pair(this.xCoord +1, this.yCoord));
 		}
-		if(this.isWall_South == false){
-			Pair toAdd = new Pair(this.xCoord, this.yCoord-1);
-			if(pathTraveled.contains(toAdd) == false){
-				toReturn.add(new Pair(this.xCoord, this.yCoord -1));
-			}
+		if(this.isWall_South == false && visited[this.xCoord][this.yCoord-1] == false){
+			toReturn.add(new Pair(this.xCoord, this.yCoord -1));
 		}
-		if(this.isWall_West == false){
-			Pair toAdd = new Pair(this.xCoord-1, this.yCoord);
-			if(pathTraveled.contains(toAdd) == false){
-				toReturn.add(new Pair(this.xCoord-1, this.yCoord));
-			}
+		if(this.isWall_West == false && visited[this.xCoord-1][this.yCoord] == false){
+			toReturn.add(new Pair(this.xCoord-1, this.yCoord));
 		}
 		return toReturn;
 	}
