@@ -14,15 +14,10 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-
-import java.awt.FlowLayout;
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import javax.swing.JButton;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
-
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -36,7 +31,6 @@ import java.io.FilenameFilter;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Random;
-
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JList;
@@ -46,12 +40,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputMethodEvent;
 import javax.swing.SwingConstants;
-import javax.swing.JSplitPane;
 import javax.swing.SpringLayout;
 import javax.swing.JScrollPane;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
-
 
 public class MazeGeneratorUI {
 	
@@ -79,7 +71,8 @@ public class MazeGeneratorUI {
 	/*Launch the application. */
 	public static void main(String[] args) {
 		Maze maze = new Maze();
-		
+		String filename = "TestMaze_9x9_46_0.7142857142857143_75.0_2017-01-29-02-17-19.txt";
+    
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -90,7 +83,6 @@ public class MazeGeneratorUI {
 				}
 			}
 		});
-		
 		// Create a test maze variable
 		maze.setTitle("TestMaze");
 		maze.setGridSize(9);

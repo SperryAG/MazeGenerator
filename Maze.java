@@ -508,6 +508,9 @@ class Maze {
 		
 		/* Calculate and Set complexity */
 		complexity = calcComplexity();
+		
+		/*Testing out DFSSTEP */
+		System.out.println("DFS STEP: " + this.dfsStep());
 	}
 	
 	/* Generation Methods */
@@ -960,19 +963,22 @@ class Maze {
 	}
 
 	public int dfsStep(){
+		boolean[][] visited = new boolean[this.gridSize+1][this.gridSize+1];
 		int steps = 0;
 		Random rand = new Random();
-		Pair currentPair = this.getStartNode().getXYCoords();
 		Stack<Pair> pathTraveled = new Stack<Pair>();
-		pathTraveled.push(currentPair);
-		boolean foundEnd = false;
+		Pair currentPair = this.getStartNode().getXYCoords();
+		visited[currentPair.getXCoord()][currentPair.getYCoord()] = true;//always set to visited after touching
+		pathTraveled.push(currentPair);//add new path to stack.
+		boolean foundEnd = false; //initialize while loop to keep going until we hit endNode.
 		while(foundEnd == false){
-			currentPair = pathTraveled.peek();
-			Node currentNode = this.getCoordNode(currentPair.getXCoord(), currentPair.getYCoord());
-			ArrayList<Pair> neighbors = currentNode.getNeighbors(pathTraveled);
-			if(neighbors.size() != 0){
+			currentPair = pathTraveled.peek();//check the current 
+			Node currentNode = this.getCoordNode(currentPair.getXCoord(), currentPair.getYCoord());//current node from top of stack
+			ArrayList<Pair> neighbors = currentNode.getNeighbors(visited);
+			if(neighbors.isEmpty() == false){ //there's directions to go. 
 				Pair newPair = neighbors.get(rand.nextInt(neighbors.size()));
 				Node newNode = this.getCoordNode(newPair.getXCoord(), newPair.getYCoord());
+				visited[newPair.getXCoord()][newPair.getYCoord()] = true;
 				if(newNode.getIsEndNode()){
 					foundEnd = true;
 				}
@@ -980,12 +986,25 @@ class Maze {
 					pathTraveled.push(newPair);
 				}
 			}
-			else{//hit deadend
+			else{//hit deadend or no other direction to go
 				pathTraveled.pop();//pops the deadend.
-				while(currentNode.getIsIntersection() == false){
-					Pair tempPair = pathTraveled.pop();
+				while(currentNode.getIsIntersection() == false && neighbors.isEmpty()){
+					Pair tempPair = pathTraveled.peek();					
 					currentNode = this.getCoordNode(tempPair.getXCoord(), tempPair.getYCoord());
+					neighbors = currentNode.getNeighbors(visited);
+					if(neighbors.isEmpty()){
+						pathTraveled.pop();//no empty still. 
+					}
 					steps++;
+				}
+				Pair newPair = neighbors.get(rand.nextInt(neighbors.size()));
+				Node newNode = this.getCoordNode(newPair.getXCoord(), newPair.getYCoord());
+				visited[newPair.getXCoord()][newPair.getYCoord()] = true;
+				if(newNode.getIsEndNode()){
+					foundEnd = true;
+				}
+				else{
+					pathTraveled.push(newPair);
 				}
 			}
 			steps++;
@@ -1083,7 +1102,8 @@ class Maze {
 		}
 	}
 	//File Reader
-	public void MazeReader(String Filename){
+	public void MazeReader(String Filename)
+	{
 		BufferedReader br = null;
 		FileReader fr = null;
 		String[] tokens ;
@@ -1092,67 +1112,58 @@ class Maze {
 		temp = new Node();
 		ArrayList<Node> tempArray = new ArrayList<Node>();
 		
-		try {
-
+		try 
+		{
 			fr = new FileReader(Filename);
 			br = new BufferedReader(fr);
-			String sCurrentLine;
-			Maze maze;
-			maze = new Maze(); 
+			String sCurrentLine; 
 			double dtemp;
 			int itemp = 0;
 			boolean btemp;
 			br = new BufferedReader(new FileReader(Filename));
-			while ((sCurrentLine = br.readLine()) != null) { //Filereader
-				String delims = "[<>,.()]";
+			while ((sCurrentLine = br.readLine()) != null) 
+			{ //Filereader
+				String delims = "[<>,()]";
 				tokens = sCurrentLine.split(delims);
-				for (int i = 0; i < tokens.length; i++){
-			        switch (tokens[i]) {
+				for (int i = 0; i < tokens.length; i++)
+				{
+			        switch (tokens[i]) 
+			        {
 		            	case "Title":
 		            		i++;
-			            	maze.title = tokens[i];
+		            		title = tokens[i];
 			            	break;
 		            	case "Created":
 		            		i++; 
-		            		maze.created = tokens[i];
+		            		created = tokens[i];
 			            	break;
-			            
-		            	case "Gridsize":
+		            	case "GridSize":
 		            		i++;
-		            		itemp = Integer.parseInt(tokens[i]);
-		            		maze.gridSize= itemp;
-		            		break;	
-		            		
+		            		gridSize = Integer.parseInt(tokens[i]);
+		            		break;
 		            	case "ActiveNodeCount":
 		            		i++;
-		            		itemp = Integer.parseInt(tokens[i]);
-		            		maze.activeNodeCount= itemp;
-		            		break;	
-		            		
+		            		activeNodeCount = Integer.parseInt(tokens[i]);
+		            		break;
 		            	case "BranchFactor":
 		            		i++;
-		            		dtemp = Double.parseDouble(tokens[i]);
-		            		maze.branchFactor = dtemp;
+		            		branchFactor = Double.parseDouble(tokens[i]);
 		            		break;
 		            	case "Complexity":
 		            		i++;
-		            		itemp = Integer.parseInt(tokens[i]);
-		            		maze.complexity = itemp;
+		            		complexity = Integer.parseInt(tokens[i]);
 		            		break;
 		            	case "DeadendCount":
 		            		i++;
-		            		itemp = Integer.parseInt(tokens[i]);
-		            		maze.deadendCount= itemp;
-		            		break;	
-		            		
+		            		deadendCount = Integer.parseInt(tokens[i]);
+		            		break;		
 		            	case "LoopCount":
 		            		i++;
 		            		if(tokens[i].equals("Not Calculated")){
-		            			maze.loopCount= -1;
-		            		}
-		            		else{
+		            			loopCount= -1;
+		            		}else{
 		            			itemp = Integer.parseInt(tokens[i]);
-		            			maze.loopCount= itemp;
+		            			loopCount= itemp;
 		            		}
 		            		break;		
 		            	case "Nodes":
@@ -1160,90 +1171,79 @@ class Maze {
 		            		break;
 		            	case "Node":
 		            		i++;
-		            		break;
-		            		
+		            		break;	
 		            	case "Coordinates":  
-		                    		i= i+2;
-		                    		itemp = Integer.parseInt(tokens[i]);
-		                    		temp.setXCoord(itemp);
-		                    		i++;
-		                    		itemp = Integer.parseInt(tokens[i]);
-		                    		temp.setYCoord(itemp);
-		                            break;
+		                    i= i+2;
+		                    itemp = Integer.parseInt(tokens[i]);
+		                    temp.setXCoord(itemp);
+		                    i++;
+		                    itemp = Integer.parseInt(tokens[i]);
+		                    temp.setYCoord(itemp);
+		                    break;
 		            	case "StartNode":  
-				                    		i++;
-				                    		btemp = Boolean.parseBoolean(tokens[i]);
-				                    		temp.setStartNode(btemp);
-				                            break;		                            
-				                 case "EndNode":  
-			                    		i++;
-			                    		btemp = Boolean.parseBoolean(tokens[i]);
-			                    		temp.setEndNode(btemp);
-			                            break;	 
-				                 case "EndIntersectionNode":  
-			                    		i++;
-			                    		btemp = Boolean.parseBoolean(tokens[i]);
-			                    		temp.setEndIntersection(btemp);
-			                            break;
-				                 case "CoreNode":  
-			                    		i++;
-			                    		btemp = Boolean.parseBoolean(tokens[i]);
-			                    		temp.setIsCoreNode(btemp);
-
-			                            break;		                            
-				                 case "LongestTailNode":  
-			                    		i++;
-			                    		btemp = Boolean.parseBoolean(tokens[i]);
-			                    		temp.setIsLongestTailNode(btemp);
-		                    		break;	 
-				                 case "WallNorth":  
-			                    		i++;
-			                    		btemp = Boolean.parseBoolean(tokens[i]);
-			                    		temp.setNorthWall(btemp);
-			                            break;	  
-				                 case "WallEast":  
-			                    		i++;
-			                    		btemp = Boolean.parseBoolean(tokens[i]);
-			                    		temp.setEastWall(btemp);
-			                            break;		                            
-					              case "WallSouth":  
-			                    		i++;
-			                    		btemp = Boolean.parseBoolean(tokens[i]);
-			                    		temp.setSouthWall(btemp);
-			                    		break;	 
-					          	 case "WallWest":  
-			                    		i++;
-			                    		btemp = Boolean.parseBoolean(tokens[i]);
-			                    		temp.setWestWall(btemp);
-			                            break;	      
-			                            
-				                 default:
-				                	 break;
-		                }
-		            	tempArray.add(temp);	
-				}
+				                i++;
+                    		btemp = Boolean.parseBoolean(tokens[i]);
+                    		temp.setStartNode(btemp);
+                            break;		                            
+				        case "EndNode":  
+				        	      i++;
+	                    	btemp = Boolean.parseBoolean(tokens[i]);
+	                    	temp.setEndNode(btemp);
+	                        break;	 
+		                case "EndIntersectionNode":  
+	                    	i++;
+	                    	btemp = Boolean.parseBoolean(tokens[i]);
+	                    	temp.setEndIntersection(btemp);
+	                        break;
+		                case "CoreNode":  
+	                    	i++;
+	                    	btemp = Boolean.parseBoolean(tokens[i]);
+	                    	temp.setIsCoreNode(btemp);	
+	                        break;		                            
+		                case "LongestTailNode":  
+	                    	i++;
+	                    	btemp = Boolean.parseBoolean(tokens[i]);
+	                    	temp.setIsLongestTailNode(btemp);
+	                    	break;	 
+		                case "WallNorth":  
+	                    	i++;
+	                    	btemp = Boolean.parseBoolean(tokens[i]);
+	                    	temp.setNorthWall(btemp);
+	                        break;	  
+		                case "WallEast":  
+	                    	i++;
+	                    	btemp = Boolean.parseBoolean(tokens[i]);
+	                    	temp.setEastWall(btemp);
+	                        break;		                            
+			            case "WallSouth":  
+	                    	i++;
+	                    	btemp = Boolean.parseBoolean(tokens[i]);
+	                    	temp.setSouthWall(btemp);
+	                    	break;	 
+			          	case "WallWest":  
+	                    	i++;
+	                    	btemp = Boolean.parseBoolean(tokens[i]);
+	                    	temp.setWestWall(btemp);
+	                        break;	      
+	                    default:
+	                    	break;
+			        }
+		            tempArray.add(temp);	    		
+				}		
 			}
 			Node[] nodeArr = new Node[tempArray.size()];
 			nodeArray = tempArray.toArray(nodeArr);
 		} catch (IOException e) {
-
 			e.printStackTrace();
-
 		} finally {
-
 			try {
-
 				if (br != null)
 					br.close();
 
 				if (fr != null)
 					fr.close();
-
-			} catch (IOException ex) {
-
-				ex.printStackTrace();
-
 			}
+			catch (IOException ex) {ex.printStackTrace();} 
 		}
 	}
 }
