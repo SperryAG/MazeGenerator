@@ -188,7 +188,7 @@ class Maze {
 	public void setComplexity(int complexity) {
 		this.complexity = complexity;
 	}
-	public double getComplexity() {
+	public int getComplexity() {
 		return complexity;
 	}
 	public void setNodeArray(Node[] nodeArray)
@@ -1051,7 +1051,7 @@ class Maze {
 		if(complexity == -1)
 			output += ("<Complexity>" + "Not Calculated" + "</Complexity>" + '\n');
 		else
-			output += ("<Complexity>" + Double.toString(complexity) + "</Complexity>" + '\n');
+			output += ("<Complexity>" + Integer.toString(complexity) + "</Complexity>" + '\n');
 		// IntersectionCount
 		if(intersectionCount == -1)
 			output += ("<IntersectionCount>" + "Not Calculated" + "</IntersectionCount>" + '\n');
@@ -1100,7 +1100,7 @@ class Maze {
 			List<String> output = Arrays.asList(this.toString());
 			file = Paths.get(title + "_" + Integer.toString(gridSize) + "x" + Integer.toString(gridSize) + "_" +
 		                          Integer.toString(activeNodeCount) + "_" + Double.toString(branchFactor) + "_" + 
-					              Double.toString(complexity) + "_" + created + ".txt");
+					              Integer.toString(complexity) + "_" + created + ".txt");
 			Files.write(file, output, Charset.forName("UTF-8"));
 		} catch (IOException e) {
 			System.out.println(e.toString());
