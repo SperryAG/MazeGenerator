@@ -1102,22 +1102,19 @@ class Maze {
 		}
 	}
 	//File Reader
-	public void MazeReader(String Filename)
+	public void fromFile(String Filename)
 	{
 		BufferedReader br = null;
 		FileReader fr = null;
 		String[] tokens ;
 		Node temp = null ;
-		Node[] tempNodeArray;
 		temp = new Node();
-		ArrayList<Node> tempArray = new ArrayList<Node>();
-		
+		int count = 0;
 		try 
 		{
 			fr = new FileReader(Filename);
 			br = new BufferedReader(fr);
 			String sCurrentLine; 
-			double dtemp;
 			int itemp = 0;
 			boolean btemp;
 			br = new BufferedReader(new FileReader(Filename));
@@ -1153,6 +1150,10 @@ class Maze {
 		            		i++;
 		            		complexity = Integer.parseInt(tokens[i]);
 		            		break;
+		            	case "IntersectionCount":
+		            		i++;
+		            		intersectionCount = Integer.parseInt(tokens[i]);
+		            		break;
 		            	case "DeadendCount":
 		            		i++;
 		            		deadendCount = Integer.parseInt(tokens[i]);
@@ -1168,8 +1169,10 @@ class Maze {
 		            		break;		
 		            	case "Nodes":
 		            		i++;
+							nodeArray = new Node[activeNodeCount];
 		            		break;
 		            	case "Node":
+		            		temp = new Node();
 		            		i++;
 		            		break;	
 		            	case "Coordinates":  
@@ -1181,20 +1184,35 @@ class Maze {
 		                    temp.setYCoord(itemp);
 		                    break;
 		            	case "StartNode":  
-				                i++;
+				            i++;
                     		btemp = Boolean.parseBoolean(tokens[i]);
                     		temp.setStartNode(btemp);
                             break;		                            
 				        case "EndNode":  
-				        	      i++;
+				        	i++;
 	                    	btemp = Boolean.parseBoolean(tokens[i]);
 	                    	temp.setEndNode(btemp);
-	                        break;	 
+	                        break;    
 		                case "EndIntersectionNode":  
 	                    	i++;
 	                    	btemp = Boolean.parseBoolean(tokens[i]);
 	                    	temp.setEndIntersection(btemp);
 	                        break;
+				        case "OptimalPathNode":  
+			        	    i++;
+			                btemp = Boolean.parseBoolean(tokens[i]);
+			                temp.setIsOptimalPath(btemp);
+			                break;    
+				        case "IntersectionNode":  
+			        	    i++;
+			                btemp = Boolean.parseBoolean(tokens[i]);
+			                temp.setIsIntersection(btemp);
+			                break;     
+				        case "DeadendNode":  
+			        	    i++;
+			                btemp = Boolean.parseBoolean(tokens[i]);
+			                temp.setIsDeadend(btemp);
+			                break;     
 		                case "CoreNode":  
 	                    	i++;
 	                    	btemp = Boolean.parseBoolean(tokens[i]);
@@ -1224,15 +1242,16 @@ class Maze {
 	                    	i++;
 	                    	btemp = Boolean.parseBoolean(tokens[i]);
 	                    	temp.setWestWall(btemp);
+	                    	nodeArray[count] = temp;
+	                    	count++;
 	                        break;	      
 	                    default:
 	                    	break;
 			        }
-		            tempArray.add(temp);	    		
+		               		
 				}		
 			}
-			Node[] nodeArr = new Node[tempArray.size()];
-			nodeArray = tempArray.toArray(nodeArr);
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
