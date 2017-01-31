@@ -195,105 +195,108 @@ public class MazeGeneratorUI {
 		JList list = new JList();
 		list.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent arg0) {
-				maze = new Maze();
-				maze.fromFile(list.getSelectedValue().toString());
-				
-				inpMazeTitle2.setText(maze.getTitle());
-				if(maze.getStartNode() == null)
-					inpStartNodeX.setText("");
-				else
-					inpStartNodeX.setText(Integer.toString(maze.getStartNode().getXCoord()));
-				if(maze.getStartNode() == null)
-					inpStartNodeY.setText("");
-				else
-					inpStartNodeY.setText(Integer.toString(maze.getStartNode().getYCoord()));
-				if(maze.getEndNode() == null)
-					inpEndNodeX.setText("");
-				else
-					inpEndNodeX.setText(Integer.toString(maze.getEndNode().getXCoord()));
-				if(maze.getEndNode() == null)
-					inpEndNodeY.setText("");
-				else
-					inpEndNodeY.setText(Integer.toString(maze.getEndNode().getYCoord()));
-				if(maze.getBranchFactor() == 0)
-					txtBranchFactor.setText("0.0");
-				else
-					txtBranchFactor.setText(Double.toString(
-						(double)Math.round(maze.getBranchFactor()*100) / 100.0
-								));
-				if(maze.getComplexity() == 0)
-					txtComplexity.setText("0.0");
-				else
-					txtComplexity.setText(Double.toString(maze.getComplexity()));
-				
-				for(JPanel jp : nodePanelList)
-					pnlRightPanel.remove(jp);
-				nodePanelList = new ArrayList<JPanel>();
-				
-				// Maze panels
-				int gridWidth = pnlRightPanel.getWidth();
-				int gridBottomCornerY = 549;
-				int gridSquareSize = gridWidth / maze.getGridSize();
-				Color nC, eC, sC, wC;
-				boolean[][] exists = new boolean[maze.getGridSize()+1][maze.getGridSize()+1];
-				Node[][] nodes = new Node[maze.getGridSize()+1][maze.getGridSize()+1];
-				if(maze.getNodeArray() != null && maze.getNodeArray().length != 0)
+				if(!list.isSelectionEmpty())
 				{
-					for(Node node : maze.getNodeArray())
+					maze.fromFile(list.getSelectedValue().toString());
+					
+					inpMazeTitle2.setText(maze.getTitle());
+					if(maze.getStartNode() == null)
+						inpStartNodeX.setText("");
+					else
+						inpStartNodeX.setText(Integer.toString(maze.getStartNode().getXCoord()));
+					if(maze.getStartNode() == null)
+						inpStartNodeY.setText("");
+					else
+						inpStartNodeY.setText(Integer.toString(maze.getStartNode().getYCoord()));
+					if(maze.getEndNode() == null)
+						inpEndNodeX.setText("");
+					else
+						inpEndNodeX.setText(Integer.toString(maze.getEndNode().getXCoord()));
+					if(maze.getEndNode() == null)
+						inpEndNodeY.setText("");
+					else
+						inpEndNodeY.setText(Integer.toString(maze.getEndNode().getYCoord()));
+					if(maze.getBranchFactor() == 0)
+						txtBranchFactor.setText("0.0");
+					else
+						txtBranchFactor.setText(Double.toString(
+							(double)Math.round(maze.getBranchFactor()*100) / 100.0
+									));
+					if(maze.getComplexity() == 0)
+						txtComplexity.setText("0");
+					else
+						txtComplexity.setText(Integer.toString(maze.getComplexity()));
+					
+					for(JPanel jp : nodePanelList)
+						pnlRightPanel.remove(jp);
+					nodePanelList.clear();
+					
+					// Maze panels
+					int gridWidth = pnlRightPanel.getWidth();
+					int gridBottomCornerY = 549;
+					int gridSquareSize = gridWidth / maze.getGridSize();
+					Color nC, eC, sC, wC;
+					boolean[][] exists = new boolean[maze.getGridSize()+1][maze.getGridSize()+1];
+					Node[][] nodes = new Node[maze.getGridSize()+1][maze.getGridSize()+1];
+					if(maze.getNodeArray() != null && maze.getNodeArray().length != 0)
 					{
-						exists[node.getXCoord()][node.getYCoord()] = true;
-						nodes[node.getXCoord()][node.getYCoord()] = node;
-					}
-				}
-				for(int y = 1; y < maze.getGridSize() + 1; y++)
-				{
-					for(int x = 1; x < maze.getGridSize() + 1; x++)
-					{
-						JPanel p = new JPanel();
-						if(exists[x][y])
+						for(Node node : maze.getNodeArray())
 						{
-							if(nodes[x][y].getNorthWall()){nC = Color.BLACK;}else{nC = Color.decode("#dbdbdb");}
-							if(nodes[x][y].getEastWall()){eC = Color.BLACK;}else{eC = Color.decode("#dbdbdb");}
-							if(nodes[x][y].getSouthWall()){sC = Color.BLACK;}else{sC = Color.decode("#dbdbdb");}
-							if(nodes[x][y].getWestWall()){wC = Color.BLACK;}else{wC = Color.decode("#dbdbdb");}
-							p.setBorder(new CompoundBorder(
-											new CompoundBorder(
-												BorderFactory.createMatteBorder(1, 0, 0, 0, nC),
-												BorderFactory.createMatteBorder(0, 0, 0, 1, eC)
-											),
-											new CompoundBorder(
-												BorderFactory.createMatteBorder(0, 0, 1, 0, sC),
-												BorderFactory.createMatteBorder(0, 1, 0, 0, wC)
-											)
-										));
-							if(nodes[x][y].getIsStartNode())
-								p.setBackground(Color.decode("#2a8c3d"));
-							else if(nodes[x][y].getIsEndNode())
-								p.setBackground(Color.decode("#8c2a2a"));
-							else if(nodes[x][y].getIsEndIntersection())
-								p.setBackground(Color.decode("#8c852a"));
-							else if(nodes[x][y].getIsIntersection() && !nodes[x][y].getIsEndIntersection())
-								p.setBackground(Color.decode("#2a888c"));
-							else if(nodes[x][y].getIsDeadend())
-								p.setBackground(Color.decode("#8c562a"));
+							exists[node.getXCoord()][node.getYCoord()] = true;
+							nodes[node.getXCoord()][node.getYCoord()] = node;
+						}
+					}
+					for(int y = 1; y < maze.getGridSize() + 1; y++)
+					{
+						for(int x = 1; x < maze.getGridSize() + 1; x++)
+						{
+							JPanel p = new JPanel();
+							if(exists[x][y])
+							{
+								if(nodes[x][y].getNorthWall()){nC = Color.BLACK;}else{nC = Color.decode("#dbdbdb");}
+								if(nodes[x][y].getEastWall()){eC = Color.BLACK;}else{eC = Color.decode("#dbdbdb");}
+								if(nodes[x][y].getSouthWall()){sC = Color.BLACK;}else{sC = Color.decode("#dbdbdb");}
+								if(nodes[x][y].getWestWall()){wC = Color.BLACK;}else{wC = Color.decode("#dbdbdb");}
+								p.setBorder(new CompoundBorder(
+												new CompoundBorder(
+													BorderFactory.createMatteBorder(1, 0, 0, 0, nC),
+													BorderFactory.createMatteBorder(0, 0, 0, 1, eC)
+												),
+												new CompoundBorder(
+													BorderFactory.createMatteBorder(0, 0, 1, 0, sC),
+													BorderFactory.createMatteBorder(0, 1, 0, 0, wC)
+												)
+											));
+								if(nodes[x][y].getIsStartNode())
+									p.setBackground(Color.decode("#2a8c3d"));
+								else if(nodes[x][y].getIsEndNode())
+									p.setBackground(Color.decode("#8c2a2a"));
+								else if(nodes[x][y].getIsEndIntersection())
+									p.setBackground(Color.decode("#8c852a"));
+								else if(nodes[x][y].getIsIntersection() && !nodes[x][y].getIsEndIntersection())
+									p.setBackground(Color.decode("#2a888c"));
+								else if(nodes[x][y].getIsDeadend())
+									p.setBackground(Color.decode("#8c562a"));
+								else
+									p.setBackground(Color.WHITE);
+								p.setBounds(gridSquareSize*(x-1), gridBottomCornerY-gridSquareSize*(y), gridSquareSize, gridSquareSize);
+								
+								nodePanelList.add(p);
+							}
 							else
-								p.setBackground(Color.WHITE);
-							p.setBounds(gridSquareSize*(x-1), gridBottomCornerY-gridSquareSize*(y), gridSquareSize, gridSquareSize);
-							
-							nodePanelList.add(p);
-						}
-						else
-						{
-							p.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.decode("#dbdbdb")));
-							p.setBackground(Color.decode("#cccccc"));
-							p.setBounds(gridSquareSize*(x-1), gridBottomCornerY-gridSquareSize*(y), gridSquareSize, gridSquareSize);
-							nodePanelList.add(p);
+							{
+								p.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.decode("#dbdbdb")));
+								p.setBackground(Color.decode("#cccccc"));
+								p.setBounds(gridSquareSize*(x-1), gridBottomCornerY-gridSquareSize*(y), gridSquareSize, gridSquareSize);
+								nodePanelList.add(p);
+							}
 						}
 					}
-				}
-				for(JPanel j : nodePanelList)
-				{
-					pnlRightPanel.add(j);
+					for(JPanel j : nodePanelList)
+					{
+						pnlRightPanel.add(j);
+					}
+					pnlRightPanel.repaint();
 				}
 			}
 		});
