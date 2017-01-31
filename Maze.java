@@ -202,6 +202,8 @@ class Maze {
 	// Return the startNode in nodeArray
 	Node getStartNode()
 	{
+		if(nodeArray == null || nodeArray.length == 0)
+			return null;
 		for(Node n : nodeArray)
 			if(n.getIsStartNode())
 				return n;
@@ -210,6 +212,8 @@ class Maze {
 	// Return the endNode in nodeArray
 	Node getEndNode()
 	{
+		if(nodeArray == null || nodeArray.length == 0)
+			return null;
 		for(Node n : nodeArray)
 			if(n.getIsEndNode())
 				return n;
@@ -459,11 +463,11 @@ class Maze {
 		Random rand = new Random();
 		
 		/* Randomize gridSize if needed */
-		if(gridSize == -1)
+		if(gridSize == -1 || gridSize == 0)
 			gridSize = rand.nextInt(48) + 2; // random Integer from 2-50
 		
 		/* Randomize activeNodeCount if needed */
-		if(activeNodeCount == -1)
+		if(activeNodeCount == -1 || activeNodeCount == 0)
 			activeNodeCount = rand.nextInt(gridSize*gridSize) + 1;
 		
 		/* Generate random maze nodes and store in nodeArray */
@@ -488,7 +492,7 @@ class Maze {
 		deadendCount = setDeadendNodes();
 		
 		/* Find and Set the isEndIntersection Node */
-		//setEndIntersectionNode();
+		setEndIntersectionNode();
 		
 		/* Set isCoreNode = true for every core node and calculate coreActiveNodeCount */
 		coreActiveNodeCount = setCoreNodes();
@@ -997,7 +1001,7 @@ class Maze {
 					}
 					steps++;
 				}
-				Pair newPair = neighbors.get(rand.nextInt(neighbors.size()));
+				Pair newPair = neighbors.get(rand.nextInt(neighbors.size())+1);
 				Node newNode = this.getCoordNode(newPair.getXCoord(), newPair.getYCoord());
 				visited[newPair.getXCoord()][newPair.getYCoord()] = true;
 				if(newNode.getIsEndNode()){
@@ -1089,17 +1093,19 @@ class Maze {
 		return output;
 	}
 	// Output to file
-	public void toFile() 
+	public String toFile() 
 	{
+		Path file = null;
 		try {
 			List<String> output = Arrays.asList(this.toString());
-			Path file = Paths.get(title + "_" + Integer.toString(gridSize) + "x" + Integer.toString(gridSize) + "_" +
+			file = Paths.get(title + "_" + Integer.toString(gridSize) + "x" + Integer.toString(gridSize) + "_" +
 		                          Integer.toString(activeNodeCount) + "_" + Double.toString(branchFactor) + "_" + 
 					              Double.toString(complexity) + "_" + created + ".txt");
 			Files.write(file, output, Charset.forName("UTF-8"));
 		} catch (IOException e) {
 			System.out.println(e.toString());
 		}
+		return file.toString();
 	}
 	//File Reader
 	public void fromFile(String Filename)
