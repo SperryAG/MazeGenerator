@@ -47,7 +47,7 @@ public class Node {
 		isDeadend = false;
 		isCoreNode = false;
 		isLongestTailNode = false;
-		isWall_North = isWall_East = isWall_South = isWall_West = false;
+		isWall_North = isWall_East = isWall_South = isWall_West = true;
 	}
 	
 	public Node(int xCoord, int yCoord, boolean isStartNode, boolean isEndIntersection,
@@ -167,10 +167,10 @@ public class Node {
 	}
 	
 	public void printWalls(){
-		if(this.getNorthWall()){System.out.print("North ");}
-		if(this.getEastWall()){System.out.print("East ");}
-		if(this.getSouthWall()){System.out.print("South ");}
-		if(this.getWestWall()){System.out.print("west");}
+//		if(this.getNorthWall()){System.out.print("North ");}
+//		if(this.getEastWall()){System.out.print("East ");}
+//		if(this.getSouthWall()){System.out.print("South ");}
+//		if(this.getWestWall()){System.out.print("west");}
 	}
 	
 	public ArrayList<Integer> getWalls(Set<Pair> coords, int gridSize){
