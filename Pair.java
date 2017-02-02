@@ -2,8 +2,8 @@ package MazeGenerator;
 
 public class Pair {
 	/* Variables */
-	final int x;
-	final int y;
+	private int x;
+	private int y;
 	/* Constructors */
 	Pair(int x, int y) {this.x=x;this.y=y;}
 	/* Methods */
@@ -15,6 +15,13 @@ public class Pair {
 	}
 	public int getYCoord() {
 		return this.y;
+	}
+	public String getCoords() {
+		return "(" + x + ", " + y + ")";
+	}
+	public void update(int x, int y) {
+		this.x = x;
+		this.y = y;
 	}
 	public String toString() {
 		String output = "(" + x + ", " + y + ")";
