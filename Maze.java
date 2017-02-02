@@ -482,45 +482,129 @@ class Maze {
 		while(nodeArray[randNode].getIsStartNode());
 		nodeArray[randNode].setEndNode(true);
 		
-		/* Find the full optimal path(s) and set isOptimalPath = true for involved nodes */
-		setOptimalPathNodes();
-		
 		/* Find the intersection nodes and set isIntersection = true for involved nodes. Return the intersection count. */
 		intersectionCount = setIntersectionNodes();
 		
 		/* Find and Set isDeadend for last node of a deadend path. */
 		deadendCount = setDeadendNodes();
 		
+		/* Find the full optimal path(s) and set isOptimalPath = true for involved nodes */
+		setOptimalPathNodes();
+		
 		/* Find and Set the isEndIntersection Node */
-		setEndIntersectionNode();
+//		setEndIntersectionNode();
 		
 		/* Set isCoreNode = true for every core node and calculate coreActiveNodeCount */
-		coreActiveNodeCount = setCoreNodes();
+//		coreActiveNodeCount = setCoreNodes();
 		
 		/* Set the core variable counts */
-		coreOptimalPathNodeCount = calcCoreOptimalPathNodeCount();
-		coreIntersectionCount = calcCoreIntersectionCount();
-		coreDeadendCount = calcCoreDeadendCount();
+//		coreOptimalPathNodeCount = calcCoreOptimalPathNodeCount();
+//		coreIntersectionCount = calcCoreIntersectionCount();
+//		coreDeadendCount = calcCoreDeadendCount();
 		
 		/* Loops - Not sure how to do this - Can just adjust this value manually in the maze file for now. */
 		
 		/* Find the longest tail and set isLongestTail = true for involved nodes. Return the longestTailCount */
-		longestTailCount = setLongestTailNodes();
+//		longestTailCount = setLongestTailNodes();
 		
 		/* Calculate and Set branchFactor */
-		branchFactor = calcBranchFactor();
+//		branchFactor = calcBranchFactor();
 		
 		/* Calculate and Set complexity */
-		complexity = calcComplexity();
+//		complexity = calcComplexity();
 		
 		/*Testing out DFSSTEP */
-		System.out.println("DFS STEP: " + this.dfsStep());
+//		System.out.println("DFS STEP: " + this.dfsStep());
 	}
 	
 	/* Generation Methods */
 	// Given gridSize and activeNodeCount, generate a random maze
 	private void populateNodeArray()
 	{
+		// Andrew's Version
+		System.out.println(gridSize);
+		System.out.println(activeNodeCount);
+		Node tempNode;
+		ArrayList<Node> availableNodes = new ArrayList<Node>();
+		boolean[][] spaceFilled = new boolean[gridSize+1][gridSize+1];
+		
+		Random rand = new Random();
+		int randNodeIndex = 0, cntFinishedNodes = 0;
+		ArrayList<Character> availableDirections = new ArrayList<Character>();
+		
+		nodeArray = new Node[activeNodeCount];
+		
+		// Generate the first node toward the center of the grid
+		tempNode = new Node(gridSize/2,gridSize/2,false);
+		System.out.println(tempNode.getXCoord() + " " + tempNode.getYCoord());
+		spaceFilled[tempNode.getXCoord()][tempNode.getYCoord()] = true;
+		availableNodes.add(tempNode);
+		
+		// Generate activeNodeCount more nodes.
+		for(int i = 0; i < activeNodeCount - 1;)
+		{
+			// Choose a random node inside availableNodes to extend
+			randNodeIndex = rand.nextInt(availableNodes.size());
+			
+			// Get the directions that can be extended
+			tempNode = availableNodes.get(randNodeIndex);
+			availableDirections.clear();
+			if(tempNode.getNorthWall() && tempNode.getYCoord() < gridSize && !spaceFilled[tempNode.getXCoord()][tempNode.getYCoord() + 1])
+				availableDirections.add('N');
+			if(tempNode.getEastWall() && tempNode.getXCoord() < gridSize && !spaceFilled[tempNode.getXCoord() + 1][tempNode.getYCoord()])
+				availableDirections.add('E');
+			if(tempNode.getSouthWall() && tempNode.getYCoord() > 1 && !spaceFilled[tempNode.getXCoord()][tempNode.getYCoord() - 1])
+				availableDirections.add('S');
+			if(tempNode.getWestWall() && tempNode.getXCoord() > 1 && !spaceFilled[tempNode.getXCoord() - 1][tempNode.getYCoord()])
+				availableDirections.add('W');
+			
+			// If no directions can be extended move the node to nodeArray and prevent the for loop from incrementing.
+			if(availableDirections.isEmpty())
+			{
+				nodeArray[cntFinishedNodes] = tempNode;
+				availableNodes.remove(randNodeIndex);
+				cntFinishedNodes++;
+			}
+			// Else choose a random direction and create the new node
+			else
+			{
+				switch(availableDirections.get(rand.nextInt(availableDirections.size())))
+				{
+					case('N'):
+						tempNode.setNorthWall(false);
+						tempNode = new Node(tempNode.getXCoord(),tempNode.getYCoord()+1,false);
+						tempNode.setSouthWall(false);
+						break;
+					case('E'):
+						tempNode.setEastWall(false);
+						tempNode = new Node(tempNode.getXCoord()+1,tempNode.getYCoord(),false);
+						tempNode.setWestWall(false);
+						break;
+					case('S'):
+						tempNode.setSouthWall(false);
+						tempNode = new Node(tempNode.getXCoord(),tempNode.getYCoord()-1,false);
+						tempNode.setNorthWall(false);
+						break;
+					case('W'):
+						tempNode.setWestWall(false);
+						tempNode = new Node(tempNode.getXCoord()-1,tempNode.getYCoord(),false);
+						tempNode.setEastWall(false);
+						break;
+				}
+				availableNodes.add(tempNode);
+				spaceFilled[tempNode.getXCoord()][tempNode.getYCoord()] = true;
+				i++;
+			}
+		}
+		// After activeNodeCount nodes have been completed copy remaining availableNodes into nodeArray
+		for(Node node : availableNodes)
+		{
+			nodeArray[cntFinishedNodes] = node;
+			cntFinishedNodes++;
+		}
+		
+		/*
+		// Steven's Version
 		//Randomize if needed 
 		double nSquare = Math.sqrt(activeNodeCount);
   		int n = (int) Math.ceil(nSquare);
@@ -593,11 +677,12 @@ class Maze {
 		/*for(Node node : nodeArr){
 			this.nodeArray[count] = node;
 			count++;
-		}*/
+		}
 		for(Node node: nodeArray){
 			node.updateWalls(coords);
 		}
 		//String[] both = (String[])ArrayUtils.addAll(first, second);
+		 */
 	}
 	
 	private Map<Integer, Set<Pair>> optimalPathCoords(){
@@ -607,7 +692,7 @@ class Maze {
 			if (n.getIsStartNode()) {
 				BFS.put(0, n.getCoords());
 				availableCoords = n.isPath();//isPath returns the set of x,y coordinates that it can travel to
-				System.out.println("Available Coords from the start node: " + BFS);
+//				System.out.println("Available Coords from the start node: " + BFS);
 				break;
 			}
 		}
@@ -662,14 +747,14 @@ class Maze {
 	{
 		Node setOptLocal = new Node();
 		Map<Integer, Set<Pair>> optimalPathCoords = optimalPathCoords();
-		System.out.println("optimalPathCoords: " + optimalPathCoords);
+//		System.out.println("optimalPathCoords: " + optimalPathCoords);
 		Set<Pair> endCoords = optimalPathCoords.get(optimalPathCoords.size()-1);
-		System.out.println("endCoordsSet: " + endCoords + " endCoords:");//print statement of end coords
+//		System.out.println("endCoordsSet: " + endCoords + " endCoords:");//print statement of end coords
 		for(int i = optimalPathCoords.size()-1; i >= 0;i--){
 			Set<Pair> coordinates = optimalPathCoords.get(i);
-			System.out.println("coordinates: " + coordinates);
+//			System.out.println("coordinates: " + coordinates);
 			for(Pair p: coordinates){
-				System.out.println("p: " + coordinates);
+//				System.out.println("p: " + coordinates);
 				Node temp = this.getCoordNode(p.getXCoord(), p.getYCoord());
 				//System.out.println(temp);
 				if(temp.getIsEndNode()){
@@ -679,9 +764,9 @@ class Maze {
 					updateNode(temp);
 				}
 				else{
-					System.out.print("printWalls: ");
+//					System.out.print("printWalls: ");
 					temp.printWalls();
-					System.out.print("\n");
+//					System.out.print("\n");
 					if(setOptLocal.getNorthWall() && temp.getSouthWall()){
 						temp.setIsOptimalPath(true);
 						setOptLocal = temp;
@@ -705,10 +790,10 @@ class Maze {
 				}
 			}
 		}
-		for(Node n: this.nodeArray){
-			System.out.print(n.getXYCoords()+ " " + n.getIsOptimalPath() + " ");
-		}
-		System.out.println("\n" + optimalPathCoords);
+//		for(Node n: this.nodeArray){
+//			System.out.print(n.getXYCoords()+ " " + n.getIsOptimalPath() + " ");
+//		}
+//		System.out.println("\n" + optimalPathCoords);
 	}
 	// Find and Set the end intersection node
 	private void setEndIntersectionNode()
@@ -833,11 +918,13 @@ class Maze {
 		{
 			int count = 0;
 			for(Node n : nodeArray)
+			{
 				if((n.getIsStartNode() || getPathCount(n) >= 3) && !n.getIsEndNode())
 				{
 					n.setIsIntersection(true);
 					count++;
 				}
+			}
 			return count;
 		}
 	}
@@ -1023,48 +1110,39 @@ class Maze {
 		String output = "";
 		
 		// Title
-		if(title == "")
-			output += ("<Title>" + "Not Assigned" + "</Title>" + '\n');
-		else
-			output += ("<Title>" + title + "</Title>" + '\n');
+		output += ("<Title>" + title + "</Title>" + '\n');
 		// Created
 		if(created == null)
-			output += ("<Created>" + "Not Assigned" + "</Created>" + '\n');
+			output += ("<Created>" + "</Created>" + '\n');
 		else
 			output += ("<Created>" + created + "</Created>" + '\n');
 		// GridSize
-		if(gridSize == -1)
-			output += ("<GridSize>" + "Not Assigned" + "</GridSize>" + '\n');
-		else
-			output += ("<GridSize>" + Integer.toString(gridSize) + "</GridSize>" + '\n');
+		output += ("<GridSize>" + Integer.toString(gridSize) + "</GridSize>" + '\n');
 		// ActiveNodeCount
-		if(activeNodeCount == -1)
-			output += ("<ActiveNodeCount>" + "Not Assigned" + "</ActiveNodeCount>" + '\n');
-		else
-			output += ("<ActiveNodeCount>" + Integer.toString(activeNodeCount) + "</ActiveNodeCount>" + '\n');
+		output += ("<ActiveNodeCount>" + Integer.toString(activeNodeCount) + "</ActiveNodeCount>" + '\n');
 		// BranchFactor
 		if(branchFactor == -1)
-			output += ("<BranchFactor>" + "Not Calculated" + "</BranchFactor>" + '\n');
+			output += ("<BranchFactor>" + "0.0" + "</BranchFactor>" + '\n');
 		else
 			output += ("<BranchFactor>" + Double.toString(branchFactor) + "</BranchFactor>" + '\n');
 		// Complexity
 		if(complexity == -1)
-			output += ("<Complexity>" + "Not Calculated" + "</Complexity>" + '\n');
+			output += ("<Complexity>" + "0" + "</Complexity>" + '\n');
 		else
 			output += ("<Complexity>" + Integer.toString(complexity) + "</Complexity>" + '\n');
 		// IntersectionCount
 		if(intersectionCount == -1)
-			output += ("<IntersectionCount>" + "Not Calculated" + "</IntersectionCount>" + '\n');
+			output += ("<IntersectionCount>" + "0" + "</IntersectionCount>" + '\n');
 		else
 			output += ("<IntersectionCount>" + Integer.toString(intersectionCount) + "</IntersectionCount>" + '\n');
 		// DeadendCount
 		if(deadendCount == -1)
-			output += ("<DeadendCount>" + "Not Calculated" + "</DeadendCount>" + '\n');
+			output += ("<DeadendCount>" + "0" + "</DeadendCount>" + '\n');
 		else
 			output += ("<DeadendCount>" + Integer.toString(deadendCount) + "</DeadendCount>" + '\n');
 		// LoopCount
 		if(deadendCount == -1)
-			output += ("<LoopCount>" + "Not Calculated" + "</LoopCount>" + '\n');
+			output += ("<LoopCount>" + "0" + "</LoopCount>" + '\n');
 		else
 			output += ("<LoopCount>" + Integer.toString(loopCount) + "</LoopCount>" + '\n');
 		
@@ -1150,11 +1228,23 @@ class Maze {
 		            		break;
 		            	case "BranchFactor":
 		            		i++;
-		            		branchFactor = Double.parseDouble(tokens[i]);
+		            		if(tokens[i] == "Not")
+		            		{
+		            			branchFactor = 0.0;
+		            			i++;
+		            		}
+		            		else
+		            			branchFactor = Double.parseDouble(tokens[i]);
 		            		break;
 		            	case "Complexity":
 		            		i++;
-		            		complexity = Integer.parseInt(tokens[i]);
+		            		if(tokens[i] == "Not")
+		            		{
+		            			complexity = 0;
+		            			i++;
+		            		}
+		            		else
+		            			complexity = Integer.parseInt(tokens[i]);
 		            		break;
 		            	case "IntersectionCount":
 		            		i++;
