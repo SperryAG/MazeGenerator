@@ -548,7 +548,7 @@ class Maze {
 			   while(randomNode.isFull()){
 				   //this.nodeArray[count] = randomNode;
 				   //count++;
-//				   tempArray.remove(randomPick);
+				   tempArray.remove(randomPick);
 				   randomPick = rand.nextInt(tempArray.size());
 				   randomNode = tempArray.get(randomPick);
 			   }
