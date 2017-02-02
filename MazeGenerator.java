@@ -35,11 +35,8 @@ package MazeGenerator;
 import java.util.Scanner; 
 
 public class MazeGenerator {
-	public static void main(String[] args) {
-		Maze maze;
-		
-//		Maze maze = new Maze();
-//		/*	
+	public static void main(String[] args) {		
+		Maze maze = new Maze();
 		Scanner user_input = new Scanner(System.in);
 		
 		String title;

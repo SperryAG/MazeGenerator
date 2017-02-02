@@ -11,7 +11,9 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.text.MaskFormatter;
 import javax.swing.text.NumberFormatter;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -235,7 +237,7 @@ public class MazeGeneratorUI {
 					int gridWidth = pnlRightPanel.getWidth();
 					int gridBottomCornerY = 549;
 					int gridSquareSize = gridWidth / maze.getGridSize();
-					Color nC, eC, sC, wC;
+					Color nC = null, eC = null, sC = null, wC = null;
 					boolean[][] exists = new boolean[maze.getGridSize()+1][maze.getGridSize()+1];
 					Node[][] nodes = new Node[maze.getGridSize()+1][maze.getGridSize()+1];
 					if(maze.getNodeArray() != null && maze.getNodeArray().length != 0)
@@ -251,43 +253,41 @@ public class MazeGeneratorUI {
 						for(int x = 1; x < maze.getGridSize() + 1; x++)
 						{
 							JPanel p = new JPanel();
+							EmptyBorder emptyBorder = new EmptyBorder(0, 0, 0, 0);
+							Border insideBorder;
 							if(exists[x][y])
 							{
-								if(nodes[x][y].getNorthWall()){nC = Color.BLACK;}else{nC = Color.decode("#dbdbdb");}
-								if(nodes[x][y].getEastWall()){eC = Color.BLACK;}else{eC = Color.decode("#dbdbdb");}
-								if(nodes[x][y].getSouthWall()){sC = Color.BLACK;}else{sC = Color.decode("#dbdbdb");}
-								if(nodes[x][y].getWestWall()){wC = Color.BLACK;}else{wC = Color.decode("#dbdbdb");}
-								p.setBorder(new CompoundBorder(
-												new CompoundBorder(
-													BorderFactory.createMatteBorder(1, 0, 0, 0, nC),
-													BorderFactory.createMatteBorder(0, 0, 0, 1, eC)
-												),
-												new CompoundBorder(
-													BorderFactory.createMatteBorder(0, 0, 1, 0, sC),
-													BorderFactory.createMatteBorder(0, 1, 0, 0, wC)
-												)
-											));
+								insideBorder = BorderFactory.createMatteBorder
+								(
+									(nodes[x][y].getNorthWall()?1:0), 
+									(nodes[x][y].getWestWall()?1:0), 
+									(nodes[x][y].getSouthWall()?1:0), 
+									(nodes[x][y].getEastWall()?1:0), 
+									Color.BLACK
+								);
+								p.setBorder(new CompoundBorder(emptyBorder,insideBorder));		
+								p.setBackground(Color.WHITE);
+								if(nodes[x][y].getIsOptimalPath())
+									p.setBackground(Color.decode("#90A8D4"));
+								if(nodes[x][y].getIsIntersection() && !nodes[x][y].getIsEndIntersection())
+									p.setBackground(Color.decode("#D4BC90"));
+								if(nodes[x][y].getIsDeadend())
+									p.setBackground(Color.decode("#B290D4"));
+								if(nodes[x][y].getIsEndIntersection())
+									p.setBackground(Color.decode("#D4D490"));
 								if(nodes[x][y].getIsStartNode())
-									p.setBackground(Color.decode("#2a8c3d"));
-								else if(nodes[x][y].getIsEndNode())
-									p.setBackground(Color.decode("#8c2a2a"));
-								else if(nodes[x][y].getIsEndIntersection())
-									p.setBackground(Color.decode("#8c852a"));
-								else if(nodes[x][y].getIsIntersection() && !nodes[x][y].getIsEndIntersection())
-									p.setBackground(Color.decode("#2a888c"));
-								else if(nodes[x][y].getIsDeadend())
-									p.setBackground(Color.decode("#8c562a"));
-								else
-									p.setBackground(Color.WHITE);
-								p.setBounds(gridSquareSize*(x-1), gridBottomCornerY-gridSquareSize*(y), gridSquareSize, gridSquareSize);
+									p.setBackground(Color.decode("#B2D490"));
+								if(nodes[x][y].getIsEndNode())
+									p.setBackground(Color.decode("#D49090"));
+								p.setBounds(gridSquareSize*(x-1)+(pnlRightPanel.getWidth() % maze.getGridSize())/2, gridBottomCornerY-gridSquareSize*(y)-(pnlRightPanel.getWidth() % maze.getGridSize())/2, gridSquareSize, gridSquareSize);
 								
 								nodePanelList.add(p);
 							}
 							else
 							{
-								p.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.decode("#dbdbdb")));
+								p.setBorder(emptyBorder);
 								p.setBackground(Color.decode("#cccccc"));
-								p.setBounds(gridSquareSize*(x-1), gridBottomCornerY-gridSquareSize*(y), gridSquareSize, gridSquareSize);
+								p.setBounds(gridSquareSize*(x-1)+(pnlRightPanel.getWidth() % maze.getGridSize())/2, gridBottomCornerY-gridSquareSize*(y)-(pnlRightPanel.getWidth() % maze.getGridSize())/2, gridSquareSize, gridSquareSize);
 								nodePanelList.add(p);
 							}
 						}
