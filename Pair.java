@@ -20,4 +20,14 @@ public class Pair {
 		String output = "(" + x + ", " + y + ")";
 		return output;
 	}
+	public boolean equals(Object obj){
+		Pair pair = (Pair) obj;
+		return pair.x == this.x && pair.y == this.y;
+	}
+	public int hashCode() {
+		  
+	    int hash = x+y;
+	    //System.out.println("hashcode called" + hash);
+	    return hash;
+	}
 }

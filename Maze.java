@@ -492,7 +492,7 @@ class Maze {
 		setOptimalPathNodes();
 		
 		/* Find and Set the isEndIntersection Node */
-//		setEndIntersectionNode();
+		//setEndIntersectionNode();
 		
 		/* Set isCoreNode = true for every core node and calculate coreActiveNodeCount */
 //		coreActiveNodeCount = setCoreNodes();
@@ -514,7 +514,7 @@ class Maze {
 //		complexity = calcComplexity();
 		
 		/*Testing out DFSSTEP */
-//		System.out.println("DFS STEP: " + this.dfsStep());
+		//System.out.println("DFS STEP: " + this.dfsStep());
 	}
 	
 	/* Generation Methods */
@@ -630,16 +630,21 @@ class Maze {
 			   int  randomPick = rand.nextInt(tempArray.size());
 			   Node randomNode = tempArray.get(randomPick);
 			   while(randomNode.isFull()){
-				   this.nodeArray[count] = randomNode;
-				   count++;
-//				   tempArray.remove(randomPick);
+				   //this.nodeArray[count] = randomNode;
+				   //count++;
+				   tempArray.remove(randomPick);
 				   randomPick = rand.nextInt(tempArray.size());
 				   randomNode = tempArray.get(randomPick);
 			   }
 			   ArrayList<Integer> dirArray = new ArrayList<Integer>();
 			   dirArray = randomNode.getWalls(coords, this.gridSize);
-			   int randomDirection = rand.nextInt(dirArray.size());
-			   randomDirection = dirArray.get(randomDirection);
+			   while(dirArray.size() == 0){
+				   randomPick = rand.nextInt(tempArray.size());
+				   randomNode = tempArray.get(randomPick);
+				   dirArray = randomNode.getWalls(coords, this.gridSize);
+			   }
+			   int ran = rand.nextInt(dirArray.size());
+			   int randomDirection = dirArray.get(ran);
 			   if(randomDirection == 0){//this is north
 				   toAdd.setXCoord(randomNode.getXCoord());
 				   toAdd.setYCoord(randomNode.getYCoord() + 1);
@@ -1088,7 +1093,7 @@ class Maze {
 					}
 					steps++;
 				}
-				Pair newPair = neighbors.get(rand.nextInt(neighbors.size())+1);
+				Pair newPair = neighbors.get(rand.nextInt(neighbors.size()));
 				Node newNode = this.getCoordNode(newPair.getXCoord(), newPair.getYCoord());
 				visited[newPair.getXCoord()][newPair.getYCoord()] = true;
 				if(newNode.getIsEndNode()){

@@ -261,7 +261,11 @@ public class Node {
 	}
 	
 	public boolean isFull(){
-		return !(this.isWall_East || this.isWall_North || this.isWall_South || this.isWall_West);
+		boolean toReturn = false;
+		if(this.getNorthWall() == false && this.getEastWall() == false && this.getSouthWall() == false && this.getWestWall() == false){
+			toReturn = true;
+		}
+		return toReturn;
 	}
 	
 	// Output Methods
