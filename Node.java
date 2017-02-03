@@ -236,6 +236,31 @@ public class Node {
 		}
 		return toReturn;
 	}
+	
+	public Set<Pair> isPath(boolean[][] visited){//returns a set of Pair(x,y) coordinates that can be reached and that were not visited
+		Set<Pair> toReturn = new HashSet<Pair>();
+		if(!this.getNorthWall() && visited[this.getXCoord()][this.getYCoord()+1] == false){
+			toReturn.add(new Pair(this.getXCoord(), this.getYCoord() + 1));
+		}
+		if(!this.getEastWall() && visited[this.getXCoord()+1][this.getYCoord()] == false){
+			toReturn.add(new Pair(this.getXCoord() + 1, this.getYCoord()));
+		}
+		if(!this.getSouthWall() && visited[this.getXCoord()][this.getYCoord() - 1] == false){
+			toReturn.add(new Pair(this.getXCoord(), this.getYCoord() -1));
+		}
+		if(!this.getWestWall() && visited[this.getXCoord()-1][this.getYCoord()] == false){
+			toReturn.add(new Pair(this.getXCoord() - 1, this.getYCoord()));
+		}
+		return toReturn;
+	}
+	
+	//returns true if the neighbors of this node is set True on isOptimalPath
+	public boolean neighborIsOptimal(Node[] nodeArray){
+		boolean toReturn = false;
+		
+		return toReturn;
+	}
+	
 	public Map<String, Pair> paths() {
 		Map<String, Pair> toReturn = new HashMap<String, Pair>();
 		if (!this.getNorthWall()) {
@@ -266,6 +291,17 @@ public class Node {
 			toReturn = true;
 		}
 		return toReturn;
+	}
+	
+	public boolean equals(Object obj){
+		Node node = (Node) obj;
+		return node.getXCoord() == this.getXCoord() && node.getYCoord() == this.getYCoord();
+	}
+	public int hashCode() {
+		  
+	    int hash = this.getXCoord() + this.getYCoord();
+	    //System.out.println("hashcode called" + hash);
+	    return hash;
 	}
 	
 	// Output Methods

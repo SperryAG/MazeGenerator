@@ -690,58 +690,44 @@ class Maze {
 		 */
 	}
 	
-	private Map<Integer, Set<Pair>> optimalPathCoords(){
+	private Map<Integer, Set<Pair>> optimalPathCoords(){//this should return the map of integer and set pairs of stuff. 
+		boolean[][] localVisited = new boolean[gridSize+1][gridSize+1];
 		Map<Integer, Set<Pair>> BFS = new HashMap<Integer, Set<Pair>>();
 		Set<Pair> availableCoords = new HashSet<Pair>();
-		for (Node n: nodeArray) {
-			if (n.getIsStartNode()) {
-				BFS.put(0, n.getCoords());
-				availableCoords = n.isPath();//isPath returns the set of x,y coordinates that it can travel to
-//				System.out.println("Available Coords from the start node: " + BFS);
-				break;
-			}
-		}
-		int count = 1;
-		boolean isEnd = false;
-		while(isEnd == false) {
-			Set<Pair> updateAvailableCoords = new HashSet<Pair>();
-//			System.out.println("availableCoords: " + availableCoords);
-			for (Pair p : availableCoords) {
-				for (Node n : this.nodeArray) {
-					if (n.getXCoord() == p.getXCoord() && n.getYCoord() == p.getYCoord()) { // n.getXYCoords() == p) {
-						if (n.getIsEndNode()) {//if the next coordinate is the end node. 
-							isEnd = true;
-							BFS.remove(count);
-							BFS.put(count, n.getCoords());//leave the end node in its own array. 
-							return BFS;
-						}
-						Set<Pair> toAdd = new HashSet<Pair>(); //toAdd is the next level of coordinates that can be reached. 
-						if (BFS.containsKey(count)) {
-							for (Pair i : BFS.get(count)) { //get all the available coordinates already that can be reached?
-								if (toAdd.contains(i) == false) {
-									toAdd.add(i);
-								}
-							}
-						}
-						if (toAdd.contains(n.getCoords()) == false) {
-							toAdd.addAll(n.getCoords());	
-						}
-						BFS.put(count, toAdd);
-						updateAvailableCoords.addAll(n.isPath());
-					}
+		Node currentNode = this.getStartNode(); //Let's get the starting node.
+		availableCoords.add(currentNode.getXYCoords());
+		localVisited[currentNode.getXCoord()][currentNode.getYCoord()] = true;
+		BFS.put(0, availableCoords); //adding start node to position 0 of BFS
+		availableCoords = currentNode.isPath(localVisited);//this is all the nodes reachable from the startPosition
+		BFS.put(1,  availableCoords);
+		int steps = 1;//how many steps away from the start node we are. We're currently on all nodes 1Step away from Start
+		while(true){
+			availableCoords = BFS.get(steps);
+			steps++;//increment steps to be adding to the next level. We enter having already filled level 1 with all reachable
+			//nodes from the start node.
+			Set<Pair> tempSet = new HashSet<Pair>();
+			for(Pair p: availableCoords){//iterate through all the possible paths reachable from the currentNode. 
+				Node tempNode = this.getCoordNode(p.getXCoord(), p.getYCoord());
+				localVisited[p.getXCoord()][p.getYCoord()] = true;
+				tempSet.addAll(tempNode.isPath(localVisited));
+				//If we do find the endNode, set the furthest step as a set pair with only end node cords. 
+				if(tempNode.getXCoord() == this.getEndNode().getXCoord() && tempNode.getYCoord() == this.getEndNode().getYCoord()){
+					Set<Pair> endNode = new HashSet<Pair>();
+					endNode.add(new Pair(tempNode.getXCoord(), tempNode.getYCoord()));
+					BFS.put(steps-1, endNode);
+					System.out.println("We finished BFS: " + BFS + " endNode: " + this.getEndNode().getXYCoords());
+					return BFS;
 				}
-			}//end of for loop of availableCoords. 
-			count++;
-			availableCoords = updateAvailableCoords;
+			}
+			//At this point, tempSet should contain all the values reachable from this level of nodes. 
+			BFS.put(steps, tempSet);			
 		}
-		return BFS;
 	}
 	
 	//this will update and replace a Node
 	private void updateNode(Node toUpdate){
 		for(int i = 0; i < this.nodeArray.length; i++){
-			Node temp = nodeArray[i];
-			if(temp.getXYCoords() == toUpdate.getXYCoords()){
+			if(nodeArray[i].getXYCoords() == toUpdate.getXYCoords()){
 				nodeArray[i] = toUpdate;
 			}
 		}
@@ -750,55 +736,41 @@ class Maze {
 	// Find and Set the nodes involved in the optimal path(s)
 	private void setOptimalPathNodes()
 	{
-		Node setOptLocal = new Node();
+		Node setOptLocal = this.getEndNode();
 		Map<Integer, Set<Pair>> optimalPathCoords = optimalPathCoords();
-//		System.out.println("optimalPathCoords: " + optimalPathCoords);
 		Set<Pair> endCoords = optimalPathCoords.get(optimalPathCoords.size()-1);
-//		System.out.println("endCoordsSet: " + endCoords + " endCoords:");//print statement of end coords
-		for(int i = optimalPathCoords.size()-1; i >= 0;i--){
-			Set<Pair> coordinates = optimalPathCoords.get(i);
-//			System.out.println("coordinates: " + coordinates);
-			for(Pair p: coordinates){
-//				System.out.println("p: " + coordinates);
-				Node temp = this.getCoordNode(p.getXCoord(), p.getYCoord());
-				//System.out.println(temp);
-				if(temp.getIsEndNode()){
-					temp.setIsOptimalPath(true);
-					//System.out.println("endNode " + temp);
-					setOptLocal = temp;
-					updateNode(temp);
+		for(int i = optimalPathCoords.size() -1; i >= 0; i--){//for loop backwards through all values in the map of optimalNodes
+			Set<Pair> currentSet = optimalPathCoords.get(i);
+			for(Pair pair : currentSet){//for all values in the current level of the map
+				Node tempNode = this.getCoordNode(pair.getXCoord(), pair.getYCoord());
+				//endNode set true
+				if(tempNode.getXCoord() == this.getEndNode().getXCoord() && tempNode.getYCoord() == this.getEndNode().getYCoord()){
+					tempNode.setIsOptimalPath(true);
+					updateNode(tempNode);
 				}
+				//startNode set true
+				else if(tempNode.getXCoord() == this.getStartNode().getXCoord() && tempNode.getYCoord() == this.getStartNode().getYCoord()){
+					tempNode.setIsOptimalPath(true);
+					updateNode(tempNode);
+				}
+				//only Set true if the level below has the neighbor that's set to true?
 				else{
-//					System.out.print("printWalls: ");
-					temp.printWalls();
-//					System.out.print("\n");
-					if(setOptLocal.getNorthWall() && temp.getSouthWall()){
-						temp.setIsOptimalPath(true);
-						setOptLocal = temp;
-						updateNode(temp);
-					}
-					else if(setOptLocal.getEastWall() && temp.getWestWall()){
-						temp.setIsOptimalPath(true);
-						setOptLocal = temp;
-						updateNode(temp);
-					}
-					else if(setOptLocal.getSouthWall() && temp.getNorthWall()){						
-						temp.setIsOptimalPath(true);
-						setOptLocal = temp;
-						updateNode(temp);
-					}
-					else if(setOptLocal.getWestWall() && temp.getEastWall()){						
-						temp.setIsOptimalPath(true);
-						setOptLocal = temp;
-						updateNode(temp);
+					Set<Pair> currentNeighbors = tempNode.isPath();
+					for(Pair p : currentNeighbors){
+						Node oneFurther = this.getCoordNode(p.getXCoord(), p.getYCoord());
+						if(oneFurther.getIsOptimalPath()){
+							tempNode.setIsOptimalPath(true);
+							updateNode(tempNode);
+						}
 					}
 				}
 			}
 		}
-//		for(Node n: this.nodeArray){
-//			System.out.print(n.getXYCoords()+ " " + n.getIsOptimalPath() + " ");
-//		}
-//		System.out.println("\n" + optimalPathCoords);
+		//these are print statements to check OptimalNodes
+		/*for(Node n: this.nodeArray){
+			System.out.print(n.getXYCoords()+ " " + n.getIsOptimalPath() + " ");
+		}
+		System.out.println("\n optimalPathCoords: " + optimalPathCoords);*/
 	}
 	// Find and Set the end intersection node
 	private void setEndIntersectionNode()
