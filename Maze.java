@@ -493,17 +493,19 @@ class Maze {
 		
 		/* Find and Set the isEndIntersection Node */
 		setEndIntersectionNode();
+		System.out.println("after end intersection node");
 		/* Set isCoreNode = true for every core node and calculate coreActiveNodeCount */
-		coreActiveNodeCount = setCoreNodes();
+//		coreActiveNodeCount = setCoreNodes();	// Throws NullPointer Exception stepDeadEnd() line 397
 		/* Set the core variable counts */
-		coreOptimalPathNodeCount = calcCoreOptimalPathNodeCount();
-		coreIntersectionCount = calcCoreIntersectionCount();
-		coreDeadendCount = calcCoreDeadendCount();
+//		coreOptimalPathNodeCount = calcCoreOptimalPathNodeCount();	// Infinite Looping?
+//		coreIntersectionCount = calcCoreIntersectionCount();	// Infinite Looping?
+//		coreDeadendCount = calcCoreDeadendCount();	// Infinite Looping?
 		/* Loops - Not sure how to do this - Can just adjust this value manually in the maze file for now. */
 		
 		/* Find the longest tail and set isLongestTail = true for involved nodes. Return the longestTailCount */
+		System.out.println("before longest tail");
 		longestTailCount = setLongestTailNodes();
-		System.out.println("after longest tail");		
+		System.out.println("after longest tail");
 		/* Calculate and Set branchFactor */
 //		branchFactor = calcBranchFactor();
 		
@@ -941,6 +943,7 @@ class Maze {
 		// !isCoreNode can be use determine which nodes come after the isEndIntersectionNode
 		private int setToLongestTail (Stack<Pair> traveled) {
 			for (Pair p : traveled) {
+				System.out.println("settolongesttail loop");
 				getCoordNode(p.getXCoord(), p.getYCoord()).setIsLongestTailNode(true);
 			}
 			return traveled.size();
@@ -986,6 +989,7 @@ class Maze {
 				Map<Integer, Stack<Pair>> tempReturn3 = new HashMap<Integer, Stack<Pair>>();
 				tempReturn1.put(-2, null);
 				for (int i = 0; i < neighbors.size(); i++) {
+					System.out.println("traversingLongestTailPaths loop");
 					if (neighbors.get(i) != traveled.peek()) {
 						traveled.push(neighbors.get(i));
 						neighbors = getCoordNode(traveled.peek().getXCoord(), traveled.peek().getYCoord()).getAllNeighbors(traveled);
@@ -1036,6 +1040,9 @@ class Maze {
 		// !isCoreNode can be use determine which nodes come after the isEndIntersectionNode
 		public int setLongestTailNodes()
 		{
+			for (Node n: this.nodeArray) {
+				System.out.println(n.toString());
+			}
 			setEndIntersectionNode();
 //			Node endIntersection = new Node();
 			Node endNode = new Node();
@@ -1053,14 +1060,21 @@ class Maze {
 			ArrayList<Pair> neighbors = endNode.getAllNeighbors(traveled);
 			System.out.println("Traveled: " + traveled + " neighbors: " + neighbors);
 			if (neighbors.size() == 1) {	// only optimal path
-				getCoordNode(neighbors.get(0).getXCoord(), neighbors.get(0).getYCoord()).setIsLongestTailNode(true);
+				getCoordNode(neighbors.get(0).getXCoord(), neighbors.get(0).getYCoord()).setIsLongestTailNode(true);//sets neighbor of endNode to be true
 				Stack<Pair> traveledOptimal = new Stack<Pair>();
 				traveledOptimal.push(endPair);
-				traveledOptimal.push(neighbors.get(0));
+//				traveledOptimal.push(neighbors.get(0));
 				boolean isEndIntersection = false;
 				while (!isEndIntersection) {	// while node is not endIntersection
+					System.out.println("only optimal path loop: " + neighbors);
+					if (getCoordNode(neighbors.get(0).getXCoord(), neighbors.get(0).getYCoord()).getIsEndIntersection()) {
+						return 1;
+					}
 					ArrayList<Pair> temp = getCoordNode(neighbors.get(0).getXCoord(), neighbors.get(0).getYCoord()).getAllNeighbors(traveledOptimal);
+					System.out.println("temp size: " + temp.size());
+					System.out.println("temp: " + temp);
 					for (Pair p : temp) {
+						System.out.println("in optimal path only for loop: " + getCoordNode(p.getXCoord(), p.getYCoord()).getIsOptimalPath());
 						if (getCoordNode(p.getXCoord(), p.getYCoord()).getIsEndIntersection()) {
 							isEndIntersection = true;
 							break;
@@ -1069,7 +1083,9 @@ class Maze {
 							traveledOptimal.push(p);
 							getCoordNode(p.getXCoord(), p.getYCoord()).setIsLongestTailNode(true);
 							neighbors.clear();
-							neighbors.add(p);
+							neighbors = getCoordNode(p.getXCoord(), p.getYCoord()).getAllNeighbors(traveledOptimal);
+							System.out.print("neighbors after update: " + neighbors);
+							break;
 						}
 					}
 					if (neighbors.get(0) == temp.get(0)) {	// neighbors was not updated, end intersection was reached
@@ -1087,6 +1103,7 @@ class Maze {
 //			ArrayList<Pair> temp3 = new ArrayList<Pair>();
 			boolean temp3inUse = false;
 			for (int i = 0; i < neighbors.size(); i++) {	// if more than just optimal path is available
+				System.out.println("more than optimal loop");
 //				ArrayList<Pair> temp1 = new ArrayList<Pair>();
 //				boolean temp1inUse = false;
 //				ArrayList<Pair> temp2 = new ArrayList<Pair>();
@@ -1164,37 +1181,53 @@ class Maze {
 			Map<Integer, Stack<Pair>> toReturn3 = new HashMap<Integer, Stack<Pair>>();
 			toReturn3.put(-2, null);
 			while (temp1inUse) {	// follow first path until you reach endIntersection node
+				System.out.println("in temp1 loop: " + traveled1 + " " + traveled1.peek());
+				if (getCoordNode(traveled1.peek().getXCoord(), traveled1.peek().getXCoord()).getAllNeighbors(traveled1) == null) {
+					break;
+				}
 				neighbors = getCoordNode(traveled1.peek().getXCoord(), traveled1.peek().getXCoord()).getAllNeighbors(traveled1);
 				toReturn1.clear();
 				toReturn1 = traversingLongestTailPaths(neighbors, traveled1);
-				if (traveled1.peek().getCoords() == "(-1, -1)") {	// if no endIntersection path was found
+				System.out.println("toreturn1: " + toReturn1);
+//				if (traveled1.peek().getCoords() == "(-1, -1)") {	// if no endIntersection path was found
+				if (toReturn1.entrySet().iterator().next().getKey() == -1) {	// if no endIntersection path was found
 					temp1inUse = false;
 				}
-				else {	// To Do: the last pair returned should be the endIntersection node...?
-					neighbors = getCoordNode(traveled1.peek().getXCoord(), traveled1.peek().getXCoord()).getAllNeighbors(traveled1);
-				}
+//				else {	// To Do: the last pair returned should be the endIntersection node...?
+//					neighbors = getCoordNode(traveled1.peek().getXCoord(), traveled1.peek().getXCoord()).getAllNeighbors(traveled1);
+//				}
 			}
 			while (temp2inUse) {	// follow second path (if there is one) until you reach endIntersection node
+				System.out.println("in temp2 loop");
+				if (getCoordNode(traveled2.peek().getXCoord(), traveled2.peek().getXCoord()).getAllNeighbors(traveled2) == null) {
+					break;
+				}
 				neighbors = getCoordNode(traveled2.peek().getXCoord(), traveled2.peek().getXCoord()).getAllNeighbors(traveled2);
 				toReturn2.clear();
 				toReturn2 = traversingLongestTailPaths(neighbors, traveled2);	// should traverse any branching paths and set isLongestTail as needed
-				if (traveled2.peek().getCoords() == "(-1, -1)") {	// if no endIntersection path was found
+//				if (traveled2.peek().getCoords() == "(-1, -1)") {	// if no endIntersection path was found
+				if (toReturn2.entrySet().iterator().next().getKey() == -1) {	// if no endIntersection path was found
 					temp2inUse = false;
 				}
-				else {	// To Do: the last pair returned should be the endIntersection node...?
-					neighbors = getCoordNode(traveled2.peek().getXCoord(), traveled2.peek().getXCoord()).getAllNeighbors(traveled2);
-				}
+//				else {	// To Do: the last pair returned should be the endIntersection node...?
+//					neighbors = getCoordNode(traveled2.peek().getXCoord(), traveled2.peek().getXCoord()).getAllNeighbors(traveled2);
+//				}
 			}
 			while (temp3inUse) {	// follow third path (if there is one) until you reach endIntersection node
+				System.out.println("in temp3 loop");
+				if (getCoordNode(traveled3.peek().getXCoord(), traveled3.peek().getXCoord()).getAllNeighbors(traveled3) == null) {
+					break;
+				}
 				neighbors = getCoordNode(traveled3.peek().getXCoord(), traveled3.peek().getXCoord()).getAllNeighbors(traveled3);
 				toReturn3.clear();
 				toReturn3 = traversingLongestTailPaths(neighbors, traveled3);
-				if (traveled3.peek().getCoords() == "(-1, -1)") {	// if no endIntersection path was found
+//				if (traveled3.peek().getCoords() == "(-1, -1)") {	// if no endIntersection path was found
+				if (toReturn3.entrySet().iterator().next().getKey() == -1) {	// if no endIntersection path was found
 					temp3inUse = false;
 				}
-				else {	// To Do: the last pair returned should be the endIntersection node...?
-					neighbors = getCoordNode(traveled3.peek().getXCoord(), traveled3.peek().getXCoord()).getAllNeighbors(traveled3);
-				}
+//				else {	// To Do: the last pair returned should be the endIntersection node...?
+//					neighbors = getCoordNode(traveled3.peek().getXCoord(), traveled3.peek().getXCoord()).getAllNeighbors(traveled3);
+//				}
 			}
 			int maxLength1 = toReturn1.entrySet().iterator().next().getKey();
 			int maxLength2 = toReturn2.entrySet().iterator().next().getKey();
