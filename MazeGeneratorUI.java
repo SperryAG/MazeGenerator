@@ -227,7 +227,7 @@ public class MazeGeneratorUI {
 					if(maze.getComplexity() == 0)
 						txtComplexity.setText("0");
 					else
-						txtComplexity.setText(Integer.toString(maze.getComplexity()));
+						txtComplexity.setText(Double.toString(maze.getComplexity()));
 					
 					for(JPanel jp : nodePanelList)
 						pnlRightPanel.remove(jp);
@@ -267,12 +267,14 @@ public class MazeGeneratorUI {
 								);
 								p.setBorder(new CompoundBorder(emptyBorder,insideBorder));		
 								p.setBackground(Color.WHITE);
+								if(nodes[x][y].getIsCoreNode())
+									p.setBackground(Color.GRAY);
 								if(nodes[x][y].getIsOptimalPath())
 									p.setBackground(Color.decode("#90A8D4"));
-								if(nodes[x][y].getIsIntersection() && !nodes[x][y].getIsEndIntersection())
-									p.setBackground(Color.decode("#D4BC90"));
-								if(nodes[x][y].getIsDeadend())
-									p.setBackground(Color.decode("#B290D4"));
+								//if(nodes[x][y].getIsIntersection() && !nodes[x][y].getIsEndIntersection())
+								//	p.setBackground(Color.decode("#D4BC90"));
+								//if(nodes[x][y].getIsDeadend())
+								//	p.setBackground(Color.decode("#B290D4"));
 								if(nodes[x][y].getIsEndIntersection())
 									p.setBackground(Color.decode("#D4D490"));
 								if(nodes[x][y].getIsStartNode())
