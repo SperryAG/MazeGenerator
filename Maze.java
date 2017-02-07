@@ -272,23 +272,7 @@ class Maze {
 		else
 			return 'X';
 	}
-	// Get the opposite direction of a given direction
-	private char getOppositeDirection(char direction)
-	{
-		switch(Character.toUpperCase(direction))
-		{
-			case 'N':
-				return 'S';
-			case 'E':
-				return 'W';
-			case 'S':
-				return 'N';
-			case 'W':
-				return 'E';
-			default:
-				return 'X'; // Undefined
-		}
-	}
+	
 	// Get a node's path count
 	private int getPathCount(Node node)
 	{
@@ -301,6 +285,7 @@ class Maze {
 			count++;
 		if(!node.getWestWall())
 			count++;
+		//System.out.print(count + " ");
 		return count;
 	}
 	// Traverse all nodes from input node and mark them visited until isEndIntersection node is reached.
@@ -318,91 +303,36 @@ class Maze {
 			if(!node.getNorthWall() && !visited[xCoord][yCoord + 1])
 			{
 				// If current Node is iEnd, then we only want to find the deadends connected to it.
-				if(node.getIsEndIntersection())
-					stepDeadEnd(getNextNode(node,'N'),visited);
+				if(node.getIsEndIntersection() && getNextNode(node,'N').getIsOptimalPath())
+					{/* Do Nothing */}
 				// If current Node is not iEnd, just step.
 				else
 					step(getNextNode(node,'N'),visited);
 			}
 			if(!node.getEastWall() && !visited[xCoord + 1][yCoord])
 			{
-				if(node.getIsEndIntersection())
-					stepDeadEnd(getNextNode(node,'E'),visited);
+				if(node.getIsEndIntersection() && getNextNode(node,'E').getIsOptimalPath())
+					{/* Do Nothing */}
 				else
 					step(getNextNode(node,'E'),visited);
 			}
 			if(!node.getSouthWall() && !visited[xCoord][yCoord - 1])
 			{
-				if(node.getIsEndIntersection())
-					stepDeadEnd(getNextNode(node,'S'),visited);
+				if(node.getIsEndIntersection() && getNextNode(node,'S').getIsOptimalPath())
+					{/* Do Nothing */}
 				else
 					step(getNextNode(node,'S'),visited);
 			}
 			if(!node.getWestWall() && !visited[xCoord - 1][yCoord])
 			{
-				if(node.getIsEndIntersection())
-					stepDeadEnd(getNextNode(node,'W'),visited);
+				if(node.getIsEndIntersection() && getNextNode(node,'W').getIsOptimalPath())
+					{/* Do Nothing */}
 				else
 					step(getNextNode(node,'W'),visited);
 			}
 		}
 	}
-	// Traverse paths out of endIntersection that haven't been visited and mark deadend paths visited.
-	private void stepDeadEnd(Node node, boolean[][] visited)
-	{
-		Node temp;
-		char direction = 'N';
-		// Set the isEndIntersection to visited
-		visited[node.getXCoord()][node.getYCoord()] = true;
-		// If North path is a deadend, add the nodes as visited
-		if(!node.getNorthWall())
-		{
-			temp = getNextNode(node,'N');
-			while(!visited[temp.getXCoord()][temp.getYCoord()] && !temp.getIsIntersection() && !temp.getIsEndNode())
-			{
-				direction = getOutPathDirection(temp,direction);
-				temp = getNextNode(temp,getOppositeDirection(direction));
-			}
-			if(temp.getIsDeadend() && !visited[temp.getXCoord()][temp.getYCoord()])
-					step(temp,visited);
-		}
-		// If East path is a deadend, add the nodes as visited
-		if(!node.getEastWall())
-		{
-			temp = getNextNode(node,'E');
-			while(!visited[temp.getXCoord()][temp.getYCoord()] && !temp.getIsIntersection() && !temp.getIsEndNode())
-			{
-				direction = getOutPathDirection(temp,direction);
-				temp = getNextNode(temp,getOppositeDirection(direction));
-			}
-			if(temp.getIsDeadend() && !visited[temp.getXCoord()][temp.getYCoord()])
-				step(temp,visited);
-		}
-		// If South path is a deadend, add the nodes as visited
-		if(!node.getSouthWall())
-		{
-			temp = getNextNode(node,'S');
-			while(!visited[temp.getXCoord()][temp.getYCoord()] && !temp.getIsIntersection() && !temp.getIsEndNode())
-			{
-				direction = getOutPathDirection(temp,direction);
-				temp = getNextNode(temp,getOppositeDirection(direction));
-			}
-			if(temp.getIsDeadend())
-					step(temp,visited);
-		}
-		// If West path is a deadend, add the nodes as visited
-		if(!node.getWestWall())
-		{
-			temp = getNextNode(node,'W');
-			while(!visited[temp.getXCoord()][temp.getYCoord()] && !temp.getIsIntersection() && !temp.getIsEndNode())
-			{
-				direction = getOutPathDirection(temp,direction);
-				temp = getNextNode(temp,getOppositeDirection(direction));
-			}
-			if(temp.getIsDeadend())
-					step(temp,visited);
-		}
-	}
+	
 	// Return the number of outpaths that are optimal
 	public int getOptimalPathOutCount(Node node)
 	{
@@ -434,20 +364,7 @@ class Maze {
 		}
 		return count;
 	}
-	// Get the nextOptimalNode base on a specific input direction
-	public Node getNextOptimalNode(Node node, char direction)
-	{
-		if(!node.getNorthWall() && getNextNode(node,'N').getIsOptimalPath() && direction != 'N')
-			return getNextNode(node,'N');
-		if(!node.getEastWall() && getNextNode(node,'E').getIsOptimalPath() && direction != 'E')
-			return getNextNode(node,'E');
-		if(!node.getSouthWall() && getNextNode(node,'S').getIsOptimalPath() && direction != 'S')
-			return getNextNode(node,'S');
-		if(!node.getWestWall() && getNextNode(node,'W').getIsOptimalPath() && direction != 'W')
-			return getNextNode(node,'W');
-		return null;
-
-	}
+	
 	// Evaluate whether a node matches a node in an arraylist
 	public boolean nodeFound(Node node, ArrayList<Node> nodeArray)
 	{
@@ -501,17 +418,19 @@ class Maze {
 		coreOptimalPathNodeCount = calcCoreOptimalPathNodeCount();
 		coreIntersectionCount = calcCoreIntersectionCount();
 		coreDeadendCount = calcCoreDeadendCount();
-		
-		/* Loops - Not sure how to do this - Can just adjust this value manually in the maze file for now. */
+		loopCount = 0;
+		coreLoopCount = 0;
 		
 		/* Find the longest tail and set isLongestTail = true for involved nodes. Return the longestTailCount */
-		longestTailCount = setLongestTailNodes();
-		
+		longestTailCount = 0;
+		//longestTailCount = setLongestTailNodes();
+		//System.out.println("after longest tail");		
+    
 		/* Calculate and Set branchFactor */
-//		branchFactor = calcBranchFactor();
+		branchFactor = calcBranchFactor();
 		
 		/* Calculate and Set complexity */
-//		complexity = calcComplexity();
+		complexity = calcComplexity();
 		
 		/*Testing out DFSSTEP */
 		//System.out.println("DFS STEP: " + this.dfsStep());
@@ -522,8 +441,6 @@ class Maze {
 	private void populateNodeArray()
 	{
 		// Andrew's Version
-		System.out.println(gridSize);
-		System.out.println(activeNodeCount);
 		Node tempNode;
 		ArrayList<Node> availableNodes = new ArrayList<Node>();
 		boolean[][] spaceFilled = new boolean[gridSize+1][gridSize+1];
@@ -536,7 +453,6 @@ class Maze {
 		
 		// Generate the first node toward the center of the grid
 		tempNode = new Node(gridSize/2,gridSize/2,false);
-		System.out.println(tempNode.getXCoord() + " " + tempNode.getYCoord());
 		spaceFilled[tempNode.getXCoord()][tempNode.getYCoord()] = true;
 		availableNodes.add(tempNode);
 		
@@ -602,92 +518,6 @@ class Maze {
 			nodeArray[cntFinishedNodes] = node;
 			cntFinishedNodes++;
 		}
-		
-		/*
-		// Steven's Version
-		//Randomize if needed 
-		double nSquare = Math.sqrt(activeNodeCount);
-  		int n = (int) Math.ceil(nSquare);
-  		//initialization time.
-		//Generate random nodes 
-		int count = 0;
-		ArrayList<Node> tempArray = new ArrayList<Node>();
-		Set<Pair> coords = new HashSet<Pair>();
-		for(int times = 0; times < this.activeNodeCount; times++)
-		{
-			if(times == 0)
-			{
-			   Node toAdd = new Node();
-			   toAdd.setXCoord(this.gridSize/2);
-			   toAdd.setYCoord(this.gridSize/2);
-			   tempArray.add(toAdd);
-			   coords.add(new Pair(this.gridSize/2, this.gridSize/2));
-			}
-			else
-			{
-			   Node toAdd = new Node();
-			   Random rand = new Random();
-			   int  randomPick = rand.nextInt(tempArray.size());
-			   Node randomNode = tempArray.get(randomPick);
-			   while(randomNode.isFull()){
-				   //this.nodeArray[count] = randomNode;
-				   //count++;
-				   tempArray.remove(randomPick);
-				   randomPick = rand.nextInt(tempArray.size());
-				   randomNode = tempArray.get(randomPick);
-			   }
-			   ArrayList<Integer> dirArray = new ArrayList<Integer>();
-			   dirArray = randomNode.getWalls(coords, this.gridSize);
-			   while(dirArray.size() == 0){
-				   randomPick = rand.nextInt(tempArray.size());
-				   randomNode = tempArray.get(randomPick);
-				   dirArray = randomNode.getWalls(coords, this.gridSize);
-			   }
-			   int ran = rand.nextInt(dirArray.size());
-			   int randomDirection = dirArray.get(ran);
-			   if(randomDirection == 0){//this is north
-				   toAdd.setXCoord(randomNode.getXCoord());
-				   toAdd.setYCoord(randomNode.getYCoord() + 1);
-				   toAdd.setSouthWall(false);
-				   randomNode.setNorthWall(false);
-				   tempArray.set(randomPick, randomNode);
-			   }
-			   else if(randomDirection == 1){ //this is east
-				   toAdd.setXCoord(randomNode.getXCoord()+1);
-				   toAdd.setYCoord(randomNode.getYCoord());
-				   toAdd.setWestWall(false);
-				   randomNode.setEastWall(false);
-				   tempArray.set(randomPick, randomNode);
-			   }
-			   else if(randomDirection == 2){ //this is south
-				   toAdd.setXCoord(randomNode.getXCoord());
-				   toAdd.setYCoord(randomNode.getYCoord()-1);
-				   toAdd.setNorthWall(false);
-				   randomNode.setSouthWall(false);
-				   tempArray.set(randomPick, randomNode);
-			   }
-			   else{//this is west
-				   toAdd.setXCoord(randomNode.getXCoord()-1);
-				   toAdd.setYCoord(randomNode.getYCoord());
-				   toAdd.setEastWall(false);
-				   randomNode.setWestWall(false);
-				   tempArray.set(randomPick, randomNode);
-			   }
-			   coords.add(new Pair(toAdd.getXCoord(), toAdd.getYCoord()));
-			   tempArray.add(toAdd);
-		   }
-       }//end for for loop
-		Node[] nodeArr = new Node[tempArray.size()];
-		nodeArray = tempArray.toArray(nodeArr);
-		/*for(Node node : nodeArr){
-			this.nodeArray[count] = node;
-			count++;
-		}
-		for(Node node: nodeArray){
-			node.updateWalls(coords);
-		}
-		//String[] both = (String[])ArrayUtils.addAll(first, second);
-		 */
 	}
 	
 	private Map<Integer, Set<Pair>> optimalPathCoords(){//this should return the map of integer and set pairs of stuff. 
@@ -721,7 +551,7 @@ class Maze {
 					Set<Pair> endNode = new HashSet<Pair>();
 					endNode.add(new Pair(tempNode.getXCoord(), tempNode.getYCoord()));
 					BFS.put(steps-1, endNode);
-					System.out.println("We finished BFS: " + BFS + " endNode: " + this.getEndNode().getXYCoords());
+					// System.out.println("We finished BFS: " + BFS + " endNode: " + this.getEndNode().getXYCoords());
 					return BFS;
 				}
 			}
@@ -782,93 +612,57 @@ class Maze {
 		}
 		System.out.println("\n optimalPathCoords: " + optimalPathCoords);*/
 	}
+	private char getOptimalOutPathDirection(Node node, char inFrom)
+	{
+		if(!node.getNorthWall() && getNextNode(node,'N').getIsOptimalPath() && Character.toUpperCase(inFrom) != 'N')
+			return 'N';
+		else if(!node.getEastWall() && getNextNode(node,'E').getIsOptimalPath() && Character.toUpperCase(inFrom) != 'E')
+			return 'E';
+		else if(!node.getSouthWall() && getNextNode(node,'S').getIsOptimalPath() && Character.toUpperCase(inFrom) != 'S')
+			return 'S';
+		else if(!node.getWestWall() && getNextNode(node,'W').getIsOptimalPath() && Character.toUpperCase(inFrom) != 'W')
+			return 'W';
+		else
+			return 'X';
+	}
+	// Get the opposite direction of a given direction
+	private char getOppositeDirection(char direction)
+	{
+		switch(Character.toUpperCase(direction))
+		{
+			case 'N':
+				return 'S';
+			case 'E':
+				return 'W';
+			case 'S':
+				return 'N';
+			case 'W':
+				return 'E';
+			default:
+				return 'X'; // Undefined
+		}
+	}
+	
 	// Find and Set the end intersection node
 	private void setEndIntersectionNode()
 	{
-		// Get the endNode from nodeArray
+	// Get the endNode as a starting point
+		
+		Node startNode = getStartNode();
 		Node endNode = getEndNode();
-		
-		// Get the coordinates of the intersections directly connected to the end node
-		Node tempNode;
-		char direction;
-		ArrayList<Node> directIntersections = new ArrayList<Node>();
-		// Get the North path direct end intersection if it exists
-		if(!endNode.getNorthWall()) 
+		Node stepNode = endNode;
+		char inDirection = 'X';
+		char outDirection = 'X';
+	// Follow the endNode path back to the first Intersection
+		while(stepNode != startNode && !stepNode.getIsIntersection())
 		{
-			direction = 'N';
-			tempNode = getNextNode(endNode,direction);
-			while(getOutPathCount(tempNode,getOppositeDirection(direction)) == 1)
-			{
-				direction = getOutPathDirection(tempNode,direction);
-				tempNode = getNextNode(tempNode,direction);
-			}
-			if(tempNode.getIsIntersection())
-				directIntersections.add(tempNode);
+			outDirection = getOptimalOutPathDirection(stepNode,inDirection);
+			stepNode = getNextNode(stepNode,outDirection);
+			inDirection = getOppositeDirection(outDirection);
 		}
-		// East Path
-		if(!endNode.getEastWall()) 
-		{
-			direction = 'E';
-			tempNode = getNextNode(endNode,direction);
-			while(getOutPathCount(tempNode,getOppositeDirection(direction)) == 1)
-			{
-				direction = getOutPathDirection(tempNode,direction);
-				tempNode = getNextNode(tempNode,direction);
-			}
-			if(tempNode.getIsIntersection())
-				directIntersections.add(tempNode);
-		}
-		// South Path
-		if(!endNode.getSouthWall()) 
-		{
-			direction = 'S';
-			tempNode = getNextNode(endNode,direction);
-			while(getOutPathCount(tempNode,getOppositeDirection(direction)) == 1)
-			{
-				direction = getOutPathDirection(tempNode,direction);
-				tempNode = getNextNode(tempNode,direction);
-			}
-			if(tempNode.getIsIntersection())
-				directIntersections.add(tempNode);
-		}
-		// West Path
-		if(!endNode.getWestWall()) 
-		{
-			direction = 'W';
-			tempNode = getNextNode(endNode,direction);
-			while(getOutPathCount(tempNode,getOppositeDirection(direction)) == 1)
-			{
-				direction = getOutPathDirection(tempNode,direction);
-				tempNode = getNextNode(tempNode,direction);
-			}
-			if(tempNode.getIsIntersection())
-				directIntersections.add(tempNode);
-		}
-		
-		// Follow the optimal path from start until there is an optimal path split or 
-		// one of the above direct intersections is stepped on.
-		tempNode = getStartNode();
-		if(getOptimalPathOutCount(tempNode) > 1)
-			tempNode.setEndIntersection(true);
-		else
-		{
-			// Set the direction of the optimal path to correctly get the next optimal path
-			if(!tempNode.getNorthWall() && getNextNode(tempNode,'N').getIsOptimalPath())
-				direction = getOppositeDirection('N');
-			else if(!tempNode.getEastWall() && getNextNode(tempNode,'E').getIsOptimalPath())
-				direction = getOppositeDirection('E');
-			else if(!tempNode.getSouthWall() && getNextNode(tempNode,'S').getIsOptimalPath())
-				direction = getOppositeDirection('S');
-			else
-				direction = getOppositeDirection('W');
-			tempNode = getNextOptimalNode(tempNode,'X');
-			while(getOptimalPathOutCount(tempNode) == 2 && !nodeFound(tempNode,directIntersections))
-			{
-				tempNode = getNextOptimalNode(tempNode,direction);
-			}
-		}
-		tempNode.setEndIntersection(true);
+		stepNode.setEndIntersection(true);
 	}
+	
 	// Set core nodes and coreActiveNodeCount
 	private int setCoreNodes()
 	{
@@ -1004,39 +798,58 @@ class Maze {
 			return (double)0;
 		else
 		{
-			int total = 0;
+			double total = 0;
 			for(Node n : nodeArray)
 				if(n.getIsIntersection())
 					total += getPathCount(n);  
-			return total / (intersectionCount*4);
+			return total / ((double)(intersectionCount*4));
 		}
 			
+	}
+	// Get the path count of a node where only core paths are counted
+	private int getCorePathCount(Node n)
+	{
+		int count = 0;
+		if(!n.getNorthWall() && getNextNode(n,'N').getIsCoreNode())
+			count++;
+		if(!n.getEastWall() && getNextNode(n,'E').getIsCoreNode())
+			count++;
+		if(!n.getSouthWall() && getNextNode(n,'S').getIsCoreNode())
+			count++;
+		if(!n.getWestWall() && getNextNode(n,'W').getIsCoreNode())
+			count++;
+		return count;
 	}
 	// Calculate the core branch summation for complexity
 	private int calcBranchSum()
 	{
-		int total = 0;
 		int count = 0;
 		for(Node n : nodeArray)
 		{
 			if(n.getIsCoreNode() && n.getIsIntersection())
 			{
-				total += (getPathCount(n)-2);
-				count++;
+				count += (getCorePathCount(n)-2);
 			}
 		}
-		return total / count;
+		count += 2;
+		System.out.println("calcBranchSum: " + count);
+		return count;
 	}
 	// Calculate the complexity for the maze
 	public int calcComplexity() 
 	{
-		int temp;
+		int temp = 0;
 		temp = 2*coreActiveNodeCount;
+		System.out.println("coreActiveNodeCount: " + coreActiveNodeCount);
 		temp -= coreOptimalPathNodeCount;
+		System.out.println("coreOptimalPathNodeCount: " + coreOptimalPathNodeCount);
 		temp += calcBranchSum();
 		temp -= coreDeadendCount;
+		System.out.println("coreDeadendCount: " + coreDeadendCount);
 		temp -= coreLoopCount;
+		System.out.println("coreLoopCount: " + coreLoopCount);
 		temp += longestTailCount;
+		System.out.println("longestTailCount: " + longestTailCount);
 		return temp;		
 	}
 
