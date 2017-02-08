@@ -492,6 +492,7 @@ class Maze {
 		for (Node n : this.nodeArray) {
 			System.out.println(n);
 		}
+    
 		/* Calculate and Set branchFactor */
 //		branchFactor = calcBranchFactor();
 		
@@ -932,7 +933,7 @@ class Maze {
 				System.out.println("settolongesttail loop");
 				Node toUpdate = getCoordNode(p.getXCoord(), p.getYCoord());
 				toUpdate.setIsLongestTailNode(true);
-				updateNode(toUpdate);
+				updateNode(toUpdat
 			}
 			return traveled.size();
 		}
