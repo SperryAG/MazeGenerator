@@ -33,21 +33,27 @@ public class Swarm {
 		return startNode;
 	}
 	
-	private void update() {
+	private boolean update() {
 		for (Robot currentRobot : this.RobotSet) {
 			SwarmNode currentNode = currentRobot.getCurrentSwarmNode();
 			Map<String, SwarmNode> neighbors = new HashMap<String, SwarmNode>();	// Includes current node and neighbor nodes
 //			neighbors.put("Current", map.get(currentNode.getXYCoords()));
 			for (Map.Entry<String, Pair> entry : currentNode.paths().entrySet()) {
-				if (!map.get(entry.getValue()).isOccupied()) {	// Only add nodes to neighbors that aren't currently occupied
+				if (!map.get(entry.getValue()).isOccupied() && !(!map.get(entry.getValue()).isDeadend())) {	// Only add nodes to neighbors that aren't currently occupied
 					neighbors.put(entry.getKey(), map.get(entry.getValue()));
 				}
 			}
 			map.put(currentNode.getXYCoords(), currentRobot.update(neighbors));	// Update robot's previous currentNode
 			map.put(currentRobot.getCurrentSwarmNode().getXYCoords(), currentRobot.getCurrentSwarmNode());	// Update robot's new currentNode
 			if (currentRobot.getAtEnd()) {	// Robot has found the end node
-				// Signal all other robots
+				//TODO function to getall other robots to get here
+				//stackToEnd 
+				//set currentRobot to end Robot
+				// remove end robot from RobotSet
+				//robot to solution function.
+				return true;// Signal all other robots
 			}
 		}
+		return false;
 	}
 }
