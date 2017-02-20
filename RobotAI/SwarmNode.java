@@ -1,4 +1,6 @@
 package RobotAI;
+import java.util.ArrayList;
+
 import MazeGenerator.*;
 
 public class SwarmNode extends Node {
@@ -25,6 +27,87 @@ public class SwarmNode extends Node {
 		this.isWall_South = n.getSouthWall();
 		this.isWall_West = n.getWestWall();		
 	}
+	
+	public String lastTraveledtoString(SwarmNode lastTraveled){
+		String toReturn = null;
+		Pair coordLastTraveled = lastTraveled.getXYCoords();
+		
+		if(this.getYCoord()+1 == coordLastTraveled.getYCoord()){
+			toReturn = "North";
+		}
+		
+		else if(this.getXCoord()+1 == coordLastTraveled.getXCoord()){
+			toReturn = "East";
+		}
+		
+		else if(this.getYCoord()-1 == coordLastTraveled.getYCoord()){
+			toReturn = "South";
+		}
+		
+		else if(this.getXCoord()-1 == coordLastTraveled.getXCoord()){
+			toReturn = "West";
+		}
+		
+		return toReturn;
+	}
+	
+	public ArrayList<String> leastTraveled(SwarmNode lastTraveled){
+		ArrayList<String> toReturn = new ArrayList<String>();
+		String previousCoordString = lastTraveled.lastTraveledtoString(lastTraveled);
+
+		toReturn.add("North");
+		toReturn.add("East");
+		toReturn.add("South");
+		toReturn.add("West");
+		toReturn.remove(previousCoordString);
+		
+		int min = Integer.MAX_VALUE;
+		for(String direction : toReturn){
+			if(getRobotTraveled(direction) <= min){
+				min = getRobotTraveled(direction);
+			}
+		}
+		
+		ArrayList<String> temp = toReturn;
+		for(String direction : temp){
+			if(getRobotTraveled(direction)> min){
+				toReturn.remove(direction);
+			}
+		}
+		
+		return toReturn;
+	}
+	
+	public int getRobotTraveled(String direction){
+		if (direction.equals("North")){
+			return this.getRobotsTraveledNorth();
+		}
+		else if (direction.equals("East")){
+			return this.getRobotsTraveledEast();
+		}
+		else if (direction.equals("South")){
+			return this.getRobotsTraveledSouth();
+		}
+		else{
+			return this.getRobotsTraveledWest();
+		}
+	}
+	
+	public void setRobotTraveled(String direction){
+		if (direction.equals("North")){
+			setRobotsTraveledNorth();
+		}
+		else if (direction.equals("East")){
+			setRobotsTraveledEast();
+		}
+		else if (direction.equals("South")){
+			setRobotsTraveledSouth();
+		}
+		else{
+			setRobotsTraveledWest();
+		}
+	}
+	
 	// set number of robots that have traveled NORTH through this node
 	public void setRobotsTraveledNorth() {
 		this.robotsTraveledNorth++;
