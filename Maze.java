@@ -19,7 +19,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
 
-class Maze {
+public class Maze {
 	/* Variables */
 	private String title;
 	private String created;
