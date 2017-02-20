@@ -23,7 +23,7 @@ public class MazeGenerator {
 		maze = new Maze(title,gridsize,activenode);
 		maze.generateMaze();
 	//	maze = new Maze("FirstMaze",12,42);
-		System.out.println(maze.toString());
+		//System.out.println(maze.toString());
 		maze.toFile();
 		
 		/*maze.fromFile("TestMaze_9x9_46_0.7142857142857143_75_2017-01-29-02-17-19.txt");*/

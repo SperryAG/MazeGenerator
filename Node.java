@@ -68,6 +68,23 @@ public class Node {
 		this.isWall_South = isWall_South;
 		this.isWall_West = isWall_West;
 	}
+	public Node(Node node)
+	{
+		this.xCoord = node.getXCoord();
+		this.yCoord = node.getYCoord();
+		this.isStartNode = node.getIsStartNode();
+		this.isEndNode = node.getIsEndNode();
+		this.isEndIntersection = node.getIsEndIntersection();
+		this.isOptimalPath = node.getIsOptimalPath();
+		this.isIntersection = node.getIsIntersection();
+		this.isDeadend = node.getIsDeadend();
+		this.isCoreNode = node.getIsCoreNode();
+		this.isLongestTailNode = node.getIsLongestTailNode();
+		this.isWall_North = node.getNorthWall();
+		this.isWall_East = node.getEastWall();
+		this.isWall_South = node.getSouthWall();
+		this.isWall_West = node.getWestWall();
+	}
 	
 	// Methods
 	// Helper Methods
