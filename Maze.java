@@ -40,6 +40,7 @@ class Maze {
 	private int complexity;
 	private Node[] nodeArray;
 	private ArrayList<Result> resultArray;
+	private int optimalRobotCount;
 	
 	/* Constructors */
 	public Maze() {
@@ -59,7 +60,8 @@ class Maze {
 		this.branchFactor = -1;
 		this.complexity = -1;
 		this.nodeArray = null;
-		this.resultArray = new ArrayList<Result>();;
+		this.resultArray = new ArrayList<Result>();
+		this.optimalRobotCount = -1;
 	}
 	
 	public Maze(String title, int gridSize) {
@@ -79,7 +81,8 @@ class Maze {
 		this.branchFactor = -1;
 		this.complexity = -1;
 		this.nodeArray = null;
-		this.resultArray = new ArrayList<Result>();;
+		this.resultArray = new ArrayList<Result>();
+		this.optimalRobotCount = -1;
 	}
 	
 	public Maze(String title, int gridSize, int activeNodeCount) {
@@ -100,6 +103,7 @@ class Maze {
 		this.complexity = -1;
 		this.nodeArray = new Node[activeNodeCount];
 		this.resultArray = new ArrayList<Result>();
+		this.optimalRobotCount = -1;
 	}
 	
 	/* General Methods */
@@ -193,6 +197,12 @@ class Maze {
 	public int getComplexity() {
 		return complexity;
 	}
+	public void setOptimalRobotCount(int optimalRobotCount) {
+		this.optimalRobotCount = optimalRobotCount;
+	}
+	public int getOptimalRobotCount() {
+		return optimalRobotCount;
+	}
 	public void setNodeArray(Node[] nodeArray)
 	{
 		this.nodeArray = nodeArray;
@@ -201,6 +211,15 @@ class Maze {
 	{
 		return this.nodeArray;
 	}
+	public void setResultArray(ArrayList<Result> resultArray)
+	{
+		this.resultArray = resultArray;
+	}
+	public ArrayList<Result> getResultArray()
+	{
+		return this.resultArray;
+	}
+	
 	// Return the startNode in nodeArray
 	Node getStartNode()
 	{
@@ -211,6 +230,7 @@ class Maze {
 				return n;
 		return null;
 	}
+	
 	// Return the endNode in nodeArray
 	Node getEndNode()
 	{
@@ -221,6 +241,7 @@ class Maze {
 				return n;
 		return null;
 	}
+	
 	// Return a node in nodeArray based on coordinates
 	private Node getCoordNode(int x, int y)
 	{
@@ -229,6 +250,7 @@ class Maze {
 				return n;
 		return null;
 	}
+	
 	// Get the next node based on the current node and desired direction
 	private Node getNextNode(Node node, char direction)
 	{
@@ -245,34 +267,6 @@ class Maze {
 			default:
 				return null;
 		}
-	}
-	// Get the number of outgoing paths based on an incoming direction.
-	private int getOutPathCount(Node node, char inFrom)
-	{
-		int count = 0;
-		if(!node.getNorthWall() && Character.toUpperCase(inFrom) != 'N')
-			count++;
-		if(!node.getEastWall() && Character.toUpperCase(inFrom) != 'E')
-			count++;
-		if(!node.getSouthWall() && Character.toUpperCase(inFrom) != 'S')
-			count++;
-		if(!node.getWestWall() && Character.toUpperCase(inFrom) != 'W')
-			count++;
-		return count;
-	}
-	// If a node has a branching factor of 2/4, return the out direction based on the in direction.
-	private char getOutPathDirection(Node node, char inFrom)
-	{
-		if(!node.getNorthWall() && Character.toUpperCase(inFrom) != 'N')
-			return 'N';
-		else if(!node.getEastWall() && Character.toUpperCase(inFrom) != 'E')
-			return 'E';
-		else if(!node.getSouthWall() && Character.toUpperCase(inFrom) != 'S')
-			return 'S';
-		else if(!node.getWestWall() && Character.toUpperCase(inFrom) != 'W')
-			return 'W';
-		else
-			return 'X';
 	}
 	
 	// Get a node's path count
@@ -424,17 +418,13 @@ class Maze {
 		coreLoopCount = 0;
 		
 		/* Find the longest tail and set isLongestTail = true for involved nodes. Return the longestTailCount */
-		longestTailCount = 0;
 		longestTailCount = setLongestTailNodes();
-		System.out.println("after longest tail: " + longestTailCount);		
+		
 		/* Calculate and Set branchFactor */
 		branchFactor = calcBranchFactor();
 		
 		/* Calculate and Set complexity */
 		complexity = calcComplexity();
-		
-		/*Testing out DFSSTEP */
-		//System.out.println("DFS STEP: " + this.dfsStep());
 	}
 	
 	/* Generation Methods */
@@ -735,150 +725,76 @@ class Maze {
 				count++;
 		return count;
 	}
-	// Find the longest tail and return its count. 
-		// !isCoreNode can be use determine which nodes come after the isEndIntersectionNode
-		private int setToLongestTail (Stack<Pair> traveled) {
-//			if (getCoordNode(traveled.peek().getXCoord(), traveled.peek().getYCoord()).getIsEndIntersection()) {
-//				traveled.pop();		// don't set end intersection
-//			}
-			System.out.println(traveled);
-			for (Pair p : traveled) {
-				getCoordNode(p.getXCoord(), p.getYCoord()).setIsLongestTailNode(true);
-			}
-			return traveled.size();
+
+	private void stepTail(ArrayList<Node> nodes, boolean[][] visited, Node current)
+	{
+		// Tag all tail nodes up to end node
+		if(!current.getIsEndIntersection())
+		{
+			visited[current.getXCoord()][current.getYCoord()] = true;
+			for(Node n : nodeArray)
+				if(n.getXCoord() == current.getXCoord() && n.getYCoord() == current.getYCoord())
+					n.setIsLongestTailNode(true);
 		}
-
-			// Find the longest tail and return its count. 
-				// !isCoreNode can be use determine which nodes come after the isEndIntersectionNode
-				public int setLongestTailNodes()
-				{		
-					ArrayList<Node> temp = new ArrayList<Node>(); 
-					Map<Pair,String> TailMap = new HashMap<Pair,String>();
-					String skey ;
-					int ikey = 1 ; 
-					int x , y; 
-					String START = "" ;
-					String END = "" ;
-					String CNODE =""; //Current Node
-					String NNODE =""; //Start Node
-					for(Node n : nodeArray){
-						if(n.getIsCoreNode() != true){
-							temp.add(n);
-						}
-					}
-					
-					
-					for(Node n : temp){ //Add Nodes to Hashmap based on number index 
-						skey = Integer.toString(ikey) ; 
-						x = n.getXCoord();
-						y = n.getYCoord();
-						if(n.getIsEndIntersection() == true){
-							START = skey; 
-						}
-						if(n.getIsEndNode() == true){
-							END = skey; 
-						}
-						TailMap.put( new Pair(x,y),skey );
-						ikey++;
-					}
-					
-						
-							System.out.println(TailMap.values());
-						
-					
-						Graph graph = new Graph();
-						for(Node n : temp){
-							if(n.getNorthWall() == false ){ //Add edge for North Case 
-								x = n.getXCoord();
-								y = n.getYCoord();
-								CNODE = TailMap.get(new Pair(x,y) );
-								y++; 
-								NNODE = TailMap.get(new Pair(x,y) );
-								if(NNODE != null){
-									graph.addEdge(CNODE, NNODE);
-								}
-							}
-							
-							if(n.getSouthWall() == false ){ //Add edge for South Case 
-								x = n.getXCoord();
-								y = n.getYCoord();
-								CNODE = TailMap.get(new Pair(x,y) );
-								y--; 
-								NNODE = TailMap.get(new Pair(x,y) );
-								if(NNODE != null){
-									graph.addEdge(CNODE, NNODE);
-								}
-							}
-							
-							if(n.getEastWall() == false ){ //Add edge for East Case 
-								x = n.getXCoord();
-								y = n.getYCoord();
-								CNODE = TailMap.get(new Pair(x,y) );
-								x++; 
-								NNODE = TailMap.get(new Pair(x,y) );
-								if(NNODE != null){
-									graph.addEdge(CNODE, NNODE);
-								}
-							}
-							
-							if(n.getWestWall() == false ){ //Add edge for SWEst Case 
-								x = n.getXCoord();
-								y = n.getYCoord();
-								CNODE = TailMap.get(new Pair(x,y) );
-								x--; 
-								NNODE = TailMap.get(new Pair(x,y) );
-								if(NNODE != null){
-									graph.addEdge(CNODE, NNODE);
-								}
-							}
-							
-
-						}
-						
-						System.out.println("Test");
-				        LinkedList<String> visited = new LinkedList<String>();
-				        visited.add(START);
-				        new Maze().depthFirst(graph, visited,START, END);
-				        return 1;
-				    }
-
-				    private void depthFirst(Graph graph, LinkedList<String> visited, String START, String END) {
-				        LinkedList<String> nodes = graph.adjacentNodes(visited.getLast());
-				        // examine adjacent nodes
-				        for (String node : nodes) {
-				            if (visited.contains(node)) {
-				                continue;
-				            }
-				            if (node.equals(END)) {
-				                visited.add(node);
-				                printPath(visited);
-				                visited.removeLast();
-				                break;
-				            }
-				        }
-				        for (String node : nodes) {
-				            if (visited.contains(node) || node.equals(END)) {
-				                continue;
-				            }
-				            visited.addLast(node);
-				            depthFirst(graph, visited, START, END);
-				            visited.removeLast();
-				        }
-				    }
-
-				    private void printPath(LinkedList<String> visited) {
-				        for (String node : visited) {
-				            System.out.print(node);
-				            System.out.print(" ");
-				        }
-				        System.out.println();
-				        
-				}	
-				
-				
-				
-				
-				
+		if(current.getIsEndNode())
+		{
+			return;
+		}
+		for(Node n : nodes)
+			if
+			(
+				(!current.getNorthWall() && getNextNode(current,'N') == n && !visited[n.getXCoord()][n.getYCoord()]) ||
+				(!current.getEastWall() && getNextNode(current,'E') == n && !visited[n.getXCoord()][n.getYCoord()]) ||
+				(!current.getSouthWall() && getNextNode(current,'S') == n && !visited[n.getXCoord()][n.getYCoord()]) ||
+				(!current.getWestWall() && getNextNode(current,'W') == n && !visited[n.getXCoord()][n.getYCoord()])
+			)
+				stepTail(nodes,visited,n);
+	}
+	
+	// Find the longest tail and return its count.
+	private int setLongestTailNodes()
+	{
+		boolean[][] visited = new boolean[51][51];
+		// Since our mazes do not generate loops
+			// Every node from end-intersection to end node contributes to the longest path as a deadend
+			// minus the nodes blocked by the end node.
+			
+		// Remove the core nodes and mark the start node
+		ArrayList<Node> nodes = new ArrayList<Node>();
+		Node start = null;
+		for(Node n : nodeArray)
+		{
+			if(!n.getIsCoreNode() || n.getIsEndIntersection())
+				nodes.add(n);
+			if(n.getIsEndIntersection())
+				start = n;
+		}
+		
+		// From end-Intersection, tag every node that isnt blocked by end-node
+		stepTail(nodes,visited,start);
+		
+		// Remove all the nodes not marked
+		nodes.clear();
+		for(Node n : nodeArray)
+			if(n.getIsLongestTailNode())
+				nodes.add(n);
+		
+		// Calculate the longest tail
+		int count = 0;
+		for(Node n : nodes)
+		{
+			count += 2;
+			if(n.getIsOptimalPath() && !n.getIsEndIntersection())
+				count--;
+			if(n.getIsDeadend())
+				count--;
+			if(n.getIsIntersection())
+				count++;
+		}
+		
+		return count;
+	}
+  
 	// Calculate the branch factor for the maze
 	public double calcBranchFactor() 
 	{
@@ -1159,6 +1075,18 @@ class Maze {
 		            		temp = new Node();
 		            		i++;
 		            		break;	
+		            	case "Results":
+		            		i++;
+							resultArray = new ArrayList<Result>();
+		            		break;
+		            	case "Result":
+		            		i = i+2;
+		                    int r, c;
+		            		r = Integer.parseInt(tokens[i]);
+		                    i++;
+		                    c = Integer.parseInt(tokens[i]);
+		                    resultArray.add(new Result(r,c));
+		                    break;
 		            	case "Coordinates":  
 		                    i= i+2;
 		                    itemp = Integer.parseInt(tokens[i]);
