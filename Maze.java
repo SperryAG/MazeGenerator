@@ -38,6 +38,7 @@ class Maze {
 	private int complexity;
 	private Node[] nodeArray;
 	private ArrayList<Result> resultArray;
+	private int optimalRobotCount;
 	
 	/* Constructors */
 	public Maze() {
@@ -57,7 +58,8 @@ class Maze {
 		this.branchFactor = -1;
 		this.complexity = -1;
 		this.nodeArray = null;
-		this.resultArray = new ArrayList<Result>();;
+		this.resultArray = new ArrayList<Result>();
+		this.optimalRobotCount = -1;
 	}
 	
 	public Maze(String title, int gridSize) {
@@ -77,7 +79,8 @@ class Maze {
 		this.branchFactor = -1;
 		this.complexity = -1;
 		this.nodeArray = null;
-		this.resultArray = new ArrayList<Result>();;
+		this.resultArray = new ArrayList<Result>();
+		this.optimalRobotCount = -1;
 	}
 	
 	public Maze(String title, int gridSize, int activeNodeCount) {
@@ -98,6 +101,7 @@ class Maze {
 		this.complexity = -1;
 		this.nodeArray = new Node[activeNodeCount];
 		this.resultArray = new ArrayList<Result>();
+		this.optimalRobotCount = -1;
 	}
 	
 	/* General Methods */
@@ -191,6 +195,12 @@ class Maze {
 	public int getComplexity() {
 		return complexity;
 	}
+	public void setOptimalRobotCount(int optimalRobotCount) {
+		this.optimalRobotCount = optimalRobotCount;
+	}
+	public int getOptimalRobotCount() {
+		return optimalRobotCount;
+	}
 	public void setNodeArray(Node[] nodeArray)
 	{
 		this.nodeArray = nodeArray;
@@ -199,6 +209,15 @@ class Maze {
 	{
 		return this.nodeArray;
 	}
+	public void setResultArray(ArrayList<Result> resultArray)
+	{
+		this.resultArray = resultArray;
+	}
+	public ArrayList<Result> getResultArray()
+	{
+		return this.resultArray;
+	}
+	
 	// Return the startNode in nodeArray
 	Node getStartNode()
 	{
@@ -209,6 +228,7 @@ class Maze {
 				return n;
 		return null;
 	}
+	
 	// Return the endNode in nodeArray
 	Node getEndNode()
 	{
@@ -219,6 +239,7 @@ class Maze {
 				return n;
 		return null;
 	}
+	
 	// Return a node in nodeArray based on coordinates
 	private Node getCoordNode(int x, int y)
 	{
@@ -227,6 +248,7 @@ class Maze {
 				return n;
 		return null;
 	}
+	
 	// Get the next node based on the current node and desired direction
 	private Node getNextNode(Node node, char direction)
 	{
@@ -243,34 +265,6 @@ class Maze {
 			default:
 				return null;
 		}
-	}
-	// Get the number of outgoing paths based on an incoming direction.
-	private int getOutPathCount(Node node, char inFrom)
-	{
-		int count = 0;
-		if(!node.getNorthWall() && Character.toUpperCase(inFrom) != 'N')
-			count++;
-		if(!node.getEastWall() && Character.toUpperCase(inFrom) != 'E')
-			count++;
-		if(!node.getSouthWall() && Character.toUpperCase(inFrom) != 'S')
-			count++;
-		if(!node.getWestWall() && Character.toUpperCase(inFrom) != 'W')
-			count++;
-		return count;
-	}
-	// If a node has a branching factor of 2/4, return the out direction based on the in direction.
-	private char getOutPathDirection(Node node, char inFrom)
-	{
-		if(!node.getNorthWall() && Character.toUpperCase(inFrom) != 'N')
-			return 'N';
-		else if(!node.getEastWall() && Character.toUpperCase(inFrom) != 'E')
-			return 'E';
-		else if(!node.getSouthWall() && Character.toUpperCase(inFrom) != 'S')
-			return 'S';
-		else if(!node.getWestWall() && Character.toUpperCase(inFrom) != 'W')
-			return 'W';
-		else
-			return 'X';
 	}
 	
 	// Get a node's path count
@@ -422,17 +416,13 @@ class Maze {
 		coreLoopCount = 0;
 		
 		/* Find the longest tail and set isLongestTail = true for involved nodes. Return the longestTailCount */
-		longestTailCount = 0;
-		//longestTailCount = setLongestTailNodes();
-		//System.out.println("after longest tail");		
+		longestTailCount = setLongestTailNodes();
+		
 		/* Calculate and Set branchFactor */
 		branchFactor = calcBranchFactor();
 		
 		/* Calculate and Set complexity */
 		complexity = calcComplexity();
-		
-		/*Testing out DFSSTEP */
-		//System.out.println("DFS STEP: " + this.dfsStep());
 	}
 	
 	/* Generation Methods */
@@ -733,314 +723,77 @@ class Maze {
 				count++;
 		return count;
 	}
-	// Find the longest tail and return its count. 
-		// !isCoreNode can be use determine which nodes come after the isEndIntersectionNode
-		private int setToLongestTail (Stack<Pair> traveled) {
-			for (Pair p : traveled) {
-				getCoordNode(p.getXCoord(), p.getYCoord()).setIsLongestTailNode(true);
-			}
-			return traveled.size();
+	
+	
+	private void stepTail(ArrayList<Node> nodes, boolean[][] visited, Node current)
+	{
+		// Tag all tail nodes up to end node
+		if(!current.getIsEndIntersection())
+		{
+			visited[current.getXCoord()][current.getYCoord()] = true;
+			for(Node n : nodeArray)
+				if(n.getXCoord() == current.getXCoord() && n.getYCoord() == current.getYCoord())
+					n.setIsLongestTailNode(true);
 		}
-		// recursively calls itself down a path as it intersects
-		// if multiple of these paths reach the endIntersection node
-			// then it returns the length of the path and the coordinates of the endIntersection of the longest one
-		// if none of the paths lead to the end intersection, it returns -1 and the invalid coordinates of (-1, -1)
-		private Map<Integer, Stack<Pair>> traversingLongestTailPaths(ArrayList<Pair> neighbors, Stack<Pair> traveled) {
-			Map<Integer, Stack<Pair>> toReturn1 = new HashMap<Integer, Stack<Pair>>();
-			toReturn1.put(-2, null);
-			Map<Integer, Stack<Pair>> toReturn2 = new HashMap<Integer, Stack<Pair>>();
-			toReturn2.put(-2, null);
-			Map<Integer, Stack<Pair>> toReturn3 = new HashMap<Integer, Stack<Pair>>();
-			toReturn3.put(-2, null);
-			if (neighbors.size() == 1) {	// node is a deadend
-				if (getCoordNode(neighbors.get(0).getXCoord(), neighbors.get(0).getYCoord()).getIsEndIntersection()) {	// if node is endIntersection
-					toReturn1.clear();
-					toReturn1.put(traveled.size(), traveled);
-				}
-				else {
-					Stack<Pair> toAdd = new Stack<Pair>();
-					toAdd.push(new Pair(-1, -1));
-					toReturn1.clear();
-					toReturn1.put(-1, toAdd);
-				}
-			}
-			else if (neighbors.size() == 2) {	// node is a neutral node (not a deadend or intersection)
-				for (int i = 0; i < neighbors.size(); i++) {
-					if (neighbors.get(i) != traveled.peek()) {
-						traveled.push(neighbors.get(i));
-						neighbors = getCoordNode(traveled.peek().getXCoord(), traveled.peek().getYCoord()).getAllNeighbors(traveled);
-						toReturn2.clear();
-						toReturn2 = traversingLongestTailPaths(neighbors, traveled);
-					}
-				}
-			}
-			else if (neighbors.size() > 2) {	// node is an intersection
-				Map<Integer, Stack<Pair>> tempReturn1 = new HashMap<Integer, Stack<Pair>>();
-				tempReturn1.put(-2, null);
-				Map<Integer, Stack<Pair>> tempReturn2 = new HashMap<Integer, Stack<Pair>>();
-				tempReturn1.put(-2, null);
-				Map<Integer, Stack<Pair>> tempReturn3 = new HashMap<Integer, Stack<Pair>>();
-				tempReturn1.put(-2, null);
-				for (int i = 0; i < neighbors.size(); i++) {
-					if (neighbors.get(i) != traveled.peek()) {
-						traveled.push(neighbors.get(i));
-						neighbors = getCoordNode(traveled.peek().getXCoord(), traveled.peek().getYCoord()).getAllNeighbors(traveled);
-						if (tempReturn1.containsKey(-2)) {
-							tempReturn1.clear();
-							tempReturn1 = traversingLongestTailPaths(neighbors, traveled);
-						}
-						else if (!tempReturn1.containsKey(-2) && tempReturn2.containsKey(-2)) {
-							tempReturn2.clear();
-							tempReturn2 = traversingLongestTailPaths(neighbors, traveled);
-						}
-						else if (!tempReturn1.containsKey(-2) && !tempReturn2.containsKey(-2) && tempReturn3.containsKey(-2)) {
-							tempReturn3.clear();
-							tempReturn3 = traversingLongestTailPaths(neighbors, traveled);
-						}
-					}
-				}
-				int tempMaxLength1 = tempReturn1.entrySet().iterator().next().getKey();
-				int tempMaxLength2 = tempReturn2.entrySet().iterator().next().getKey();
-				int tempMaxLength3 = tempReturn3.entrySet().iterator().next().getKey();
-				toReturn3.clear();
-				if (Math.max(Math.max(tempMaxLength1, tempMaxLength2), tempMaxLength3) == tempMaxLength1) {
-					toReturn3 = tempReturn1;
-				}
-				else if (Math.max(Math.max(tempMaxLength1, tempMaxLength2), tempMaxLength3) == tempMaxLength2) {
-					toReturn3 = tempReturn2;
-				}
-				else if (Math.max(Math.max(tempMaxLength1, tempMaxLength2), tempMaxLength3) == tempMaxLength3) {
-					toReturn3 = tempReturn3;
-				}
-			}
-			int maxLength1 = toReturn1.entrySet().iterator().next().getKey();
-			int maxLength2 = toReturn2.entrySet().iterator().next().getKey();
-			int maxLength3 = toReturn3.entrySet().iterator().next().getKey();
-			if (Math.max(Math.max(maxLength1, maxLength2), maxLength3) == maxLength1) {
-				return toReturn1;
-			}
-			if (Math.max(Math.max(maxLength1, maxLength2), maxLength3) == maxLength2) {
-				return toReturn2;
-			}
-			else {
-//			if (Math.max(Math.max(maxLength1, maxLength2), maxLength3) == maxLength3) {
-				return toReturn3;
-			}
+		if(current.getIsEndNode())
+		{
+			return;
+		}
+		for(Node n : nodes)
+			if
+			(
+				(!current.getNorthWall() && getNextNode(current,'N') == n && !visited[n.getXCoord()][n.getYCoord()]) ||
+				(!current.getEastWall() && getNextNode(current,'E') == n && !visited[n.getXCoord()][n.getYCoord()]) ||
+				(!current.getSouthWall() && getNextNode(current,'S') == n && !visited[n.getXCoord()][n.getYCoord()]) ||
+				(!current.getWestWall() && getNextNode(current,'W') == n && !visited[n.getXCoord()][n.getYCoord()])
+			)
+				stepTail(nodes,visited,n);
+	}
+	
+	// Find the longest tail and return its count.
+	private int setLongestTailNodes()
+	{
+		boolean[][] visited = new boolean[51][51];
+		// Since our mazes do not generate loops
+			// Every node from end-intersection to end node contributes to the longest path as a deadend
+			// minus the nodes blocked by the end node.
+			
+		// Remove the core nodes and mark the start node
+		ArrayList<Node> nodes = new ArrayList<Node>();
+		Node start = null;
+		for(Node n : nodeArray)
+		{
+			if(!n.getIsCoreNode() || n.getIsEndIntersection())
+				nodes.add(n);
+			if(n.getIsEndIntersection())
+				start = n;
 		}
 		
-		// Find the longest tail and return its count. 
-				// !isCoreNode can be use determine which nodes come after the isEndIntersectionNode
-				public int setLongestTailNodes()
-				{
-					for (Node n: this.nodeArray) {
-						System.out.println(n.toString());
-					}
-					setEndIntersectionNode();
-//					Node endIntersection = new Node();
-					Node endNode = new Node();
-					Pair endPair = new Pair(0, 0);
-					for (Node n : this.nodeArray) {
-						if (n.getIsEndNode()) {
-							endNode = n;
-							endPair.update(n.getXCoord(), n.getYCoord());
-							break;
-						}
-					}
-					System.out.println("EndNode: " + endNode + " EndPair: " + endPair);
-					Stack<Pair> traveled = new Stack<Pair>();
-					traveled.push(endPair);
-					ArrayList<Pair> neighbors = endNode.getAllNeighbors(traveled);
-					System.out.println("Traveled: " + traveled + " neighbors: " + neighbors);
-					if (neighbors.size() == 1) {	// only optimal path
-						getCoordNode(neighbors.get(0).getXCoord(), neighbors.get(0).getYCoord()).setIsLongestTailNode(true);	// sets neighbor of endNode to be true
-						Stack<Pair> traveledOptimal = new Stack<Pair>();
-						traveledOptimal.push(endPair);
-//						traveledOptimal.push(neighbors.get(0));
-						boolean isEndIntersection = false;
-						while (!isEndIntersection) {	// while node is not endIntersection
-							System.out.println("only optimal path loop: " + neighbors);
-							if (getCoordNode(neighbors.get(0).getXCoord(), neighbors.get(0).getYCoord()).getIsEndIntersection()) {
-								int toReturn = setToLongestTail(traveled);
-								return toReturn - 1;
-//								return 1;
-							}
-							ArrayList<Pair> temp = getCoordNode(neighbors.get(0).getXCoord(), neighbors.get(0).getYCoord()).getAllNeighbors(traveledOptimal);
-							System.out.println("temp size: " + temp.size());
-							System.out.println("temp: " + temp);
-							if(temp.size() > 1){System.exit(0);}
-							for (Pair p : temp) {
-								System.out.println("in optimal path only for loop: " + getCoordNode(p.getXCoord(), p.getYCoord()).getIsOptimalPath());
-								if (getCoordNode(p.getXCoord(), p.getYCoord()).getIsEndIntersection()) {
-									isEndIntersection = true;
-									break;
-								}
-								if (getCoordNode(p.getXCoord(), p.getYCoord()).getIsOptimalPath()) {
-									traveledOptimal.push(p);
-									getCoordNode(p.getXCoord(), p.getYCoord()).setIsLongestTailNode(true);
-									neighbors.clear();
-									neighbors = getCoordNode(p.getXCoord(), p.getYCoord()).getAllNeighbors(traveledOptimal);
-									System.out.print("neighbors after update: " + neighbors);
-									break;
-								}
-							}
-							if (neighbors.get(0) == temp.get(0)) {	// neighbors was not updated, end intersection was reached
-								int toReturn = setToLongestTail(traveled);
-								return toReturn;
-							}
-						}
-					}
-					Stack<Pair> traveled1 = traveled;
-					Stack<Pair> traveled2 = traveled;
-					Stack<Pair> traveled3 = traveled;
-//					ArrayList<Pair> temp1 = new ArrayList<Pair>();
-					boolean temp1inUse = false;
-//					ArrayList<Pair> temp2 = new ArrayList<Pair>();
-					boolean temp2inUse = false;
-//					ArrayList<Pair> temp3 = new ArrayList<Pair>();
-					boolean temp3inUse = false;
-					for (int i = 0; i < neighbors.size(); i++) {	// if more than just optimal path is available
-						System.out.println("more than optimal loop");
-//						ArrayList<Pair> temp1 = new ArrayList<Pair>();
-//						boolean temp1inUse = false;
-//						ArrayList<Pair> temp2 = new ArrayList<Pair>();
-//						boolean temp2inUse = false;
-//						ArrayList<Pair> temp3 = new ArrayList<Pair>();
-//						boolean temp3inUse = false;
-						if (getCoordNode(neighbors.get(i).getXCoord(), neighbors.get(i).getYCoord()).getIsEndIntersection()) {
-							int toReturn = setToLongestTail(traveled);
-							return toReturn - 1;	// traveled.size()
-						}
-						if (!getCoordNode(neighbors.get(i).getXCoord(), neighbors.get(i).getYCoord()).getIsOptimalPath()) {
-							if (traveled1 == traveled) {
-								traveled1.push(neighbors.get(i));
-//								temp1 = getCoordNode(neighbors.get(i).getXCoord(), neighbors.get(i).getYCoord()).getAllNeighbors(traveled1);
-								temp1inUse = true;
-							}
-							else if (traveled1 != traveled && traveled2 == traveled) {
-								traveled2.push(neighbors.get(i));
-//								temp2 = getCoordNode(neighbors.get(i).getXCoord(), neighbors.get(i).getYCoord()).getAllNeighbors(traveled2);
-								temp2inUse = true;
-							}
-							else if (traveled1 != traveled && traveled2 != traveled && traveled3 == traveled) {
-								traveled3.push(neighbors.get(i));
-//								temp3 = getCoordNode(neighbors.get(i).getXCoord(), neighbors.get(i).getYCoord()).getAllNeighbors(traveled3);
-								temp2inUse = true;
-							}
-						}
-//						Map<Integer, Stack<Pair>> toReturn1, toReturn2, toReturn3;
-//						while (temp1inUse) {	// follow first path until you reach endIntersection node
-//							neighbors = getCoordNode(traveled1.peek().getXCoord(), traveled1.peek().getXCoord()).getNeighbors(traveled1);
-//							toReturn1 = traversingLongestTailPaths(neighbors, traveled1); 
-//							if (traveled1.peek().getCoords() == "(-1, -1)") {	// if no endIntersection path was found
-//								temp1inUse = false;
-//							}
-//							else {	// To Do: the last pair returned should be the endIntersection node...?
-//								neighbors = getCoordNode(traveled1.peek().getXCoord(), traveled1.peek().getXCoord()).getNeighbors(traveled1);
-//							}
-//						}
-//						while (temp2inUse) {	// follow second path (if there is one) until you reach endIntersection node
-//							neighbors = getCoordNode(traveled2.peek().getXCoord(), traveled2.peek().getXCoord()).getNeighbors(traveled2);
-//							toReturn2 = traversingLongestTailPaths(neighbors, traveled2);	// should traverse any branching paths and set isLongestTail as needed
-//							if (traveled2.peek().getCoords() == "(-1, -1)") {	// if no endIntersection path was found
-//								temp2inUse = false;
-//							}
-//							else {	// To Do: the last pair returned should be the endIntersection node...?
-//								neighbors = getCoordNode(traveled2.peek().getXCoord(), traveled2.peek().getXCoord()).getNeighbors(traveled2);
-//							}
-//						}
-//						while (temp3inUse) {	// follow third path (if there is one) until you reach endIntersection node
-//							neighbors = getCoordNode(traveled3.peek().getXCoord(), traveled3.peek().getXCoord()).getNeighbors(traveled3);
-//							toReturn3 = traversingLongestTailPaths(neighbors, traveled3);
-//							if (traveled3.peek().getCoords() == "(-1, -1)") {	// if no endIntersection path was found
-//								temp3inUse = false;
-//							}
-//							else {	// To Do: the last pair returned should be the endIntersection node...?
-//								neighbors = getCoordNode(traveled3.peek().getXCoord(), traveled3.peek().getXCoord()).getNeighbors(traveled3);
-//							}
-//						}
-//						int maxLength1 = toReturn1.entrySet().iterator().next().getKey();
-//						int maxLength2 = toReturn2.entrySet().iterator().next().getKey();
-//						int maxLength3 = toReturn3.entrySet().iterator().next().getKey();
-//						if (Math.max(Math.max(maxLength1, maxLength2), maxLength3) == maxLength1) {
-//							setToLongestTail(toReturn1.get(maxLength1));
-//						}
-//						else if (Math.max(Math.max(maxLength1, maxLength2), maxLength3) == maxLength2) {
-//							setToLongestTail(toReturn2.get(maxLength2));
-//						}
-//						else if (Math.max(Math.max(maxLength1, maxLength2), maxLength3) == maxLength3) {
-//							setToLongestTail(toReturn3.get(maxLength3));
-//						}
-					}
-					Map<Integer, Stack<Pair>> toReturn1 = new HashMap<Integer, Stack<Pair>>();
-					toReturn1.put(-2, null);
-					Map<Integer, Stack<Pair>> toReturn2 = new HashMap<Integer, Stack<Pair>>();
-					toReturn2.put(-2, null);
-					Map<Integer, Stack<Pair>> toReturn3 = new HashMap<Integer, Stack<Pair>>();
-					toReturn3.put(-2, null);
-					while (temp1inUse) {	// follow first path until you reach endIntersection node
-						System.out.println("in temp1 loop: " + traveled1 + " " + traveled1.peek());
-//						if (getCoordNode(traveled1.peek().getXCoord(), traveled1.peek().getYCoord()).getAllNeighbors(traveled1) == null) {
-//							break;
-//						}
-						neighbors = getCoordNode(traveled1.peek().getXCoord(), traveled1.peek().getYCoord()).getAllNeighbors(traveled1);
-						toReturn1.clear();
-						toReturn1 = traversingLongestTailPaths(neighbors, traveled1);
-						System.out.println("toreturn1: " + toReturn1);
-//						if (traveled1.peek().getCoords() == "(-1, -1)") {	// if no endIntersection path was found
-//						if (toReturn1.entrySet().iterator().next().getKey() == -1) {	// if no endIntersection path was found
-						temp1inUse = false;
-//						}
-//						else {	// To Do: the last pair returned should be the endIntersection node...?
-//							neighbors = getCoordNode(traveled1.peek().getXCoord(), traveled1.peek().getXCoord()).getAllNeighbors(traveled1);
-//						}
-					}
-					while (temp2inUse) {	// follow second path (if there is one) until you reach endIntersection node
-						System.out.println("in temp2 loop");
-						if (getCoordNode(traveled2.peek().getXCoord(), traveled2.peek().getXCoord()).getAllNeighbors(traveled2) == null) {
-							break;
-						}
-						neighbors = getCoordNode(traveled2.peek().getXCoord(), traveled2.peek().getXCoord()).getAllNeighbors(traveled2);
-						toReturn2.clear();
-						toReturn2 = traversingLongestTailPaths(neighbors, traveled2);	// should traverse any branching paths and set isLongestTail as needed
-//						if (traveled2.peek().getCoords() == "(-1, -1)") {	// if no endIntersection path was found
-//						if (toReturn2.entrySet().iterator().next().getKey() == -1) {	// if no endIntersection path was found
-						temp2inUse = false;
-//						}
-//						else {	// To Do: the last pair returned should be the endIntersection node...?
-//							neighbors = getCoordNode(traveled2.peek().getXCoord(), traveled2.peek().getXCoord()).getAllNeighbors(traveled2);
-//						}
-					}
-					while (temp3inUse) {	// follow third path (if there is one) until you reach endIntersection node
-						System.out.println("in temp3 loop");
-						if (getCoordNode(traveled3.peek().getXCoord(), traveled3.peek().getXCoord()).getAllNeighbors(traveled3) == null) {
-							break;
-						}
-						neighbors = getCoordNode(traveled3.peek().getXCoord(), traveled3.peek().getXCoord()).getAllNeighbors(traveled3);
-						toReturn3.clear();
-						toReturn3 = traversingLongestTailPaths(neighbors, traveled3);
-//						if (traveled3.peek().getCoords() == "(-1, -1)") {	// if no endIntersection path was found
-//						if (toReturn3.entrySet().iterator().next().getKey() == -1) {	// if no endIntersection path was found
-						temp3inUse = false;
-//						}
-//						else {	// To Do: the last pair returned should be the endIntersection node...?
-//							neighbors = getCoordNode(traveled3.peek().getXCoord(), traveled3.peek().getXCoord()).getAllNeighbors(traveled3);
-//						}
-					}
-					int maxLength1 = toReturn1.entrySet().iterator().next().getKey();
-					int maxLength2 = toReturn2.entrySet().iterator().next().getKey();
-					int maxLength3 = toReturn3.entrySet().iterator().next().getKey();
-					int toReturnFinal = -2;
-					if (Math.max(Math.max(maxLength1, maxLength2), maxLength3) == maxLength1) {
-						toReturnFinal = setToLongestTail(toReturn1.get(maxLength1));
-					}
-					else if (Math.max(Math.max(maxLength1, maxLength2), maxLength3) == maxLength2) {
-						toReturnFinal = setToLongestTail(toReturn2.get(maxLength2));
-					}
-					else if (Math.max(Math.max(maxLength1, maxLength2), maxLength3) == maxLength3) {
-						toReturnFinal = setToLongestTail(toReturn3.get(maxLength3));
-					}
-					return toReturnFinal - 1;
-				}
+		// From end-Intersection, tag every node that isnt blocked by end-node
+		stepTail(nodes,visited,start);
+		
+		// Remove all the nodes not marked
+		nodes.clear();
+		for(Node n : nodeArray)
+			if(n.getIsLongestTailNode())
+				nodes.add(n);
+		
+		// Calculate the longest tail
+		int count = 0;
+		for(Node n : nodes)
+		{
+			count += 2;
+			if(n.getIsOptimalPath() && !n.getIsEndIntersection())
+				count--;
+			if(n.getIsDeadend())
+				count--;
+			if(n.getIsIntersection())
+				count++;
+		}
+		
+		return count;
+	}
+	
 	// Calculate the branch factor for the maze
 	public double calcBranchFactor() 
 	{
@@ -1321,6 +1074,18 @@ class Maze {
 		            		temp = new Node();
 		            		i++;
 		            		break;	
+		            	case "Results":
+		            		i++;
+							resultArray = new ArrayList<Result>();
+		            		break;
+		            	case "Result":
+		            		i = i+2;
+		                    int r, c;
+		            		r = Integer.parseInt(tokens[i]);
+		                    i++;
+		                    c = Integer.parseInt(tokens[i]);
+		                    resultArray.add(new Result(r,c));
+		                    break;
 		            	case "Coordinates":  
 		                    i= i+2;
 		                    itemp = Integer.parseInt(tokens[i]);

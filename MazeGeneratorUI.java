@@ -61,7 +61,7 @@ public class MazeGeneratorUI {
 	private final int    FRAMEWIDTH         = 800;
 	private final int    FRAMEHEIGHT        = 600;
 	
-	private JFormattedTextField inpMazeTitle;
+	private JTextField inpMazeTitle;
 	private JFormattedTextField inpMazeTitle2;
 	private JFormattedTextField inpEndNodeX;
 	private JFormattedTextField inpEndNodeY;
@@ -122,10 +122,10 @@ public class MazeGeneratorUI {
 		  } catch (ParseException e) {
 		    e.printStackTrace();
 		  }
-		inpMazeTitle = new JFormattedTextField(formatter);
+		inpMazeTitle = new JTextField();
+		inpMazeTitle.setText("");
 		inpMazeTitle.setBackground(Color.WHITE);
 		inpMazeTitle.setBounds(10, 26, 197, 20);
-		inpMazeTitle.setCaretPosition(0);
 		pnlleftTopPanel.add(inpMazeTitle);
 		
 		JLabel lblMazeTitle = new JLabel("Maze Title:");
@@ -269,6 +269,8 @@ public class MazeGeneratorUI {
 								p.setBackground(Color.WHITE);
 								if(nodes[x][y].getIsCoreNode())
 									p.setBackground(Color.GRAY);
+								if(nodes[x][y].getIsLongestTailNode())
+									p.setBackground(Color.RED);
 								if(nodes[x][y].getIsOptimalPath())
 									p.setBackground(Color.decode("#90A8D4"));
 								//if(nodes[x][y].getIsIntersection() && !nodes[x][y].getIsEndIntersection())
@@ -314,10 +316,7 @@ public class MazeGeneratorUI {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				String filename = "";
-				Maze tempMaze = new Maze();
-				tempMaze.setTitle(inpMazeTitle.getText());
-				tempMaze.setGridSize(sldGridSize.getValue());
-				tempMaze.setActiveNodeCount(sldActiveNodeCount.getValue());
+				Maze tempMaze = new Maze(inpMazeTitle.getText(),sldGridSize.getValue(),sldActiveNodeCount.getValue());
 				tempMaze.generateMaze();
 				filename = tempMaze.toFile();
 				model1.addElement(filename);
