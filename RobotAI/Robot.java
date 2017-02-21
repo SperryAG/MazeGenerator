@@ -166,4 +166,15 @@ public class Robot {
 //		this.currentSwarmNode.setIsOccupied(true);
 		return oldNode;
 	}
+	public SwarmNode moveToEnd() {
+		// TODO Auto-generated method stub
+		SwarmNode oldNode = pathTraveled.peek();
+		pathTraveled.pop();
+		oldNode.setIsOccupied(false);	// Exit old node
+		oldNode.setIsDeadend(true);	// Set old node to deadend
+		this.currentSwarmNode = pathTraveled.peek();	// Set new node
+		this.currentSwarmNode.setIsOccupied(true);	// Set new node to occupied
+		this.steps++;
+		return oldNode;
+	}
 }

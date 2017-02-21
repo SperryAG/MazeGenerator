@@ -4,14 +4,18 @@ import java.util.*;
 
 public class Swarm {
 	private int robotCount;
-	Robot[] RobotSet;
+	//Robot[] RobotSet;
+	ArrayList<Robot> RobotSet = new ArrayList<Robot>();
 	Map<Pair, SwarmNode> map;
+	Robot endRobot = null;
 	
 	public Swarm (int robotCount, ArrayList<Node> nodeArray) {
 		this.robotCount = robotCount;
 		this.map = convert(nodeArray);
+		//RobotSet = new Robot[robotCount];
 		for (int i = 0; i < this.robotCount; i++) {
-			RobotSet[i] = new Robot(findStart());
+			//RobotSet[i] = new Robot(findStart());
+			RobotSet.add(new Robot(findStart()));
 		}
 	}
 	
@@ -47,6 +51,12 @@ public class Swarm {
 			map.put(currentRobot.getCurrentSwarmNode().getXYCoords(), currentRobot.getCurrentSwarmNode());	// Update robot's new currentNode
 			if (currentRobot.getAtEnd()) {	// Robot has found the end node
 				//TODO function to getall other robots to get here
+				Stack<SwarmNode> stackToEnd = currentRobot.getPathTraveled();
+				endRobot = currentRobot;
+				RobotSet.remove(endRobot);
+				if(!RobotSet.isEmpty()){
+					moveRobotToEnd(RobotSet, stackToEnd);
+				}
 				//stackToEnd 
 				//set currentRobot to end Robot
 				// remove end robot from RobotSet
@@ -55,5 +65,21 @@ public class Swarm {
 			}
 		}
 		return false;
+	}
+
+	private void moveRobotToEnd(ArrayList<Robot> robotSet, Stack<SwarmNode> stackToEnd) {
+		// Create a robot traversal
+		boolean allAtEnd = false;
+		while(!allAtEnd){
+			for(Robot currentRobot : robotSet){
+				SwarmNode currentNode = currentRobot.getCurrentSwarmNode();
+				if(stackToEnd.contains(currentRobot.getCurrentSwarmNode())==false){ //means that the currentRobot is not on the path to end
+					currentRobot.moveToEnd();//moveToEnd will return a swarmNode similar to update. 
+					
+					
+				}
+			}
+		}
+		
 	}
 }
