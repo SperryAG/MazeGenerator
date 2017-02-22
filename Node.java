@@ -359,32 +359,4 @@ public class Node {
 		}
 		return toReturn;
 	}
-	public ArrayList<Pair> getAllNeighbors(Stack<Pair> pathTraveled) {
- 		ArrayList<Pair> toReturn = new ArrayList<Pair>();
- 		if(this.isWall_North == false){
-  			Pair toAdd = new Pair(this.xCoord, this.yCoord+1);
-  			if(pathTraveled.contains(toAdd) == false){
-  				toReturn.add(new Pair(this.xCoord, this.yCoord +1));
-  			}
- 		}
- 		if(this.isWall_East == false){
- 			Pair toAdd = new Pair(this.xCoord +1, this.yCoord);
- 			if(pathTraveled.contains(toAdd) == false){
- 				toReturn.add(new Pair(this.xCoord +1, this.yCoord));
- 			}
- 		}
- 		if(this.isWall_South == false){
- 			Pair toAdd = new Pair(this.xCoord, this.yCoord-1);
- 			if(pathTraveled.contains(toAdd) == false){
- 				toReturn.add(new Pair(this.xCoord, this.yCoord -1));
- 			}
- 		}
- 		if(this.isWall_West == false){
- 			Pair toAdd = new Pair(this.xCoord-1, this.yCoord);
- 			if(pathTraveled.contains(toAdd) == false){
- 				toReturn.add(new Pair(this.xCoord-1, this.yCoord));
- 			}
- 		}
- 		return toReturn;
- 	}
 }

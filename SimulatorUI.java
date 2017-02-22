@@ -172,6 +172,7 @@ public class SimulatorUI {
 		pnlGrid.setBackground(Color.decode("#4f4f4f"));
 		pnlGrid.setBounds(378, 98, 630, 630);
 		frmMansiMazeSimulator.getContentPane().add(pnlGrid);
+		pnlGrid.setLayout(null);
 		
 		// JPanel - pnlLogo
 		lblProgramTitle = new JLabel("MANS-i");
@@ -342,7 +343,7 @@ public class SimulatorUI {
 		lstMazeList = new JList();
 		lstMazeList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
-				if(!lstMazeList.isSelectionEmpty())
+				if(!lstMazeList.isSelectionEmpty() && !lstMazeList.getValueIsAdjusting())
 				{
 					maze.fromFile(lstMazeList.getSelectedValue().toString());
 					sdrRobotCount.setEnabled(true);
@@ -361,7 +362,7 @@ public class SimulatorUI {
 					generateMazeGrid();
 					refreshRvTChart();
 				}
-				else
+				else if (lstMazeList.isSelectionEmpty() && !lstMazeList.getValueIsAdjusting())
 				{
 					sdrRobotCount.setEnabled(false);
 					sdrSpeed.setEnabled(false);
@@ -380,6 +381,7 @@ public class SimulatorUI {
 					for(JPanel jp : nodePanelList)
 						pnlGrid.remove(jp);
 					nodePanelList.clear();
+					pnlGrid.repaint();
 				}
 				hours = 0; minutes = 0; seconds = 0; tenMillis = 0;
 				lblTimerValue.setText("00:00:00:0");

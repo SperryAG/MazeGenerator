@@ -13,8 +13,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -725,7 +723,8 @@ class Maze {
 				count++;
 		return count;
 	}
-
+	
+	
 	private void stepTail(ArrayList<Node> nodes, boolean[][] visited, Node current)
 	{
 		// Tag all tail nodes up to end node
@@ -794,7 +793,7 @@ class Maze {
 		
 		return count;
 	}
-  
+	
 	// Calculate the branch factor for the maze
 	public double calcBranchFactor() 
 	{
