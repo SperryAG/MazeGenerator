@@ -294,6 +294,7 @@ public class Node {
 		}
 		return toReturn;
 	}
+		
 	public boolean getIsStartNode(){
 		return isStartNode;
 	}

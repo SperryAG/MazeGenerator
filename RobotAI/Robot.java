@@ -171,10 +171,24 @@ public class Robot {
 		SwarmNode oldNode = pathTraveled.peek();
 		pathTraveled.pop();
 		oldNode.setIsOccupied(false);	// Exit old node
-		oldNode.setIsDeadend(true);	// Set old node to deadend
+		
 		this.currentSwarmNode = pathTraveled.peek();	// Set new node
 		this.currentSwarmNode.setIsOccupied(true);	// Set new node to occupied
 		this.steps++;
+		return oldNode;
+	}
+	public SwarmNode continueOnEnd(Stack<SwarmNode> stackToEnd, ArrayList<SwarmNode> neighbors) {
+		// TODO Auto-generated method stub
+		SwarmNode oldNode = pathTraveled.peek();
+		oldNode.setIsOccupied(false);
+		for(SwarmNode node : neighbors){
+			if(stackToEnd.contains(node) && this.pathTraveled.contains(node)== false){
+				this.currentSwarmNode = node;
+				this.currentSwarmNode.setIsOccupied(true);
+				this.steps++;
+			}
+		}
+		
 		return oldNode;
 	}
 }

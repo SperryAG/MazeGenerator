@@ -73,11 +73,37 @@ public class Swarm {
 		while(!allAtEnd){
 			for(Robot currentRobot : robotSet){
 				SwarmNode currentNode = currentRobot.getCurrentSwarmNode();
-				if(stackToEnd.contains(currentRobot.getCurrentSwarmNode())==false){ //means that the currentRobot is not on the path to end
-					currentRobot.moveToEnd();//moveToEnd will return a swarmNode similar to update. 
-					
-					
+				
+				//currentRobot is at the end. Time to remove. 
+				if(currentRobot.getAtEnd()){
+					robotSet.remove(currentRobot);
+					if(robotSet.isEmpty()){
+						allAtEnd = true;
+					}
 				}
+				
+				//backtrack until you hit the currentSwarmNode
+				else if(stackToEnd.contains(currentRobot.getCurrentSwarmNode())==false){ //means that the currentRobot is not on the path to end
+					map.put(currentNode.getXYCoords(), currentRobot.moveToEnd());//moveToEnd will return a swarmNode similar to update.
+					map.put(currentRobot.getCurrentSwarmNode().getXYCoords(), currentRobot.getCurrentSwarmNode());
+				}
+				
+				//once you already are traversing the stack to end.
+				else if(stackToEnd.contains(currentRobot.getCurrentSwarmNode())){
+					Map<String, SwarmNode> neighbors = new HashMap<String, SwarmNode>();
+					for (Map.Entry<String, Pair> entry : currentNode.paths().entrySet()) {
+						if (!map.get(entry.getValue()).isOccupied() && !(!map.get(entry.getValue()).isDeadend())) {	// Only add nodes to neighbors that aren't currently occupied
+							neighbors.put(entry.getKey(), map.get(entry.getValue()));
+						}
+					}
+					ArrayList<SwarmNode> neighbor = new ArrayList<SwarmNode>();
+					for(SwarmNode swarmNode : neighbors.values()){
+						neighbor.add(swarmNode);
+					}
+					map.put(currentNode.getXYCoords(), currentRobot.continueOnEnd(stackToEnd, neighbor));
+					map.put(currentRobot.getCurrentSwarmNode().getXYCoords(), currentRobot.getCurrentSwarmNode());
+				}
+				
 			}
 		}
 		
