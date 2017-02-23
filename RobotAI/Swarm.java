@@ -52,7 +52,7 @@ public class Swarm {
 					neighbors.put(entry.getKey(), map.get(entry.getValue()));
 				}
 			}
-			System.out.println(currentRobot.getIdent() + " " + currentNode + " " + neighbors);
+			System.out.println("Current Robot Ident: " + currentRobot.getIdent() + " XY: " + currentNode.getXYCoords().toString() + " neighbors:  " + neighbors);
 			map.put(currentNode.getXYCoords(), currentRobot.update(neighbors));	// Update robot's previous currentNode
 			System.out.println("New current: " + currentRobot.getCurrentSwarmNode());
 			map.put(currentRobot.getCurrentSwarmNode().getXYCoords(), currentRobot.getCurrentSwarmNode());	// Update robot's new currentNode

@@ -23,9 +23,9 @@ public class SwarmNode extends Node {
 	}
 	
 	public String lastTraveledtoString(SwarmNode lastTraveled){
-		String toReturn = null;
+		String toReturn = "error";
 		Pair coordLastTraveled = lastTraveled.getXYCoords();
-		
+		System.out.println("lastTraveledToSTring pair: " +coordLastTraveled.toString() + " thisCurrentPair: " + this.getXYCoords());
 		if(this.getYCoord()+1 == coordLastTraveled.getYCoord()){
 			toReturn = "North";
 		}
@@ -42,33 +42,55 @@ public class SwarmNode extends Node {
 			toReturn = "West";
 		}
 		
+		System.out.println("lastTraveledtoString: " + toReturn);
 		return toReturn;
 	}
 	
 	public ArrayList<String> leastTraveled(SwarmNode lastTraveled){
+		//System.out.println("enter leastTraveled");
 		ArrayList<String> toReturn = new ArrayList<String>();
 		String previousCoordString = lastTraveled.lastTraveledtoString(lastTraveled);
-
-		toReturn.add("North");
-		toReturn.add("East");
-		toReturn.add("South");
-		toReturn.add("West");
-		toReturn.remove(previousCoordString);
+		
+		if(!this.getNorthWall()){
+			toReturn.add("North");
+		}
+		if(!this.getEastWall()){
+			toReturn.add("East");
+		}
+		if(!this.getSouthWall()){
+			toReturn.add("South");
+		}
+		if(!this.getWestWall()){
+			toReturn.add("West");
+		}
+		
+		if(previousCoordString.equals("error") == false){
+			toReturn.remove(previousCoordString);
+		}
+		
+		//System.out.println("leastTraveled Array: " + toReturn);
 		
 		int min = Integer.MAX_VALUE;
 		for(String direction : toReturn){
 			if(getRobotTraveled(direction) <= min){
+				System.out.println("direction: " + direction + " value: " + getRobotTraveled(direction));
 				min = getRobotTraveled(direction);
 			}
 		}
 		
-		ArrayList<String> temp = toReturn;
-		for(String direction : temp){
-			if(getRobotTraveled(direction)> min){
-				toReturn.remove(direction);
+		System.out.println("min: " + min);
+		
+		ArrayList<String> temp = new ArrayList<String>();
+		
+		//System.out.println("temp: " + temp);
+		for(String direction : toReturn){
+			if(getRobotTraveled(direction)<= min){
+				System.out.println("direction: " + direction + " value: " + getRobotTraveled(direction));
+				temp.add(direction);
 			}
 		}
-		
+		toReturn = temp;
+		//System.out.println("Exited least traveled");
 		return toReturn;
 	}
 	
@@ -151,6 +173,14 @@ public class SwarmNode extends Node {
 		return deadend;
 	}
 	public boolean equals(Object obj) {
-		return this.getXYCoords() == obj. 
+		SwarmNode swarmNode = (SwarmNode) obj;
+		return swarmNode.getXCoord() == this.getXCoord() && swarmNode.getYCoord() == this.getYCoord();
+	}
+	
+	public int hashCode() {
+		  
+	    int hash = this.getXCoord()+this.getYCoord();
+	    //System.out.println("hashcode called" + hash);
+	    return hash;
 	}
 }

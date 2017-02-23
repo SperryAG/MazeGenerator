@@ -119,12 +119,12 @@ public class Robot {
 			System.out.println("in neutral node");
 			for (Map.Entry<String, SwarmNode> entry : nodeSet.entrySet()) {	// for the two entries in nodeSet
 				System.out.println("in for loop: " + entry.getValue().getXYCoords());
-				System.out.println(pathTraveled.toString());
-				System.out.println(entry.getValue().getXYCoords());
-				Pair neighCoords = entry.getValue().getXYCoords();
-				System.out.println(pathTraveled.contains(neighCoords));
+				System.out.println("PathTraveled: " + pathTraveled.toString());
+				System.out.println("Entry value: " + entry.getValue().getXYCoords());
+				Pair neighCoords = entry.getValue().getXYCoords(); //pair form of the neighbor Swarm nodes
+				System.out.println("pathTraveled.Contains: " + pathTraveled.contains(entry));
 //				if (!pathTraveled.contains(entry.getValue().getXYCoords())) {	// if the coordinates of the SwarmNode isn't in pathTraveled
-				if (pathTraveled.peek() == entry.getValue()) {
+				if (!pathTraveled.contains(entry)) {
 					System.out.println("path not contained");
 					SwarmNode oldNode = getCurrentSwarmNode();
 					oldNode.setIsOccupied(false);	// Exit old node
@@ -144,6 +144,9 @@ public class Robot {
 		//For when there's 3 or 4 viable paths to go. 
 		else{
 			
+			System.out.println("3 or 4 paths to go");
+			//System.out.println("nodeSet: " + nodeSet);
+			System.out.println("pathTraveled: " + pathTraveled.toString());
 			Random random  = new Random();
 			List<String> directions = this.currentSwarmNode.leastTraveled(this.pathTraveled.peek()); //substitute nodeSet.keySet() to be the tied directions....
 			SwarmNode oldNode = this.pathTraveled.peek();
@@ -160,10 +163,13 @@ public class Robot {
 			else{
 				boolean newPath = false;
 				while(!newPath){
+					System.out.println("while loop trap");
 					String randomDirection = directions.get(random.nextInt(directions.size()));
+					System.out.println(randomDirection);
 					SwarmNode newDirection = nodeSet.get(randomDirection);
+					System.out.println("newDirection: " + newDirection.getXYCoords());
 //					if(this.pathTraveled.contains(newDirection) == false){
-					if (pathTraveled.peek() != newDirection) {
+					if (!pathTraveled.contains(newDirection)){
 						newPath = true;
 						oldNode.setRobotTraveled(randomDirection);
 						this.currentSwarmNode = newDirection;
@@ -184,6 +190,7 @@ public class Robot {
 //		SwarmNode previousCurrentNode = this.currentSwarmNode;
 		// Choose a direction (all checks and whatnot) DFS & random
 		SwarmNode oldNode = chooseDirection(nodeSet);
+		System.out.println("Exited choose direction");
 		if(this.currentSwarmNode.getIsEndNode()){
 			this.atEnd = true;
 		}
