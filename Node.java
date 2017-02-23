@@ -294,7 +294,23 @@ public class Node {
 		}
 		return toReturn;
 	}
-		
+	
+	public Map<String, Pair> possiblePaths(Pair previous) {
+		Map<String, Pair> toReturn = new HashMap<String, Pair>();
+		if (!this.getNorthWall() && previous.getXCoord() != this.getXCoord() && previous.getYCoord() != this.getYCoord()+1) {
+			toReturn.put("North", new Pair(this.getXCoord(), this.getYCoord() + 1));
+		}
+		if (!this.getEastWall() && previous.getXCoord() != this.getXCoord()+1 && previous.getYCoord() != this.getYCoord()) {
+			toReturn.put("East", new Pair(this.getXCoord() + 1, this.getYCoord()));
+		}
+		if (!this.getSouthWall() && previous.getXCoord() != this.getXCoord() && previous.getYCoord() != this.getYCoord()-1) {
+			toReturn.put("South", new Pair(this.getXCoord(), this.getYCoord() - 1));
+		}
+		if (!this.getWestWall() && previous.getXCoord() != this.getXCoord()-1 && previous.getYCoord() != this.getYCoord()) {
+			toReturn.put("West", new Pair(this.getXCoord() - 1, this.getYCoord()));
+		}
+		return toReturn;
+	}
 	public boolean getIsStartNode(){
 		return isStartNode;
 	}

@@ -9,6 +9,7 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -27,9 +28,12 @@ import java.awt.Font;
 import javax.swing.JList;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.JRadioButton;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
@@ -42,6 +46,8 @@ import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
+
+import RobotAI.*;
 
 import javax.swing.event.ListSelectionEvent;
 import java.awt.event.ActionListener;
@@ -112,7 +118,8 @@ public class SimulatorUI {
 	boolean recordComplete;
 	public int pausedSimulationSpeed;
 	Maze maze = new Maze();
-	
+	Swarm swarm;
+
 	/* Launch the application */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -359,6 +366,7 @@ public class SimulatorUI {
 					lblIntersectionCountValue.setText(Integer.toString(maze.getintersectionCount()));
 					lblDeadendCountValue.setText(Integer.toString(maze.getDeadendCount()));
 					lblLoopCountValue.setText(Integer.toString(maze.getLoopCount()));
+					swarm = new Swarm(sdrRobotCount.getValue(), maze.getNodeArray());
 					generateMazeGrid();
 					refreshRvTChart();
 				}
@@ -518,6 +526,10 @@ public class SimulatorUI {
 			{
 				do
 				{	
+					simulationComplete = swarm.update();
+//					simulationComplete = (boolean) swarmUpdate.get(0);	// index 0 will always be the boolean
+//					swarm.getRobotSet() = (ArrayList<Robot>) swarmUpdate.get(1);	// index 1 will always be the set of updated robot movements
+					generateMazeGrid();
 					// Apply a simulation speed until an instant simulation finish is requested (btnFinish)
 					if(!simulationFinish)
 					{
@@ -756,11 +768,23 @@ public class SimulatorUI {
 					//	p.setBackground(Color.decode("#B290D4"));
 					//if(nodes[x][y].getIsEndIntersection())
 					//	p.setBackground(Color.decode("#D4D490"));
-					if(nodes[x][y].getIsStartNode())
-						p.setBackground(Color.decode("#B2D490"));
+					if(nodes[x][y].getIsStartNode()) {
+						p.setBackground(Color.decode("#B2D490"));						
+					}
 					if(nodes[x][y].getIsEndNode())
 						p.setBackground(Color.decode("#D49090"));
 					p.setBounds(gridSquareSize*(x-1)+(pnlGrid.getWidth() % maze.getGridSize())/2, gridBottomCornerY-gridSquareSize*(y)-(pnlGrid.getWidth() % maze.getGridSize())/2, gridSquareSize, gridSquareSize);
+					ArrayList<Robot> robots = swarm.getRobotSet();
+					for (Robot r : robots) {
+						SwarmNode currentCoord = r.getCurrentSwarmNode();
+						if (currentCoord.getXCoord() == x && currentCoord.getYCoord() == y) {
+//							Icon icon = new ImageIcon("http://www.iconsdb.com/black-icons/circle-icon.html");
+							JLabel label = new JLabel("" + r.getIdent());//, icon, JLabel.CENTER);
+//							label.setText("" + r.getIdent());
+//							label.setIcon(icon);
+							p.add(label);
+						}
+					}
 					
 					nodePanelList.add(p);
 				}

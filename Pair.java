@@ -16,11 +16,17 @@ public class Pair {
 	public int getYCoord() {
 		return this.y;
 	}
+	public Pair getXYCoords() {
+		return new Pair(this.x, this.y);
+	}
 	public String toString() {
 		String output = "(" + x + ", " + y + ")";
 		return output;
 	}
 	public boolean equals(Object obj){
+		if (!(obj instanceof Pair)) {
+			return false;
+		}
 		Pair pair = (Pair) obj;
 		return pair.x == this.x && pair.y == this.y;
 	}

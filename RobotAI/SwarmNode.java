@@ -7,25 +7,19 @@ public class SwarmNode extends Node {
 	private int robotsTraveledNorth = 0, robotsTraveledEast = 0, robotsTraveledSouth = 0, robotsTraveledWest = 0;
 	private boolean occupied;
 	private boolean deadend;
-	private int xCoord;
-	private int yCoord;
-	private boolean isStartNode;
-	private boolean isEndNode;
-	private boolean isIntersection;
-	private boolean isWall_North, isWall_East, isWall_South, isWall_West;
 	
 	public SwarmNode(Node n) {
 		this.deadend = false;
 		this.occupied = false;
-		this.xCoord = n.getXCoord();
-		this.yCoord = n.getYCoord();
-		this.isStartNode = n.getIsStartNode();
-		this.isEndNode = n.getIsEndNode();
-		this.isIntersection = n.getIsIntersection();
-		this.isWall_North = n.getNorthWall();
-		this.isWall_East = n.getEastWall();
-		this.isWall_South = n.getSouthWall();
-		this.isWall_West = n.getWestWall();		
+		this.setXCoord(n.getXCoord());
+		this.setYCoord(n.getYCoord());
+		this.setStartNode(n.getIsStartNode());
+		this.setEndNode(n.getIsEndNode());
+		this.setIsIntersection(n.getIsIntersection());
+		this.setNorthWall(n.getNorthWall());
+		this.setEastWall(n.getEastWall());
+		this.setSouthWall(n.getSouthWall());
+		this.setWestWall(n.getWestWall());		
 	}
 	
 	public String lastTraveledtoString(SwarmNode lastTraveled){
@@ -155,5 +149,8 @@ public class SwarmNode extends Node {
 	// returns if the node is a deadend or not
 	public boolean isDeadend() {
 		return deadend;
+	}
+	public boolean equals(Object obj) {
+		return this.getXYCoords() == obj. 
 	}
 }
