@@ -78,7 +78,7 @@ public class Robot {
 		if(nodeSet.size() == 0){
 			SwarmNode oldNode = pathTraveled.peek();
 			this.currentSwarmNode = oldNode;
-			this.steps++;
+			//this.steps++;
 			return oldNode;
 		}
 				
@@ -89,7 +89,9 @@ public class Robot {
 //				if (entry.getKey() != "Current") {
 					// nodeSet.entrySet().iterator().next().getValue() => gives the SwarmNode of the only neighbor in nodeSet
 //					if (pathTraveled.contains(nodeSet.entrySet().iterator().next().getValue())) {	// You have reached a deadend, pop the node, set it to deadend, and backtrack
-					if (pathTraveled.peek() == nodeSet.entrySet().iterator().next().getValue()) {
+			System.out.println("entryset: " + nodeSet.entrySet().iterator().next().getValue());		
+			if (pathTraveled.peek().equals(nodeSet.entrySet().iterator().next().getValue())){
+						System.out.println("In deadend pathTraveled");
 						SwarmNode oldNode = pathTraveled.peek();
 						pathTraveled.pop();
 						oldNode.setIsOccupied(false);	// Exit old node
@@ -124,7 +126,7 @@ public class Robot {
 				Pair neighCoords = entry.getValue().getXYCoords(); //pair form of the neighbor Swarm nodes
 				System.out.println("pathTraveled.Contains: " + pathTraveled.contains(entry));
 //				if (!pathTraveled.contains(entry.getValue().getXYCoords())) {	// if the coordinates of the SwarmNode isn't in pathTraveled
-				if (!pathTraveled.contains(entry)) {
+				if (pathTraveled.search(entry) == -1) {
 					System.out.println("path not contained");
 					SwarmNode oldNode = getCurrentSwarmNode();
 					oldNode.setIsOccupied(false);	// Exit old node

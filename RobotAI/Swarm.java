@@ -47,7 +47,7 @@ public class Swarm {
 			Map<String, SwarmNode> neighbors = new HashMap<String, SwarmNode>();	// Includes current node and neighbor nodes
 //			neighbors.put("Current", map.get(currentNode.getXYCoords()));
 			for (Map.Entry<String, Pair> entry : currentNode.paths().entrySet()) {
-				if (!map.get(entry.getValue()).isOccupied() && (!map.get(entry.getValue()).isDeadend())) {	// Only add nodes to neighbors that aren't currently occupied
+				if (map.get(entry.getValue()).isOccupied()== false && (map.get(entry.getValue()).isDeadend()) == false) {	// Only add nodes to neighbors that aren't currently occupied
 					System.out.println("in not occupied and not deadend");
 					neighbors.put(entry.getKey(), map.get(entry.getValue()));
 				}
