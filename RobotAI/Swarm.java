@@ -9,6 +9,9 @@ public class Swarm {
 	Map<Pair, SwarmNode> map = new HashMap<Pair, SwarmNode>();
 	Robot endRobot = null;
 	
+	public Swarm () {
+		this.robotCount = -1;
+	}
 	public Swarm (int robotCount, Node[] nodeArray) {
 		this.robotCount = robotCount;
 		this.map = convert(nodeArray);

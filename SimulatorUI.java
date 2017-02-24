@@ -121,7 +121,7 @@ public class SimulatorUI {
 	public int pausedSimulationSpeed;
 	Maze maze = new Maze();
 	Swarm swarm;
-	Swarm updatedSwarm;
+	Swarm updatedSwarm = new Swarm();
 
 	/* Launch the application */
 	public static void main(String[] args) {
@@ -369,18 +369,17 @@ public class SimulatorUI {
 					lblIntersectionCountValue.setText(Integer.toString(maze.getintersectionCount()));
 					lblDeadendCountValue.setText(Integer.toString(maze.getDeadendCount()));
 					lblLoopCountValue.setText(Integer.toString(maze.getLoopCount()));
-					System.out.println("updatedSwarm: " + updatedSwarm);
-					if (updatedSwarm == null) {
-						System.out.println("initializing swarm");
+//					System.out.println("updatedSwarm: " + updatedSwarm);
+//					if (updatedSwarm.getRobotCount() == -1) {
+//						System.out.println("initializing swarm");
 						swarm = new Swarm(sdrRobotCount.getValue(), maze.getNodeArray());
-					}
-					else  {
-						System.out.println("in updating swarm");
-						System.exit(0);
-//						swarm.clear();
-						swarm = new Swarm(updatedSwarm);
-//						swarm.copy(updatedSwarm);
-					}
+//					}
+//					else {
+//						System.out.println("in updating swarm");
+////						swarm.clear();
+//						swarm = new Swarm(updatedSwarm);
+////						swarm.copy(updatedSwarm);
+//					}
 					generateMazeGrid();
 					refreshRvTChart();
 				}
@@ -543,7 +542,7 @@ public class SimulatorUI {
 					simulationComplete = swarm.update();
 					System.out.println("after swarm update");
 //					simulationComplete = (boolean) updatedSwarm.get(0);	// index 0 will always be the boolean
-					updatedSwarm = new Swarm(swarm);
+//					updatedSwarm = new Swarm(swarm);
 //					System.out.println("updatedSwarm.clear()" + updatedSwarm);
 //					updatedSwarm.copy(swarm);
 //					System.out.println("updatedSwarm.copy()" + updatedSwarm);

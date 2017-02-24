@@ -104,14 +104,15 @@ public class Robot {
 			System.out.println("entryset: " + nodeSet.entrySet().iterator().next().getValue());
 			if (pathTraveled.contains(nodeSet.entrySet().iterator().next().getValue())) {	// You have reached a deadend, pop the node, set it to deadend, and backtrack	
 //			if (pathTraveled.peek().equals(nodeSet.entrySet().iterator().next().getValue())){
-//				System.out.println("In deadend pathTraveled");
+				System.out.println("In deadend pathTraveled");
 				SwarmNode oldNode = pathTraveled.peek();
 				pathTraveled.pop();
 				oldNode.setIsOccupied(false);	// Exit old node
-				oldNode.setIsDeadend(true);	// Set old node to deadend
+				oldNode.isDeadend(true);	// Set old node to deadend
 				this.currentSwarmNode = pathTraveled.peek();	// Set new node
 				this.currentSwarmNode.setIsOccupied(true);	// Set new node to occupied
 				this.steps++;
+				System.out.println("old Node: " + oldNode + " new node: " + this.currentSwarmNode);
 				return oldNode;
 			}
 			else {
