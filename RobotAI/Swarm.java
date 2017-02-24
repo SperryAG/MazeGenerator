@@ -18,7 +18,14 @@ public class Swarm {
 			RobotSet.add(new Robot(findStart(), i));
 		}
 	}
-	
+	public Swarm (Swarm copy) {
+		this.robotCount = copy.getRobotCount();
+		for (Robot r : copy.getRobotSet()) {
+			this.RobotSet.add(new Robot(r));
+		}
+		this.map.putAll(copy.getMap());
+		this.endRobot = new Robot(copy.getEndRobot());
+	}
 	private Map<Pair, SwarmNode> convert(Node[] nodeArray) {
 		for(Node n : nodeArray){
 			SwarmNode toAdd = new SwarmNode(n);
@@ -26,8 +33,17 @@ public class Swarm {
 		}
 		return map;
 	}
+	public int getRobotCount() {
+		return this.robotCount;
+	}
 	public ArrayList<Robot> getRobotSet() {
 		return RobotSet;
+	}
+	Map<Pair, SwarmNode> getMap() {
+		return this.map;
+	}
+	public Robot getEndRobot() {
+		return this.endRobot; 
 	}
 	private SwarmNode findStart() {
 		SwarmNode startNode = null;
@@ -40,22 +56,40 @@ public class Swarm {
 		}
 		return startNode;
 	}
-	
+//	public void clear() {
+//		this.RobotSet = null;
+//		this.map = null;
+//		this.endRobot = null;
+//	}
+//	public void copy(Swarm newSwarm) {
+//		System.out.println("in copy");
+//		this.robotCount = newSwarm.getRobotCount();
+//		this.RobotSet.addAll(newSwarm.getRobotSet());
+//		this.map.putAll(newSwarm.getMap());
+//		this.endRobot = newSwarm.getEndRobot();
+//	}
+//	public boolean equals(Swarm newSwarm) {
+//		return false; 
+//	}
 	public boolean update() {
 		for (Robot currentRobot : this.RobotSet) {	// for every robot running the maze
 			SwarmNode currentNode = currentRobot.getCurrentSwarmNode();
 			Map<String, SwarmNode> neighbors = new HashMap<String, SwarmNode>();	// Includes current node and neighbor nodes
 //			neighbors.put("Current", map.get(currentNode.getXYCoords()));
 			for (Map.Entry<String, Pair> entry : currentNode.paths().entrySet()) {
-				if (map.get(entry.getValue()).isOccupied()== false && (map.get(entry.getValue()).isDeadend()) == false) {	// Only add nodes to neighbors that aren't currently occupied
+				System.out.println("entry: " + entry.getValue() + " map: " + map.get(entry.getValue()));
+				if (!(map.get(entry.getValue()).isOccupied()) && !(map.get(entry.getValue()).isDeadend())) {	// Only add nodes to neighbors that aren't currently occupied
 					System.out.println("in not occupied and not deadend");
 					neighbors.put(entry.getKey(), map.get(entry.getValue()));
 				}
 			}
 			System.out.println("Current Robot Ident: " + currentRobot.getIdent() + " XY: " + currentNode.getXYCoords().toString() + " neighbors:  " + neighbors);
+			map.remove(currentNode.getXYCoords());
 			map.put(currentNode.getXYCoords(), currentRobot.update(neighbors));	// Update robot's previous currentNode
 			System.out.println("New current: " + currentRobot.getCurrentSwarmNode());
+			map.remove(currentRobot.getCurrentSwarmNode().getXYCoords());
 			map.put(currentRobot.getCurrentSwarmNode().getXYCoords(), currentRobot.getCurrentSwarmNode());	// Update robot's new currentNode
+			System.out.println("Map replaced? " + map.get(currentRobot.getCurrentSwarmNode().getXYCoords()));
 			if (currentRobot.getAtEnd()) {	// Robot has found the end node
 				Stack<SwarmNode> stackToEnd = currentRobot.getPathTraveled();
 				endRobot = currentRobot;
@@ -63,12 +97,16 @@ public class Swarm {
 				if(!RobotSet.isEmpty()){
 					moveRobotToEnd(RobotSet, stackToEnd);
 				} 
+//				List<Object> toReturn = new ArrayList<Object>();
+//				toReturn.add(true);
+//				toReturn.add(map);
 				return true;
 			}
 		}
 //		List<Object> toReturn = new ArrayList<Object>();
 //		toReturn.add(false);
 //		toReturn.add(RobotSet);	// Add updated Robot moves 
+//		toReturn.add(map);
 		return false;
 	}
 
@@ -113,4 +151,26 @@ public class Swarm {
 		}
 		
 	}
+	// Output Methods
+		public String toString() {
+			String output = "";
+			
+			output += "<Swarm>" + '\n';
+			output += '\t' + "<robotCount>(" + Integer.toString(this.getRobotCount()) + ")</robotCount>" + '\n';
+			output += '\t' + "<robotCount>(" + '\t';
+			for (Robot r : this.RobotSet) {
+				output += '\t' + r.toString() + '\n';
+			}
+			output += ")</robotCount>" + '\n';
+			output += '\t' + "<Map>" + this.getMap().toString() + "</Map>" + '\n';
+//			if (this.getEndRobot() == null) {
+//				output += '\t' + "<endRobot>" + "null" + "</endRobot>" + '\n';
+//			} 
+//			else {	
+//				output += '\t' + "<endRobot>" + this.getEndRobot().toString() + "</endRobot>" + '\n';
+//			}
+			output += "</Swarm>";
+			
+			return output;
+		}
 }

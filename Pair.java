@@ -24,9 +24,6 @@ public class Pair {
 		return output;
 	}
 	public boolean equals(Object obj){
-		if (!(obj instanceof Pair)) {
-			return false;
-		}
 		Pair pair = (Pair) obj;
 		return pair.x == this.x && pair.y == this.y;
 	}

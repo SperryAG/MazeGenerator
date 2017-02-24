@@ -21,7 +21,19 @@ public class SwarmNode extends Node {
 		this.setSouthWall(n.getSouthWall());
 		this.setWestWall(n.getWestWall());		
 	}
-	
+	public SwarmNode(SwarmNode s) {
+		this.deadend = s.isDeadend();
+		this.occupied = s.isOccupied();
+		this.setXCoord(s.getXCoord());
+		this.setYCoord(s.getYCoord());
+		this.setStartNode(s.getIsStartNode());
+		this.setEndNode(s.getIsEndNode());
+		this.setIsIntersection(s.getIsIntersection());
+		this.setNorthWall(s.getNorthWall());
+		this.setEastWall(s.getEastWall());
+		this.setSouthWall(s.getSouthWall());
+		this.setWestWall(s.getWestWall());
+	}
 	public String lastTraveledtoString(SwarmNode lastTraveled){
 		String toReturn = "error";
 		Pair coordLastTraveled = lastTraveled.getXYCoords();
@@ -172,15 +184,30 @@ public class SwarmNode extends Node {
 	public boolean isDeadend() {
 		return deadend;
 	}
-	public boolean equals(Object obj) {
-		SwarmNode swarmNode = (SwarmNode) obj;
-		return swarmNode.getXCoord() == this.getXCoord() && swarmNode.getYCoord() == this.getYCoord();
+	public boolean equals(SwarmNode obj) {
+		return this.getXYCoords().equals(obj.getXYCoords()); // this.getXCoord() == obj.getXCoord() && this.getYCoord() == obj.getYCoord();
 	}
-	
 	public int hashCode() {
-		  
 	    int hash = this.getXCoord()+this.getYCoord();
 	    //System.out.println("hashcode called" + hash);
 	    return hash;
+	}
+	// Output Methods
+	public String toString() {
+		String output = "";
+		
+		output += "<SwarmNode>" + '\n';
+		output += '\t' + "<Coordinates>(" + Integer.toString(this.getXCoord()) + "," + Integer.toString(this.getYCoord()) + ")</Coordinates>" + '\n';
+		output += '\t' + "<StartNode>" + Boolean.toString(this.getIsStartNode()) + "</StartNode>" + '\n';
+		output += '\t' + "<EndNode>" + Boolean.toString(this.getIsEndNode()) + "</EndNode>" + '\n';
+		output += '\t' + "<DeadendNode>" + Boolean.toString(this.deadend) + "</DeadendNode>" + '\n';
+		output += '\t' + "<Occupied>" + Boolean.toString(this.occupied) + "</DeadendNode>" + '\n';
+		output += '\t' + "<RobotsTraveledNorth>" + Integer.toString(this.getRobotsTraveledNorth()) + "</RobotsTraveledNorth>" + '\n';
+		output += '\t' + "<RobotsTraveledEast>" + Integer.toString(this.getRobotsTraveledEast()) + "</RobotsTraveledEast>" + '\n';
+		output += '\t' + "<RobotsTraveledSouth>" + Integer.toString(this.getRobotsTraveledSouth()) + "</RobotsTraveledSouth>" + '\n';
+		output += '\t' + "<RobotsTraveledWest>" + Integer.toString(this.getRobotsTraveledWest()) + "</RobotsTraveledWest>" + '\n';
+		output += "</SwarmNode>";
+		
+		return output;
 	}
 }

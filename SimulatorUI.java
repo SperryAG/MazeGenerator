@@ -9,7 +9,9 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -119,6 +121,7 @@ public class SimulatorUI {
 	public int pausedSimulationSpeed;
 	Maze maze = new Maze();
 	Swarm swarm;
+	Swarm updatedSwarm;
 
 	/* Launch the application */
 	public static void main(String[] args) {
@@ -366,7 +369,18 @@ public class SimulatorUI {
 					lblIntersectionCountValue.setText(Integer.toString(maze.getintersectionCount()));
 					lblDeadendCountValue.setText(Integer.toString(maze.getDeadendCount()));
 					lblLoopCountValue.setText(Integer.toString(maze.getLoopCount()));
-					swarm = new Swarm(sdrRobotCount.getValue(), maze.getNodeArray());
+					System.out.println("updatedSwarm: " + updatedSwarm);
+					if (updatedSwarm == null) {
+						System.out.println("initializing swarm");
+						swarm = new Swarm(sdrRobotCount.getValue(), maze.getNodeArray());
+					}
+					else  {
+						System.out.println("in updating swarm");
+						System.exit(0);
+//						swarm.clear();
+						swarm = new Swarm(updatedSwarm);
+//						swarm.copy(updatedSwarm);
+					}
 					generateMazeGrid();
 					refreshRvTChart();
 				}
@@ -527,8 +541,13 @@ public class SimulatorUI {
 				do
 				{	
 					simulationComplete = swarm.update();
-//					simulationComplete = (boolean) swarmUpdate.get(0);	// index 0 will always be the boolean
-//					swarm.getRobotSet() = (ArrayList<Robot>) swarmUpdate.get(1);	// index 1 will always be the set of updated robot movements
+					System.out.println("after swarm update");
+//					simulationComplete = (boolean) updatedSwarm.get(0);	// index 0 will always be the boolean
+					updatedSwarm = new Swarm(swarm);
+//					System.out.println("updatedSwarm.clear()" + updatedSwarm);
+//					updatedSwarm.copy(swarm);
+//					System.out.println("updatedSwarm.copy()" + updatedSwarm);
+//					swarm.getRobotSet() = (ArrayList<Robot>) swarmUpdate.get(1);	// index 1 will always be the set of updated map
 					generateMazeGrid();
 					// Apply a simulation speed until an instant simulation finish is requested (btnFinish)
 					if(!simulationFinish)
