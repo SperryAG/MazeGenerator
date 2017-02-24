@@ -121,7 +121,6 @@ public class SimulatorUI {
 	public int pausedSimulationSpeed;
 	Maze maze = new Maze();
 	Swarm swarm;
-	Swarm updatedSwarm = new Swarm();
 
 	/* Launch the application */
 	public static void main(String[] args) {
@@ -369,17 +368,7 @@ public class SimulatorUI {
 					lblIntersectionCountValue.setText(Integer.toString(maze.getintersectionCount()));
 					lblDeadendCountValue.setText(Integer.toString(maze.getDeadendCount()));
 					lblLoopCountValue.setText(Integer.toString(maze.getLoopCount()));
-//					System.out.println("updatedSwarm: " + updatedSwarm);
-//					if (updatedSwarm.getRobotCount() == -1) {
-//						System.out.println("initializing swarm");
-						swarm = new Swarm(sdrRobotCount.getValue(), maze.getNodeArray());
-//					}
-//					else {
-//						System.out.println("in updating swarm");
-////						swarm.clear();
-//						swarm = new Swarm(updatedSwarm);
-////						swarm.copy(updatedSwarm);
-//					}
+					swarm = new Swarm(sdrRobotCount.getValue(), maze.getNodeArray());
 					generateMazeGrid();
 					refreshRvTChart();
 				}
@@ -540,13 +529,7 @@ public class SimulatorUI {
 				do
 				{	
 					simulationComplete = swarm.update();
-					System.out.println("after swarm update");
-//					simulationComplete = (boolean) updatedSwarm.get(0);	// index 0 will always be the boolean
-//					updatedSwarm = new Swarm(swarm);
-//					System.out.println("updatedSwarm.clear()" + updatedSwarm);
-//					updatedSwarm.copy(swarm);
-//					System.out.println("updatedSwarm.copy()" + updatedSwarm);
-//					swarm.getRobotSet() = (ArrayList<Robot>) swarmUpdate.get(1);	// index 1 will always be the set of updated map
+					System.out.println("after swarm update : " + swarm);
 					generateMazeGrid();
 					// Apply a simulation speed until an instant simulation finish is requested (btnFinish)
 					if(!simulationFinish)
@@ -798,6 +781,7 @@ public class SimulatorUI {
 						if (currentCoord.getXCoord() == x && currentCoord.getYCoord() == y) {
 //							Icon icon = new ImageIcon("http://www.iconsdb.com/black-icons/circle-icon.html");
 							JLabel label = new JLabel("" + r.getIdent());//, icon, JLabel.CENTER);
+							label.setMinimumSize(p.getSize());
 //							label.setText("" + r.getIdent());
 //							label.setIcon(icon);
 							p.add(label);

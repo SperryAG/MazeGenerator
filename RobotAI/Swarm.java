@@ -4,7 +4,6 @@ import java.util.*;
 
 public class Swarm {
 	private int robotCount;
-	//Robot[] RobotSet;
 	ArrayList<Robot> RobotSet = new ArrayList<Robot>();
 	Map<Pair, SwarmNode> map = new HashMap<Pair, SwarmNode>();
 	Robot endRobot = null;
@@ -15,9 +14,7 @@ public class Swarm {
 	public Swarm (int robotCount, Node[] nodeArray) {
 		this.robotCount = robotCount;
 		this.map = convert(nodeArray);
-		//RobotSet = new Robot[robotCount];
 		for (int i = 0; i < this.robotCount; i++) {
-			//RobotSet[i] = new Robot(findStart());
 			RobotSet.add(new Robot(findStart(), i));
 		}
 	}
@@ -50,7 +47,6 @@ public class Swarm {
 	}
 	private SwarmNode findStart() {
 		SwarmNode startNode = null;
-//		System.out.println(this.map.values());
 		for (SwarmNode value : this.map.values()) {
 			if (value.getIsStartNode()) {
 				startNode = value;
@@ -59,57 +55,29 @@ public class Swarm {
 		}
 		return startNode;
 	}
-//	public void clear() {
-//		this.RobotSet = null;
-//		this.map = null;
-//		this.endRobot = null;
-//	}
-//	public void copy(Swarm newSwarm) {
-//		System.out.println("in copy");
-//		this.robotCount = newSwarm.getRobotCount();
-//		this.RobotSet.addAll(newSwarm.getRobotSet());
-//		this.map.putAll(newSwarm.getMap());
-//		this.endRobot = newSwarm.getEndRobot();
-//	}
-//	public boolean equals(Swarm newSwarm) {
-//		return false; 
-//	}
 	public boolean update() {
 		for (Robot currentRobot : this.RobotSet) {	// for every robot running the maze
 			SwarmNode currentNode = currentRobot.getCurrentSwarmNode();
 			Map<String, SwarmNode> neighbors = new HashMap<String, SwarmNode>();	// Includes current node and neighbor nodes
-//			neighbors.put("Current", map.get(currentNode.getXYCoords()));
 			for (Map.Entry<String, Pair> entry : currentNode.paths().entrySet()) {
-				System.out.println("entry: " + entry.getValue() + " map: " + map.get(entry.getValue()));
 				if (!(map.get(entry.getValue()).isOccupied()) && !(map.get(entry.getValue()).isDeadend())) {	// Only add nodes to neighbors that aren't currently occupied
-					System.out.println("in not occupied and not deadend");
 					neighbors.put(entry.getKey(), map.get(entry.getValue()));
 				}
 			}
-			System.out.println("Current Robot Ident: " + currentRobot.getIdent() + " XY: " + currentNode.getXYCoords().toString() + " neighbors:  " + neighbors);
 			map.remove(currentNode.getXYCoords());
 			map.put(currentNode.getXYCoords(), currentRobot.update(neighbors));	// Update robot's previous currentNode
-			System.out.println("New current: " + currentRobot.getCurrentSwarmNode());
 			map.remove(currentRobot.getCurrentSwarmNode().getXYCoords());
 			map.put(currentRobot.getCurrentSwarmNode().getXYCoords(), currentRobot.getCurrentSwarmNode());	// Update robot's new currentNode
-			System.out.println("Map replaced? " + map.get(currentRobot.getCurrentSwarmNode().getXYCoords()));
 			if (currentRobot.getAtEnd()) {	// Robot has found the end node
 				Stack<SwarmNode> stackToEnd = currentRobot.getPathTraveled();
 				endRobot = currentRobot;
 				RobotSet.remove(endRobot);
 				if(!RobotSet.isEmpty()){
 					moveRobotToEnd(RobotSet, stackToEnd);
-				} 
-//				List<Object> toReturn = new ArrayList<Object>();
-//				toReturn.add(true);
-//				toReturn.add(map);
+				}
 				return true;
 			}
 		}
-//		List<Object> toReturn = new ArrayList<Object>();
-//		toReturn.add(false);
-//		toReturn.add(RobotSet);	// Add updated Robot moves 
-//		toReturn.add(map);
 		return false;
 	}
 
