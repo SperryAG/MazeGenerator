@@ -115,7 +115,16 @@ public class Robot {
 				return oldNode;
 			}
 			else if(this.pathTraveled.contains(toCheck) == false){
-				
+				SwarmNode oldNode = pathTraveled.peek();
+				oldNode.setIsOccupied( false);
+				this.pathTraveled.push(toCheck);
+				this.currentSwarmNode = this.pathTraveled.peek();
+				if (this.currentSwarmNode.getIsEndNode()) {
+					this.atEnd = true;
+				}
+				this.currentSwarmNode.setIsOccupied(true);
+				this.steps++;
+				return oldNode;
 			}
 			else{
 				//You are in a deadend and need to backtrack. 
