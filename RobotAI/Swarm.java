@@ -123,11 +123,11 @@ public class Swarm {
 		}	
 		else{
 			System.out.println("Moving remaining to end");
-			moveRobotToEnd(stackToEnd);
 			if(RobotSet.isEmpty()){
 				System.out.println("returning true");
 				return true;
 			}
+			moveRobotToEnd(stackToEnd);
 		}
 		
 //		List<Object> toReturn = new ArrayList<Object>();
@@ -145,9 +145,13 @@ public class Swarm {
 				System.out.println("Robot ID: " + currentRobot.getIdent() +  " currentNode: " + currentNode.getXYCoords() + " " + map.get(currentNode.getXYCoords()));
 				
 				//currentRobot is at the end. Time to remove. 
-				if(currentRobot.getAtEnd()){
+				if(currentRobot.getCurrentSwarmNode().getIsEndNode()){
 					System.out.println("remove robot");
 					RobotSet.remove(currentRobot);
+					System.out.println("robotSetSize: " + RobotSet.size());
+					if(RobotSet.isEmpty()){
+						return;
+					}
 				}
 				
 				//backtrack until you hit the currentSwarmNode
@@ -164,9 +168,9 @@ public class Swarm {
 					System.out.println("traveling to end");
 					Map<String, SwarmNode> neighbors = new HashMap<String, SwarmNode>();
 					for (Map.Entry<String, Pair> entry : currentNode.paths().entrySet()) {
-						System.out.println("entry(possible path): " + entry.getValue() + " map: " + map.get(entry.getValue()));
+						//System.out.println("entry(possible path): " + entry.getValue() + " map: " + map.get(entry.getValue()));
 						if (!(map.get(entry.getValue()).isDeadend()) && (entry.getValue().equals(currentNode.getXYCoords()) == false )) {	// Only add nodes to neighbors that aren't currently occupied
-							System.out.println("Node: " + entry.getValue() + " not occupied and not deadend");
+							//System.out.println("Node: " + entry.getValue() + " not occupied and not deadend");
 							neighbors.put(entry.getKey(), map.get(entry.getValue()));
 						}
 					}
@@ -176,10 +180,11 @@ public class Swarm {
 						neighbor.add(swarmNode);
 					}
 					System.out.println("exited neighbor");
+					
 					if(map.containsKey(currentNode.getXYCoords())){
 						map.remove(currentNode.getXYCoords());
 					}
-					System.out.println("before puts line 180 Swarm.java");
+					System.out.println("before puts line 180 Swarm.java " + currentNode.getXYCoords());
 					
 					map.put(currentNode.getXYCoords(), currentRobot.continueOnEnd(stackToEnd, neighbor));//update previous currentNode
 					System.out.println("New current: " + currentRobot.getCurrentSwarmNode());

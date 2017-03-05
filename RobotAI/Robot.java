@@ -236,7 +236,7 @@ public class Robot {
 	public SwarmNode continueOnEnd(Stack<SwarmNode> stackToEnd, ArrayList<SwarmNode> neighbors) {
 		// TODO Auto-generated method stub
 		SwarmNode oldNode = pathTraveled.peek();
-		pathTraveled.pop();
+		
 		oldNode.setIsOccupied(false);
 		
 		for(SwarmNode node : neighbors){
@@ -244,6 +244,7 @@ public class Robot {
 				this.currentSwarmNode = node;
 				this.currentSwarmNode.setIsOccupied(true);
 				this.steps++;
+				this.pathTraveled.push(node);
 			}
 		}
 		
