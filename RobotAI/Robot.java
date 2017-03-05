@@ -99,11 +99,13 @@ public class Robot {
 		// Or only one path to travel out of the startNode.
 		else if (nodeSet.size() == 1) { //2) {
 			System.out.println("in deadend");
+			SwarmNode toCheck = nodeSet.entrySet().iterator().next().getValue();
+			
 			if(this.pathTraveled.size() == 1){
 				System.out.print("One path out from start node");
 				SwarmNode oldNode = pathTraveled.peek();
 				oldNode.setIsOccupied( false);
-				this.pathTraveled.push(nodeSet.entrySet().iterator().next().getValue());
+				this.pathTraveled.push(toCheck);
 				this.currentSwarmNode = this.pathTraveled.peek();
 				if (this.currentSwarmNode.getIsEndNode()) {
 					this.atEnd = true;
@@ -111,6 +113,9 @@ public class Robot {
 				this.currentSwarmNode.setIsOccupied(true);
 				this.steps++;
 				return oldNode;
+			}
+			else if(this.pathTraveled.contains(toCheck) == false){
+				
 			}
 			else{
 				//You are in a deadend and need to backtrack. 
