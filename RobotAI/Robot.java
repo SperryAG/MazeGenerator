@@ -105,6 +105,7 @@ public class Robot {
 				System.out.print("One path out from start node");
 				SwarmNode oldNode = pathTraveled.peek();
 				oldNode.setIsOccupied( false);
+				oldNode.setRobotTraveled(nodeSet.entrySet().iterator().next().getKey());
 				this.pathTraveled.push(toCheck);
 				this.currentSwarmNode = this.pathTraveled.peek();
 				if (this.currentSwarmNode.getIsEndNode()) {
@@ -117,6 +118,7 @@ public class Robot {
 			else if(this.pathTraveled.contains(toCheck) == false){
 				SwarmNode oldNode = pathTraveled.peek();
 				oldNode.setIsOccupied( false);
+				oldNode.setRobotTraveled(nodeSet.entrySet().iterator().next().getKey());
 				this.pathTraveled.push(toCheck);
 				this.currentSwarmNode = this.pathTraveled.peek();
 				if (this.currentSwarmNode.getIsEndNode()) {
@@ -143,37 +145,92 @@ public class Robot {
 		// Neutral Node: follow the path that isn't currently in pathTraveled because you come from one Node and you have only one node choice to go. 
 		else if (nodeSet.size() == 2) {
 			System.out.println("in neutral node");
-			for (Map.Entry<String, SwarmNode> entry : nodeSet.entrySet()) {	// for the two entries in nodeSet
-//				System.out.println("in for loop: " + entry.getValue().getXYCoords());
-//				System.out.println("PathTraveled: " + pathTraveled.toString());
-//				System.out.println("Entry value: " + entry.getValue().getXYCoords());
-				Pair neighCoords = entry.getValue().getXYCoords(); //pair form of the neighbor Swarm nodes
-//				System.out.println("entry: " + entry + "pathTraveled.Contains: " + pathTraveled.contains(entry));
-				if (!(pathTraveled.contains(entry.getValue()))) {	// if the coordinates of the SwarmNode isn't in pathTraveled
-//					System.out.println("path not contained");
-					SwarmNode oldNode = getCurrentSwarmNode();
-					oldNode.setIsOccupied(false);	// Exit old node
-					oldNode.setRobotTraveled(entry.getKey());
-					pathTraveled.push(entry.getValue());	// Add new node to pathTraveled
-					this.currentSwarmNode = pathTraveled.peek();	// Set new node
-					if (this.currentSwarmNode.getIsEndNode()) {
-						this.atEnd = true;
+			boolean neutralTrue = false;
+			for(SwarmNode node : nodeSet.values()){
+				if(this.pathTraveled.contains(node)){
+					neutralTrue = true;
+				}
+			}
+			if(neutralTrue){
+				for (Map.Entry<String, SwarmNode> entry : nodeSet.entrySet()) {	// for the two entries in nodeSet
+	//				System.out.println("in for loop: " + entry.getValue().getXYCoords());
+	//				System.out.println("PathTraveled: " + pathTraveled.toString());
+	//				System.out.println("Entry value: " + entry.getValue().getXYCoords());
+					Pair neighCoords = entry.getValue().getXYCoords(); //pair form of the neighbor Swarm nodes
+	//				System.out.println("entry: " + entry + "pathTraveled.Contains: " + pathTraveled.contains(entry));
+					if (!(pathTraveled.contains(entry.getValue()))) {	// if the coordinates of the SwarmNode isn't in pathTraveled
+	//					System.out.println("path not contained");
+						SwarmNode oldNode = getCurrentSwarmNode();
+						oldNode.setIsOccupied(false);	// Exit old node
+						oldNode.setRobotTraveled(entry.getKey());
+						pathTraveled.push(entry.getValue());	// Add new node to pathTraveled
+						this.currentSwarmNode = pathTraveled.peek();	// Set new node
+						if (this.currentSwarmNode.getIsEndNode()) {
+							this.atEnd = true;
+						}
+						this.currentSwarmNode.setIsOccupied(true);	// Set new node to occupied
+						this.steps++;
+						return oldNode;
 					}
-					this.currentSwarmNode.setIsOccupied(true);	// Set new node to occupied
-					this.steps++;
+				}
+				System.out.println("In neutral deadend pathTraveled");
+				SwarmNode oldNode = pathTraveled.peek();
+				pathTraveled.pop();
+				oldNode.setIsOccupied(false);	// Exit old node
+				oldNode.isDeadend(true);	// Set old node to deadend
+				this.currentSwarmNode = pathTraveled.peek();	// Set new node
+				this.currentSwarmNode.setIsOccupied(true);	// Set new node to occupied
+				this.steps++;
+				System.out.println("old Node: " + oldNode + " new node: " + this.currentSwarmNode);
+				return oldNode;
+			}
+			else{//It's not actually neutral
+				System.out.println("3 or 4 paths to go");
+				//System.out.println("nodeSet: " + nodeSet);
+//				System.out.println("pathTraveled: " + pathTraveled.toString());
+				Random random  = new Random();
+				//List<String> directions = this.currentSwarmNode.leastTraveled(this.pathTraveled.peek()); //substitute nodeSet.keySet() to be the tied directions....
+				
+				System.out.println("Trying to get directions");
+				List<String> directions = this.currentSwarmNode.leastTraveled(nodeSet.keySet());
+				System.out.println("directions have been set");
+				
+				
+				SwarmNode oldNode = this.pathTraveled.peek();
+				this.steps++;
+				if (directions.size() == 1){
+					oldNode.setRobotTraveled(directions.get(0));
+					oldNode.setIsOccupied(false);
+					this.currentSwarmNode = nodeSet.get(directions.get(0));
+					this.pathTraveled.push(this.currentSwarmNode);
+					this.currentSwarmNode.setIsOccupied(true);
+					return oldNode;
+				}
+				
+				else{
+					boolean newPath = false;
+					while(!newPath){
+						System.out.println("while loop trap");
+						String randomDirection = directions.get(random.nextInt(directions.size()));
+						System.out.println(randomDirection);
+						SwarmNode newDirection = nodeSet.get(randomDirection);
+						System.out.println("newDirection: " + newDirection.getXYCoords());
+//						if(this.pathTraveled.contains(newDirection) == false){
+						if (!pathTraveled.contains(newDirection)){
+							newPath = true;
+							oldNode.setRobotTraveled(randomDirection);
+							this.currentSwarmNode = newDirection;
+						}
+					}
+					oldNode.setIsOccupied(false);
+					pathTraveled.push(this.currentSwarmNode);
+					// Add checks here
+					// Update new node occupied and previous node occupied			
+					this.currentSwarmNode.setIsOccupied(true);
+					// To Do: check for end node and set atEnd if it is the end node
 					return oldNode;
 				}
 			}
-			System.out.println("In neutral deadend pathTraveled");
-			SwarmNode oldNode = pathTraveled.peek();
-			pathTraveled.pop();
-			oldNode.setIsOccupied(false);	// Exit old node
-			oldNode.isDeadend(true);	// Set old node to deadend
-			this.currentSwarmNode = pathTraveled.peek();	// Set new node
-			this.currentSwarmNode.setIsOccupied(true);	// Set new node to occupied
-			this.steps++;
-			System.out.println("old Node: " + oldNode + " new node: " + this.currentSwarmNode);
-			return oldNode;
 		}
 		// Intersection
 		// Set North, South, East, and West nodes

@@ -20,7 +20,7 @@ public class Swarm {
 		//RobotSet = new Robot[robotCount];
 		for (int i = 0; i < this.robotCount; i++) {
 			//RobotSet[i] = new Robot(findStart());
-			RobotSet.add(new Robot(findStart(), i));
+			RobotSet.add(new Robot(findStart(), i + 1));
 		}
 	}
 	public Swarm (Swarm copy) {
