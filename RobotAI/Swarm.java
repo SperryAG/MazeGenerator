@@ -140,6 +140,7 @@ public class Swarm {
 	private void moveRobotToEnd(Stack<SwarmNode> stackToEnd) {
 		// This will move all robots one step and if they are at end pop them from robotSet.
 		System.out.println("moveRobotToEnd entered");
+		ArrayList<Robot> robotsToRemove = new ArrayList<Robot>(); //TODO maybe I can't delete as I'm going through them....
 			for(Robot currentRobot : this.RobotSet){
 				SwarmNode currentNode = currentRobot.getCurrentSwarmNode();
 				System.out.println("Robot ID: " + currentRobot.getIdent() +  " currentNode: " + currentNode.getXYCoords() + " " + map.get(currentNode.getXYCoords()));

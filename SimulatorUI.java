@@ -5,13 +5,12 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -53,6 +52,8 @@ import RobotAI.*;
 
 import javax.swing.event.ListSelectionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.awt.event.ActionEvent;
 
 public class SimulatorUI {
@@ -333,6 +334,15 @@ public class SimulatorUI {
 			(seconds>9?Integer.toString(seconds):"0"+Integer.toString(seconds)) + ":" +
 			Integer.toString(tenMillis)
 		);
+		
+		PropertyChangeListener l = new PropertyChangeListener(){
+			@Override
+			public void propertyChange(PropertyChangeEvent evt){
+				generateMazeGrid();
+			}
+		};
+		lblTimerValue.addPropertyChangeListener("text", l);
+		
 		lblTimerValue.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		lblTimerValue.setBounds(10, 11, 109, 32);
 		lblTimerValue.setHorizontalAlignment(SwingConstants.CENTER);
@@ -528,9 +538,10 @@ public class SimulatorUI {
 			{
 				do
 				{	
-					simulationComplete = swarm.update();
-					System.out.println("after swarm update : " + swarm);
-					generateMazeGrid();
+					
+//					simulationComplete = (boolean) swarmUpdate.get(0);	// index 0 will always be the boolean
+//					swarm.getRobotSet() = (ArrayList<Robot>) swarmUpdate.get(1);	// index 1 will always be the set of updated robot movements
+					
 					// Apply a simulation speed until an instant simulation finish is requested (btnFinish)
 					if(!simulationFinish)
 					{
@@ -568,7 +579,9 @@ public class SimulatorUI {
 					);
 					// Run a simulation step one time per second and return the simulation status.
 					if(tenMillis % 10 == 0) // Clock runs in .1ms = 1step/sec
-						simulationComplete = !stepSimulation();
+						simulationComplete = swarm.update();
+						//generateMazeGrid();
+						//simulationComplete = !stepSimulation();
 				
 				}while(!simulationComplete);
 				
@@ -627,12 +640,12 @@ public class SimulatorUI {
 	
 	private boolean stepSimulation()
 	{
-		System.out.println(
+		/*System.out.println(
 			(hours>9?Integer.toString(hours):"0"+Integer.toString(hours)) + ":" +
 			(minutes>9?Integer.toString(minutes):"0"+Integer.toString(minutes)) + ":" +
 			(seconds>9?Integer.toString(seconds):"0"+Integer.toString(seconds)) + ":" +
 			Integer.toString(tenMillis)
-		);
+		);*/
 		if(minutes == 1)
 			simulationComplete = true;
 		return !simulationComplete;
@@ -744,7 +757,7 @@ public class SimulatorUI {
 		{
 			for(int x = 1; x < maze.getGridSize() + 1; x++)
 			{
-				JPanel p = new JPanel();
+				JPanel p = new JPanel(new GridLayout());
 				EmptyBorder emptyBorder = new EmptyBorder(0, 0, 0, 0);
 				Border insideBorder;
 				if(exists[x][y])
@@ -782,6 +795,7 @@ public class SimulatorUI {
 //							Icon icon = new ImageIcon("http://www.iconsdb.com/black-icons/circle-icon.html");
 							JLabel label = new JLabel("" + r.getIdent());//, icon, JLabel.CENTER);
 							label.setMinimumSize(p.getSize());
+							label.setHorizontalAlignment(SwingConstants.CENTER);
 //							label.setText("" + r.getIdent());
 //							label.setIcon(icon);
 							p.add(label);
