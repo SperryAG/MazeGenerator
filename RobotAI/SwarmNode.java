@@ -1,6 +1,7 @@
 package RobotAI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import MazeGenerator.*;
 
@@ -59,8 +60,8 @@ public class SwarmNode extends Node {
 		return toReturn;
 	}
 	
-	public ArrayList<String> leastTraveled(List<String> directionsTraveled){
-		//System.out.println("enter leastTraveled");
+	public ArrayList<String> leastTraveled(Set<String> directionsTraveled){
+		System.out.println("enter leastTraveled");
 		ArrayList<String> toReturn = new ArrayList<String>();
 		
 		
