@@ -184,7 +184,10 @@ public class Robot {
 			//System.out.println("nodeSet: " + nodeSet);
 //			System.out.println("pathTraveled: " + pathTraveled.toString());
 			Random random  = new Random();
-			List<String> directions = this.currentSwarmNode.leastTraveled(this.pathTraveled.peek()); //substitute nodeSet.keySet() to be the tied directions....
+			//List<String> directions = this.currentSwarmNode.leastTraveled(this.pathTraveled.peek()); //substitute nodeSet.keySet() to be the tied directions....
+			@SuppressWarnings("unchecked")
+			List<String> directions = this.currentSwarmNode.leastTraveled((List<String>) nodeSet.keySet());
+			
 			SwarmNode oldNode = this.pathTraveled.peek();
 			this.steps++;
 			if (directions.size() == 1){

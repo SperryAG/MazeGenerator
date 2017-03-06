@@ -148,7 +148,7 @@ public class Swarm {
 				//currentRobot is at the end. Time to remove. 
 				if(currentRobot.getCurrentSwarmNode().getIsEndNode()){
 					System.out.println("remove robot");
-					RobotSet.remove(currentRobot);
+					robotsToRemove.add(currentRobot);
 					System.out.println("robotSetSize: " + RobotSet.size());
 					if(RobotSet.isEmpty()){
 						return;
@@ -193,6 +193,9 @@ public class Swarm {
 					map.put(currentRobot.getCurrentSwarmNode().getXYCoords(), currentRobot.getCurrentSwarmNode());	// Update robot's new currentNode
 				}		
 			}	
+			for(Robot robot : robotsToRemove ){
+				this.RobotSet.remove(robot);
+			}
 	}
 	// Output Methods
 		public String toString() {

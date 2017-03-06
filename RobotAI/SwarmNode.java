@@ -1,5 +1,6 @@
 package RobotAI;
 import java.util.ArrayList;
+import java.util.List;
 
 import MazeGenerator.*;
 
@@ -58,32 +59,15 @@ public class SwarmNode extends Node {
 		return toReturn;
 	}
 	
-	public ArrayList<String> leastTraveled(SwarmNode lastTraveled){
+	public ArrayList<String> leastTraveled(List<String> directionsTraveled){
 		//System.out.println("enter leastTraveled");
 		ArrayList<String> toReturn = new ArrayList<String>();
-		String previousCoordString = lastTraveled.lastTraveledtoString(lastTraveled);
 		
-		if(!this.getNorthWall()){
-			toReturn.add("North");
-		}
-		if(!this.getEastWall()){
-			toReturn.add("East");
-		}
-		if(!this.getSouthWall()){
-			toReturn.add("South");
-		}
-		if(!this.getWestWall()){
-			toReturn.add("West");
-		}
-		
-		if(previousCoordString.equals("error") == false){
-			toReturn.remove(previousCoordString);
-		}
 		
 		//System.out.println("leastTraveled Array: " + toReturn);
 		
 		int min = Integer.MAX_VALUE;
-		for(String direction : toReturn){
+		for(String direction : directionsTraveled){
 			if(getRobotTraveled(direction) <= min){
 				System.out.println("direction: " + direction + " value: " + getRobotTraveled(direction));
 				min = getRobotTraveled(direction);
@@ -91,17 +75,14 @@ public class SwarmNode extends Node {
 		}
 		
 		System.out.println("min: " + min);
-		
-		ArrayList<String> temp = new ArrayList<String>();
-		
+				
 		//System.out.println("temp: " + temp);
-		for(String direction : toReturn){
+		for(String direction : directionsTraveled){
 			if(getRobotTraveled(direction)<= min){
 				System.out.println("direction: " + direction + " value: " + getRobotTraveled(direction));
-				temp.add(direction);
+				toReturn.add(direction);
 			}
 		}
-		toReturn = temp;
 		//System.out.println("Exited least traveled");
 		return toReturn;
 	}
