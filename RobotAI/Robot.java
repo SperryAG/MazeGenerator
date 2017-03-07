@@ -110,12 +110,14 @@ public class Robot {
 			
 			//The only node to travel to, is occupied. So current Robot do nothing.
 			if(toCheck.isOccupied()){
+				System.out.println("Neutral Node Occupied");
 				SwarmNode oldNode = pathTraveled.peek();
 				this.currentSwarmNode = oldNode;
 				return oldNode;
 			}
 			//Otherwise, we shall traverse the only path to go. 
 			else{
+				System.out.println("Neutral Node NOT Occupied");
 				SwarmNode oldNode = pathTraveled.peek();
 				oldNode.setIsOccupied(false);
 				oldNode.setRobotTraveled(nodeSet.entrySet().iterator().next().getKey());
@@ -132,9 +134,9 @@ public class Robot {
 		
 		// Intersection
 		// Set North, South, East, and West nodes
-		//For when there's 1 or 2 or 3 viable paths to go. 
+		//For when there's 2 or 3 viable paths to go. 
 		else{
-			System.out.println("1 or 2 or 3 paths to go");
+			System.out.println("2 or 3 paths to go");
 			//System.out.println("nodeSet: " + nodeSet);
 //			System.out.println("pathTraveled: " + pathTraveled.toString());
 			Random random  = new Random();
@@ -152,10 +154,16 @@ public class Robot {
 				nodeSet.remove(remove);
 			}
 			
+			
 			System.out.println("KeySet in 1 or 2 or 3: " + nodeSet.keySet());
 			List<String> directions = this.currentSwarmNode.leastTraveled(nodeSet.keySet());
-			System.out.println("directions have been set");
+			System.out.println("directions have been set: " + directions);
 			
+			if (directions.size() == 0) {	// If all possible paths are occupied
+				SwarmNode oldNode = pathTraveled.peek();
+				this.currentSwarmNode = oldNode;
+				return oldNode;
+			}
 			
 			SwarmNode oldNode = this.pathTraveled.peek();
 			this.steps++;
