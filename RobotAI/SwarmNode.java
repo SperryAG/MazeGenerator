@@ -40,7 +40,6 @@ public class SwarmNode extends Node {
 	public String lastTraveledtoString(SwarmNode lastTraveled){
 		String toReturn = "error";
 		Pair coordLastTraveled = lastTraveled.getXYCoords();
-		System.out.println("lastTraveledToSTring pair: " +coordLastTraveled.toString() + " thisCurrentPair: " + this.getXYCoords());
 		if(this.getYCoord()+1 == coordLastTraveled.getYCoord()){
 			toReturn = "North";
 		}
@@ -57,35 +56,24 @@ public class SwarmNode extends Node {
 			toReturn = "West";
 		}
 		
-		System.out.println("lastTraveledtoString: " + toReturn);
 		return toReturn;
 	}
 	
 	public ArrayList<String> leastTraveled(Set<String> directionsTraveled){
-		System.out.println("enter leastTraveled");
 		ArrayList<String> toReturn = new ArrayList<String>();
-		
-		
-		//System.out.println("leastTraveled Array: " + toReturn);
 		
 		int min = Integer.MAX_VALUE;
 		for(String direction : directionsTraveled){
 			if(getRobotTraveled(direction) <= min){
-				System.out.println("direction: " + direction + " value: " + getRobotTraveled(direction));
 				min = getRobotTraveled(direction);
 			}
 		}
-		
-		System.out.println("min: " + min);
 				
-		//System.out.println("temp: " + temp);
 		for(String direction : directionsTraveled){
 			if(getRobotTraveled(direction)<= min){
-				System.out.println("direction: " + direction + " value: " + getRobotTraveled(direction));
 				toReturn.add(direction);
 			}
 		}
-		//System.out.println("Exited least traveled");
 		return toReturn;
 	}
 	
@@ -172,7 +160,6 @@ public class SwarmNode extends Node {
 	}
 	public int hashCode() {
 	    int hash = this.getXCoord()+this.getYCoord();
-	    //System.out.println("hashcode called" + hash);
 	    return hash;
 	}
 	
@@ -202,7 +189,7 @@ public class SwarmNode extends Node {
 		output += '\t' + "<StartNode>" + Boolean.toString(this.getIsStartNode()) + "</StartNode>" + '\n';
 		output += '\t' + "<EndNode>" + Boolean.toString(this.getIsEndNode()) + "</EndNode>" + '\n';
 		output += '\t' + "<DeadendNode>" + Boolean.toString(this.deadend) + "</DeadendNode>" + '\n';
-		output += '\t' + "<Occupied>" + Boolean.toString(this.occupied) + "</DeadendNode>" + '\n';
+		output += '\t' + "<Occupied>" + Boolean.toString(this.occupied) + "</Occupied>" + '\n';
 		output += '\t' + "<RobotsTraveledNorth>" + Integer.toString(this.getRobotsTraveledNorth()) + "</RobotsTraveledNorth>" + '\n';
 		output += '\t' + "<RobotsTraveledEast>" + Integer.toString(this.getRobotsTraveledEast()) + "</RobotsTraveledEast>" + '\n';
 		output += '\t' + "<RobotsTraveledSouth>" + Integer.toString(this.getRobotsTraveledSouth()) + "</RobotsTraveledSouth>" + '\n';

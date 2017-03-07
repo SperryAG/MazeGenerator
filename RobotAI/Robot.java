@@ -74,28 +74,10 @@ public class Robot {
 			return true;
 		}
 	}
-//	// remove a SwarmNode from the path (when backtracking)
-//	public SwarmNode popPathTraveled() {
-//		try {
-//			SwarmNode toRemove = pathTraveled.peek();
-//			pathTraveled.pop();
-//			return toRemove;
-//			// Set popped node to deadend
-//		}
-//		catch (EmptyStackException e) {
-//			return false;
-//		}
-//		return true;
-//	}
 	private SwarmNode chooseDirection(Map<String, SwarmNode> nodeSet, boolean backTrackOccupied) {
 		//There's no viable place to go. All Nodes nearby are occupied.  
 		if(nodeSet.size() == 0){ //DeadEnd
-			/*SwarmNode oldNode = pathTraveled.peek();
-			this.currentSwarmNode = oldNode;
-			//this.steps++;
-			return oldNode;*/
 			if(backTrackOccupied== false){
-				System.out.println("DeadEnd");
 				SwarmNode oldNode = this.pathTraveled.peek();
 				this.pathTraveled.pop();
 				oldNode.setIsOccupied(false);
@@ -114,7 +96,6 @@ public class Robot {
 		}
 				
 	else if (nodeSet.size() == 1) { // Neutral Node, it could be blocked. Also, could be start case. 
-			System.out.println("in Neutral Node");
 			SwarmNode toCheck = nodeSet.entrySet().iterator().next().getValue();
 			
 			//The only node to travel to, is occupied. So current Robot do nothing.
@@ -143,14 +124,9 @@ public class Robot {
 		// Set North, South, East, and West nodes
 		//For when there's 1 or 2 or 3 viable paths to go. 
 		else{
-			System.out.println("1 or 2 or 3 paths to go");
-			//System.out.println("nodeSet: " + nodeSet);
-//			System.out.println("pathTraveled: " + pathTraveled.toString());
 			Random random  = new Random();
-			//List<String> directions = this.currentSwarmNode.leastTraveled(this.pathTraveled.peek()); //substitute nodeSet.keySet() to be the tied directions....
 			
-			System.out.println("Trying to get directions");
-			
+			// substitute nodeSet.keySet() to be the tied directions....
 			ArrayList<String> toRemove = new ArrayList<String>();
 			for(Map.Entry<String, SwarmNode> entry : nodeSet.entrySet()){
 				if(entry.getValue().isOccupied()){
@@ -161,9 +137,7 @@ public class Robot {
 				nodeSet.remove(remove);
 			}
 			//TODO check if all occupied
-			System.out.println("KeySet in 1 or 2 or 3: " + nodeSet.keySet());
 			List<String> directions = this.currentSwarmNode.leastTraveled(nodeSet.keySet());
-			System.out.println("directions have been set");
 			
 			if (directions.size() == 0) {	// If all possible paths are occupied
 				SwarmNode oldNode = pathTraveled.peek();
@@ -189,12 +163,8 @@ public class Robot {
 			else{
 				boolean newPath = false;
 				while(!newPath){
-					System.out.println("while loop trap");
 					String randomDirection = directions.get(random.nextInt(directions.size()));
-					System.out.println(randomDirection);
 					SwarmNode newDirection = nodeSet.get(randomDirection);
-					System.out.println("newDirection: " + newDirection.getXYCoords());
-//					if(this.pathTraveled.contains(newDirection) == false){
 					if (!pathTraveled.contains(newDirection)){
 						newPath = true;
 						oldNode.setRobotTraveled(randomDirection);
@@ -215,22 +185,16 @@ public class Robot {
 //		SwarmNode previousCurrentNode = this.currentSwarmNode;
 		// Choose a direction (all checks and whatnot) DFS & random
 		SwarmNode oldNode = chooseDirection(nodeSet, backTrackOccupied);
-		System.out.println("Exited choose direction");
 		if(this.currentSwarmNode.getIsEndNode()){
 			this.atEnd = true;
 		}
 		// Check if new node is in stack already (means we are backtracking)
-		// Update new node occupied and previous node occupied
-//		this.currentSwarmNode.setIsOccupied(false);
-//		this.currentSwarmNode = newNode;
-//		this.currentSwarmNode.setIsOccupied(true);
+		// Update new node occupied and previous node occupied		
 		return oldNode;
 	}
 	public SwarmNode moveToEnd(boolean b) {
 		// TODO Auto-generated method stub
-		System.out.println("MoveToEnd: " + b);
 		if(b == false){
-			System.out.println("Not occupied");
 			SwarmNode oldNode = pathTraveled.peek();
 			pathTraveled.pop();
 			oldNode.setIsOccupied(false);	// Exit old node
@@ -241,7 +205,6 @@ public class Robot {
 			return oldNode;
 		}
 		else{
-			System.out.println("Occupied don't move");
 			SwarmNode oldNode = pathTraveled.peek();
 			this.currentSwarmNode = oldNode;
 			return oldNode;
@@ -250,22 +213,16 @@ public class Robot {
 	public SwarmNode continueOnEnd(Stack<SwarmNode> stackToEnd, HashMap<Pair, SwarmNode> neighbor) {
 		// TODO Auto-generated method stub
 		//If you're not on the pathToEnd yet, backtrack
-		System.out.println("entered continueOnEnd");
 		SwarmNode oldNode = pathTraveled.peek();
 		if(stackToEnd.contains(this.currentSwarmNode) == false){
-			System.out.println("need to backTrack");
 			pathTraveled.pop();//oldNode will equal the one just popped.
-			System.out.println("the node backtracking to: " + pathTraveled.peek().getXYCoords());
-			System.out.println("the neighbors: " + neighbor);
 			//Let's check if the one you're going to backtrack to is occupied. 
 			if(neighbor.get(pathTraveled.peek().getXYCoords()).isOccupied()){
-				System.out.println("occupied");
 				pathTraveled.push(oldNode);
 				this.currentSwarmNode = oldNode;
 				return oldNode;
 			}
 			else{
-				System.out.println("not occupied");
 				oldNode.setIsOccupied(false);
 				this.currentSwarmNode = pathTraveled.peek();	// Set new node
 				this.currentSwarmNode.setIsOccupied(true);	// Set new node to occupied
@@ -278,7 +235,6 @@ public class Robot {
 				
 			for(SwarmNode node : neighbor.values()){
 				if(stackToEnd.contains(node) && this.pathTraveled.contains(node)== false){
-					System.out.println("continueOnEnd: " + node.isOccupied());
 					if(node.isOccupied() == false){
 						oldNode.setIsOccupied(false);
 						this.currentSwarmNode = node;
