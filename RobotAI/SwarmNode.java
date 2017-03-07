@@ -202,7 +202,7 @@ public class SwarmNode extends Node {
 		output += '\t' + "<StartNode>" + Boolean.toString(this.getIsStartNode()) + "</StartNode>" + '\n';
 		output += '\t' + "<EndNode>" + Boolean.toString(this.getIsEndNode()) + "</EndNode>" + '\n';
 		output += '\t' + "<DeadendNode>" + Boolean.toString(this.deadend) + "</DeadendNode>" + '\n';
-		output += '\t' + "<Occupied>" + Boolean.toString(this.occupied) + "</Occupied>" + '\n';
+		output += '\t' + "<Occupied>" + Boolean.toString(this.occupied) + "</DeadendNode>" + '\n';
 		output += '\t' + "<RobotsTraveledNorth>" + Integer.toString(this.getRobotsTraveledNorth()) + "</RobotsTraveledNorth>" + '\n';
 		output += '\t' + "<RobotsTraveledEast>" + Integer.toString(this.getRobotsTraveledEast()) + "</RobotsTraveledEast>" + '\n';
 		output += '\t' + "<RobotsTraveledSouth>" + Integer.toString(this.getRobotsTraveledSouth()) + "</RobotsTraveledSouth>" + '\n';
