@@ -88,162 +88,71 @@ public class Robot {
 //	}
 	private SwarmNode chooseDirection(Map<String, SwarmNode> nodeSet) {
 		//There's no viable place to go. All Nodes nearby are occupied.  
-		if(nodeSet.size() == 0){
-			SwarmNode oldNode = pathTraveled.peek();
+		if(nodeSet.size() == 0){ //DeadEnd
+			/*SwarmNode oldNode = pathTraveled.peek();
 			this.currentSwarmNode = oldNode;
 			//this.steps++;
+			return oldNode;*/
+			System.out.println("DeadEnd");
+			SwarmNode oldNode = this.pathTraveled.peek();
+			this.pathTraveled.pop();
+			oldNode.setIsOccupied(false);
+			oldNode.isDeadend(true);
+			this.currentSwarmNode = pathTraveled.peek();
+			this.currentSwarmNode.setIsOccupied(true);
+			this.steps++;
 			return oldNode;
 		}
 				
-		// Deadend- backtrack if length of nodeSet = 1 and check non-Current node to pathTraveled
-		// Or only one path to travel out of the startNode.
-		else if (nodeSet.size() == 1) { //2) {
-			System.out.println("in deadend");
+	else if (nodeSet.size() == 1) { // Neutral Node, it could be blocked. Also, could be start case. 
+			System.out.println("in Neutral Node");
 			SwarmNode toCheck = nodeSet.entrySet().iterator().next().getValue();
 			
-			if(this.pathTraveled.size() == 1){
-				System.out.print("One path out from start node");
+			//The only node to travel to, is occupied. So current Robot do nothing.
+			if(toCheck.isOccupied()){
 				SwarmNode oldNode = pathTraveled.peek();
-				oldNode.setIsOccupied( false);
-				oldNode.setRobotTraveled(nodeSet.entrySet().iterator().next().getKey());
-				this.pathTraveled.push(toCheck);
-				this.currentSwarmNode = this.pathTraveled.peek();
-				if (this.currentSwarmNode.getIsEndNode()) {
-					this.atEnd = true;
-				}
-				this.currentSwarmNode.setIsOccupied(true);
-				this.steps++;
+				this.currentSwarmNode = oldNode;
 				return oldNode;
 			}
-			else if(this.pathTraveled.contains(toCheck) == false){
-				SwarmNode oldNode = pathTraveled.peek();
-				oldNode.setIsOccupied( false);
-				oldNode.setRobotTraveled(nodeSet.entrySet().iterator().next().getKey());
-				this.pathTraveled.push(toCheck);
-				this.currentSwarmNode = this.pathTraveled.peek();
-				if (this.currentSwarmNode.getIsEndNode()) {
-					this.atEnd = true;
-				}
-				this.currentSwarmNode.setIsOccupied(true);
-				this.steps++;
-				return oldNode;
-			}
+			//Otherwise, we shall traverse the only path to go. 
 			else{
-				//You are in a deadend and need to backtrack. 
-				System.out.println("DeadEnd");
-				SwarmNode oldNode = this.pathTraveled.peek();
-				this.pathTraveled.pop();
+				SwarmNode oldNode = pathTraveled.peek();
 				oldNode.setIsOccupied(false);
-				oldNode.isDeadend(true);
-				this.currentSwarmNode = pathTraveled.peek();
+				oldNode.setRobotTraveled(nodeSet.entrySet().iterator().next().getKey());
+				this.pathTraveled.push(toCheck);
+				this.currentSwarmNode = this.pathTraveled.peek();
+				if (this.currentSwarmNode.getIsEndNode()) {
+					this.atEnd = true;
+				}
 				this.currentSwarmNode.setIsOccupied(true);
 				this.steps++;
 				return oldNode;
-			}
+			}			
 		}
 		
-		// Neutral Node: follow the path that isn't currently in pathTraveled because you come from one Node and you have only one node choice to go. 
-		else if (nodeSet.size() == 2) {
-			System.out.println("in neutral node");
-			boolean neutralTrue = false;
-			for(SwarmNode node : nodeSet.values()){
-				if(this.pathTraveled.contains(node)){
-					neutralTrue = true;
-				}
-			}
-			if(neutralTrue){
-				for (Map.Entry<String, SwarmNode> entry : nodeSet.entrySet()) {	// for the two entries in nodeSet
-	//				System.out.println("in for loop: " + entry.getValue().getXYCoords());
-	//				System.out.println("PathTraveled: " + pathTraveled.toString());
-	//				System.out.println("Entry value: " + entry.getValue().getXYCoords());
-					Pair neighCoords = entry.getValue().getXYCoords(); //pair form of the neighbor Swarm nodes
-	//				System.out.println("entry: " + entry + "pathTraveled.Contains: " + pathTraveled.contains(entry));
-					if (!(pathTraveled.contains(entry.getValue()))) {	// if the coordinates of the SwarmNode isn't in pathTraveled
-	//					System.out.println("path not contained");
-						SwarmNode oldNode = getCurrentSwarmNode();
-						oldNode.setIsOccupied(false);	// Exit old node
-						oldNode.setRobotTraveled(entry.getKey());
-						pathTraveled.push(entry.getValue());	// Add new node to pathTraveled
-						this.currentSwarmNode = pathTraveled.peek();	// Set new node
-						if (this.currentSwarmNode.getIsEndNode()) {
-							this.atEnd = true;
-						}
-						this.currentSwarmNode.setIsOccupied(true);	// Set new node to occupied
-						this.steps++;
-						return oldNode;
-					}
-				}
-				System.out.println("In neutral deadend pathTraveled");
-				SwarmNode oldNode = pathTraveled.peek();
-				pathTraveled.pop();
-				oldNode.setIsOccupied(false);	// Exit old node
-				oldNode.isDeadend(true);	// Set old node to deadend
-				this.currentSwarmNode = pathTraveled.peek();	// Set new node
-				this.currentSwarmNode.setIsOccupied(true);	// Set new node to occupied
-				this.steps++;
-				System.out.println("old Node: " + oldNode + " new node: " + this.currentSwarmNode);
-				return oldNode;
-			}
-			else{//It's not actually neutral
-				System.out.println("3 or 4 paths to go");
-				//System.out.println("nodeSet: " + nodeSet);
-//				System.out.println("pathTraveled: " + pathTraveled.toString());
-				Random random  = new Random();
-				//List<String> directions = this.currentSwarmNode.leastTraveled(this.pathTraveled.peek()); //substitute nodeSet.keySet() to be the tied directions....
-				
-				System.out.println("Trying to get directions");
-				List<String> directions = this.currentSwarmNode.leastTraveled(nodeSet.keySet());
-				System.out.println("directions have been set");
-				
-				
-				SwarmNode oldNode = this.pathTraveled.peek();
-				this.steps++;
-				if (directions.size() == 1){
-					oldNode.setRobotTraveled(directions.get(0));
-					oldNode.setIsOccupied(false);
-					this.currentSwarmNode = nodeSet.get(directions.get(0));
-					this.pathTraveled.push(this.currentSwarmNode);
-					this.currentSwarmNode.setIsOccupied(true);
-					return oldNode;
-				}
-				
-				else{
-					boolean newPath = false;
-					while(!newPath){
-						System.out.println("while loop trap");
-						String randomDirection = directions.get(random.nextInt(directions.size()));
-						System.out.println(randomDirection);
-						SwarmNode newDirection = nodeSet.get(randomDirection);
-						System.out.println("newDirection: " + newDirection.getXYCoords());
-//						if(this.pathTraveled.contains(newDirection) == false){
-						if (!pathTraveled.contains(newDirection)){
-							newPath = true;
-							oldNode.setRobotTraveled(randomDirection);
-							this.currentSwarmNode = newDirection;
-						}
-					}
-					oldNode.setIsOccupied(false);
-					pathTraveled.push(this.currentSwarmNode);
-					// Add checks here
-					// Update new node occupied and previous node occupied			
-					this.currentSwarmNode.setIsOccupied(true);
-					// To Do: check for end node and set atEnd if it is the end node
-					return oldNode;
-				}
-			}
-		}
 		// Intersection
 		// Set North, South, East, and West nodes
-		//For when there's 3 or 4 viable paths to go. 
+		//For when there's 1 or 2 or 3 viable paths to go. 
 		else{
-			
-			System.out.println("3 or 4 paths to go");
+			System.out.println("1 or 2 or 3 paths to go");
 			//System.out.println("nodeSet: " + nodeSet);
 //			System.out.println("pathTraveled: " + pathTraveled.toString());
 			Random random  = new Random();
 			//List<String> directions = this.currentSwarmNode.leastTraveled(this.pathTraveled.peek()); //substitute nodeSet.keySet() to be the tied directions....
 			
 			System.out.println("Trying to get directions");
+			
+			ArrayList<String> toRemove = new ArrayList<String>();
+			for(Map.Entry<String, SwarmNode> entry : nodeSet.entrySet()){
+				if(entry.getValue().isOccupied()){
+					toRemove.add(entry.getKey());
+				}
+			}
+			for(String remove : toRemove){
+				nodeSet.remove(remove);
+			}
+			
+			System.out.println("KeySet in 1 or 2 or 3: " + nodeSet.keySet());
 			List<String> directions = this.currentSwarmNode.leastTraveled(nodeSet.keySet());
 			System.out.println("directions have been set");
 			

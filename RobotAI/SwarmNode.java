@@ -2,6 +2,7 @@ package RobotAI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 
 import MazeGenerator.*;
 
@@ -174,6 +175,24 @@ public class SwarmNode extends Node {
 	    //System.out.println("hashcode called" + hash);
 	    return hash;
 	}
+	
+	public ArrayList<String> emptyWalls(SwarmNode swarm){
+		ArrayList<String> toReturn = new ArrayList<String>();
+		if(!this.getNorthWall()){
+			toReturn.add("North");
+		}
+		if(!this.getEastWall()){
+			toReturn.add("East");
+		}
+		if(!this.getSouthWall()){
+			toReturn.add("South");
+		}
+		if(!this.getWestWall()){
+			toReturn.add("West");
+		}
+		return toReturn;
+	}
+	
 	// Output Methods
 	public String toString() {
 		String output = "";

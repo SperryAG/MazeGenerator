@@ -85,7 +85,7 @@ public class Swarm {
 				System.out.println("Current node: " + currentNode.getXYCoords());
 				for (Map.Entry<String, Pair> entry : currentNode.paths().entrySet()) {
 					System.out.println("entry(possible path): " + entry.getValue() + " map: " + map.get(entry.getValue()));
-					if (!(map.get(entry.getValue()).isOccupied()) && !(map.get(entry.getValue()).isDeadend()) && (entry.getValue().equals(currentNode.getXYCoords()) == false )) {	// Only add nodes to neighbors that aren't currently occupied
+					if (!currentRobot.getPathTraveled().contains(map.get(entry.getValue())) && !(map.get(entry.getValue()).isDeadend()) && (entry.getValue().equals(currentNode.getXYCoords()) == false )) {	// Only add nodes to neighbors that aren't currently occupied
 						System.out.println("Node: " + entry.getValue() + " not occupied and not deadend");
 						neighbors.put(entry.getKey(), map.get(entry.getValue()));
 					}
