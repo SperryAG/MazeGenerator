@@ -1,0 +1,314 @@
+<Title>Maze19</Title>
+<Created>2017-03-65-03-27-13</Created>
+<GridSize>5</GridSize>
+<ActiveNodeCount>20</ActiveNodeCount>
+<BranchFactor>0.7</BranchFactor>
+<Complexity>4</Complexity>
+<IntersectionCount>5</IntersectionCount>
+<DeadendCount>6</DeadendCount>
+<LoopCount>0</LoopCount>
+<Nodes>
+<Node>
+	<Coordinates>(1,2)</Coordinates>
+	<StartNode>false</StartNode>
+	<EndNode>false</EndNode>
+	<EndIntersectionNode>false</EndIntersectionNode>
+	<OptimalPathNode>false</OptimalPathNode>
+	<IntersectionNode>true</IntersectionNode>
+	<DeadendNode>false</DeadendNode>
+	<CoreNode>false</CoreNode>
+	<LongestTailNode>false</LongestTailNode>
+	<WallNorth>false</WallNorth>
+	<WallEast>false</WallEast>
+	<WallSouth>false</WallSouth>
+	<WallWest>true</WallWest>
+</Node>
+<Node>
+	<Coordinates>(2,2)</Coordinates>
+	<StartNode>false</StartNode>
+	<EndNode>false</EndNode>
+	<EndIntersectionNode>false</EndIntersectionNode>
+	<OptimalPathNode>false</OptimalPathNode>
+	<IntersectionNode>true</IntersectionNode>
+	<DeadendNode>false</DeadendNode>
+	<CoreNode>false</CoreNode>
+	<LongestTailNode>false</LongestTailNode>
+	<WallNorth>false</WallNorth>
+	<WallEast>false</WallEast>
+	<WallSouth>true</WallSouth>
+	<WallWest>false</WallWest>
+</Node>
+<Node>
+	<Coordinates>(1,1)</Coordinates>
+	<StartNode>false</StartNode>
+	<EndNode>true</EndNode>
+	<EndIntersectionNode>false</EndIntersectionNode>
+	<OptimalPathNode>true</OptimalPathNode>
+	<IntersectionNode>false</IntersectionNode>
+	<DeadendNode>false</DeadendNode>
+	<CoreNode>false</CoreNode>
+	<LongestTailNode>true</LongestTailNode>
+	<WallNorth>false</WallNorth>
+	<WallEast>false</WallEast>
+	<WallSouth>true</WallSouth>
+	<WallWest>true</WallWest>
+</Node>
+<Node>
+	<Coordinates>(1,3)</Coordinates>
+	<StartNode>false</StartNode>
+	<EndNode>false</EndNode>
+	<EndIntersectionNode>false</EndIntersectionNode>
+	<OptimalPathNode>false</OptimalPathNode>
+	<IntersectionNode>false</IntersectionNode>
+	<DeadendNode>false</DeadendNode>
+	<CoreNode>false</CoreNode>
+	<LongestTailNode>false</LongestTailNode>
+	<WallNorth>false</WallNorth>
+	<WallEast>true</WallEast>
+	<WallSouth>false</WallSouth>
+	<WallWest>true</WallWest>
+</Node>
+<Node>
+	<Coordinates>(2,3)</Coordinates>
+	<StartNode>false</StartNode>
+	<EndNode>false</EndNode>
+	<EndIntersectionNode>false</EndIntersectionNode>
+	<OptimalPathNode>false</OptimalPathNode>
+	<IntersectionNode>true</IntersectionNode>
+	<DeadendNode>false</DeadendNode>
+	<CoreNode>false</CoreNode>
+	<LongestTailNode>false</LongestTailNode>
+	<WallNorth>false</WallNorth>
+	<WallEast>false</WallEast>
+	<WallSouth>false</WallSouth>
+	<WallWest>true</WallWest>
+</Node>
+<Node>
+	<Coordinates>(3,4)</Coordinates>
+	<StartNode>false</StartNode>
+	<EndNode>false</EndNode>
+	<EndIntersectionNode>false</EndIntersectionNode>
+	<OptimalPathNode>false</OptimalPathNode>
+	<IntersectionNode>true</IntersectionNode>
+	<DeadendNode>false</DeadendNode>
+	<CoreNode>false</CoreNode>
+	<LongestTailNode>false</LongestTailNode>
+	<WallNorth>false</WallNorth>
+	<WallEast>false</WallEast>
+	<WallSouth>true</WallSouth>
+	<WallWest>false</WallWest>
+</Node>
+<Node>
+	<Coordinates>(1,4)</Coordinates>
+	<StartNode>false</StartNode>
+	<EndNode>false</EndNode>
+	<EndIntersectionNode>false</EndIntersectionNode>
+	<OptimalPathNode>false</OptimalPathNode>
+	<IntersectionNode>false</IntersectionNode>
+	<DeadendNode>false</DeadendNode>
+	<CoreNode>false</CoreNode>
+	<LongestTailNode>false</LongestTailNode>
+	<WallNorth>false</WallNorth>
+	<WallEast>true</WallEast>
+	<WallSouth>false</WallSouth>
+	<WallWest>true</WallWest>
+</Node>
+<Node>
+	<Coordinates>(3,3)</Coordinates>
+	<StartNode>false</StartNode>
+	<EndNode>false</EndNode>
+	<EndIntersectionNode>false</EndIntersectionNode>
+	<OptimalPathNode>false</OptimalPathNode>
+	<IntersectionNode>false</IntersectionNode>
+	<DeadendNode>false</DeadendNode>
+	<CoreNode>false</CoreNode>
+	<LongestTailNode>false</LongestTailNode>
+	<WallNorth>true</WallNorth>
+	<WallEast>false</WallEast>
+	<WallSouth>true</WallSouth>
+	<WallWest>false</WallWest>
+</Node>
+<Node>
+	<Coordinates>(3,2)</Coordinates>
+	<StartNode>false</StartNode>
+	<EndNode>false</EndNode>
+	<EndIntersectionNode>false</EndIntersectionNode>
+	<OptimalPathNode>false</OptimalPathNode>
+	<IntersectionNode>false</IntersectionNode>
+	<DeadendNode>false</DeadendNode>
+	<CoreNode>false</CoreNode>
+	<LongestTailNode>false</LongestTailNode>
+	<WallNorth>true</WallNorth>
+	<WallEast>false</WallEast>
+	<WallSouth>true</WallSouth>
+	<WallWest>false</WallWest>
+</Node>
+<Node>
+	<Coordinates>(2,4)</Coordinates>
+	<StartNode>false</StartNode>
+	<EndNode>false</EndNode>
+	<EndIntersectionNode>false</EndIntersectionNode>
+	<OptimalPathNode>false</OptimalPathNode>
+	<IntersectionNode>false</IntersectionNode>
+	<DeadendNode>false</DeadendNode>
+	<CoreNode>false</CoreNode>
+	<LongestTailNode>false</LongestTailNode>
+	<WallNorth>true</WallNorth>
+	<WallEast>false</WallEast>
+	<WallSouth>false</WallSouth>
+	<WallWest>true</WallWest>
+</Node>
+<Node>
+	<Coordinates>(2,1)</Coordinates>
+	<StartNode>true</StartNode>
+	<EndNode>false</EndNode>
+	<EndIntersectionNode>true</EndIntersectionNode>
+	<OptimalPathNode>true</OptimalPathNode>
+	<IntersectionNode>true</IntersectionNode>
+	<DeadendNode>false</DeadendNode>
+	<CoreNode>true</CoreNode>
+	<LongestTailNode>false</LongestTailNode>
+	<WallNorth>true</WallNorth>
+	<WallEast>false</WallEast>
+	<WallSouth>true</WallSouth>
+	<WallWest>false</WallWest>
+</Node>
+<Node>
+	<Coordinates>(3,1)</Coordinates>
+	<StartNode>false</StartNode>
+	<EndNode>false</EndNode>
+	<EndIntersectionNode>false</EndIntersectionNode>
+	<OptimalPathNode>false</OptimalPathNode>
+	<IntersectionNode>false</IntersectionNode>
+	<DeadendNode>true</DeadendNode>
+	<CoreNode>true</CoreNode>
+	<LongestTailNode>false</LongestTailNode>
+	<WallNorth>true</WallNorth>
+	<WallEast>true</WallEast>
+	<WallSouth>true</WallSouth>
+	<WallWest>false</WallWest>
+</Node>
+<Node>
+	<Coordinates>(4,3)</Coordinates>
+	<StartNode>false</StartNode>
+	<EndNode>false</EndNode>
+	<EndIntersectionNode>false</EndIntersectionNode>
+	<OptimalPathNode>false</OptimalPathNode>
+	<IntersectionNode>false</IntersectionNode>
+	<DeadendNode>true</DeadendNode>
+	<CoreNode>false</CoreNode>
+	<LongestTailNode>false</LongestTailNode>
+	<WallNorth>true</WallNorth>
+	<WallEast>true</WallEast>
+	<WallSouth>true</WallSouth>
+	<WallWest>false</WallWest>
+</Node>
+<Node>
+	<Coordinates>(4,2)</Coordinates>
+	<StartNode>false</StartNode>
+	<EndNode>false</EndNode>
+	<EndIntersectionNode>false</EndIntersectionNode>
+	<OptimalPathNode>false</OptimalPathNode>
+	<IntersectionNode>false</IntersectionNode>
+	<DeadendNode>true</DeadendNode>
+	<CoreNode>false</CoreNode>
+	<LongestTailNode>false</LongestTailNode>
+	<WallNorth>true</WallNorth>
+	<WallEast>true</WallEast>
+	<WallSouth>true</WallSouth>
+	<WallWest>false</WallWest>
+</Node>
+<Node>
+	<Coordinates>(4,4)</Coordinates>
+	<StartNode>false</StartNode>
+	<EndNode>false</EndNode>
+	<EndIntersectionNode>false</EndIntersectionNode>
+	<OptimalPathNode>false</OptimalPathNode>
+	<IntersectionNode>false</IntersectionNode>
+	<DeadendNode>false</DeadendNode>
+	<CoreNode>false</CoreNode>
+	<LongestTailNode>false</LongestTailNode>
+	<WallNorth>false</WallNorth>
+	<WallEast>true</WallEast>
+	<WallSouth>true</WallSouth>
+	<WallWest>false</WallWest>
+</Node>
+<Node>
+	<Coordinates>(3,5)</Coordinates>
+	<StartNode>false</StartNode>
+	<EndNode>false</EndNode>
+	<EndIntersectionNode>false</EndIntersectionNode>
+	<OptimalPathNode>false</OptimalPathNode>
+	<IntersectionNode>false</IntersectionNode>
+	<DeadendNode>false</DeadendNode>
+	<CoreNode>false</CoreNode>
+	<LongestTailNode>false</LongestTailNode>
+	<WallNorth>true</WallNorth>
+	<WallEast>true</WallEast>
+	<WallSouth>false</WallSouth>
+	<WallWest>false</WallWest>
+</Node>
+<Node>
+	<Coordinates>(4,5)</Coordinates>
+	<StartNode>false</StartNode>
+	<EndNode>false</EndNode>
+	<EndIntersectionNode>false</EndIntersectionNode>
+	<OptimalPathNode>false</OptimalPathNode>
+	<IntersectionNode>false</IntersectionNode>
+	<DeadendNode>false</DeadendNode>
+	<CoreNode>false</CoreNode>
+	<LongestTailNode>false</LongestTailNode>
+	<WallNorth>true</WallNorth>
+	<WallEast>false</WallEast>
+	<WallSouth>false</WallSouth>
+	<WallWest>true</WallWest>
+</Node>
+<Node>
+	<Coordinates>(1,5)</Coordinates>
+	<StartNode>false</StartNode>
+	<EndNode>false</EndNode>
+	<EndIntersectionNode>false</EndIntersectionNode>
+	<OptimalPathNode>false</OptimalPathNode>
+	<IntersectionNode>false</IntersectionNode>
+	<DeadendNode>true</DeadendNode>
+	<CoreNode>false</CoreNode>
+	<LongestTailNode>false</LongestTailNode>
+	<WallNorth>true</WallNorth>
+	<WallEast>true</WallEast>
+	<WallSouth>false</WallSouth>
+	<WallWest>true</WallWest>
+</Node>
+<Node>
+	<Coordinates>(5,5)</Coordinates>
+	<StartNode>false</StartNode>
+	<EndNode>false</EndNode>
+	<EndIntersectionNode>false</EndIntersectionNode>
+	<OptimalPathNode>false</OptimalPathNode>
+	<IntersectionNode>false</IntersectionNode>
+	<DeadendNode>true</DeadendNode>
+	<CoreNode>false</CoreNode>
+	<LongestTailNode>false</LongestTailNode>
+	<WallNorth>true</WallNorth>
+	<WallEast>true</WallEast>
+	<WallSouth>true</WallSouth>
+	<WallWest>false</WallWest>
+</Node>
+<Node>
+	<Coordinates>(2,5)</Coordinates>
+	<StartNode>false</StartNode>
+	<EndNode>false</EndNode>
+	<EndIntersectionNode>false</EndIntersectionNode>
+	<OptimalPathNode>false</OptimalPathNode>
+	<IntersectionNode>false</IntersectionNode>
+	<DeadendNode>true</DeadendNode>
+	<CoreNode>false</CoreNode>
+	<LongestTailNode>false</LongestTailNode>
+	<WallNorth>true</WallNorth>
+	<WallEast>false</WallEast>
+	<WallSouth>true</WallSouth>
+	<WallWest>true</WallWest>
+</Node>
+</Nodes>
+<Results>
+</Results>
+

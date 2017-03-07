@@ -3,6 +3,7 @@ import MazeGenerator.*;
 
 import java.util.ArrayList;
 import java.util.EmptyStackException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -86,22 +87,30 @@ public class Robot {
 //		}
 //		return true;
 //	}
-	private SwarmNode chooseDirection(Map<String, SwarmNode> nodeSet) {
+	private SwarmNode chooseDirection(Map<String, SwarmNode> nodeSet, boolean backTrackOccupied) {
 		//There's no viable place to go. All Nodes nearby are occupied.  
 		if(nodeSet.size() == 0){ //DeadEnd
 			/*SwarmNode oldNode = pathTraveled.peek();
 			this.currentSwarmNode = oldNode;
 			//this.steps++;
 			return oldNode;*/
-			System.out.println("DeadEnd");
-			SwarmNode oldNode = this.pathTraveled.peek();
-			this.pathTraveled.pop();
-			oldNode.setIsOccupied(false);
-			oldNode.isDeadend(true);
-			this.currentSwarmNode = pathTraveled.peek();
-			this.currentSwarmNode.setIsOccupied(true);
-			this.steps++;
-			return oldNode;
+			if(backTrackOccupied== false){
+				System.out.println("DeadEnd");
+				SwarmNode oldNode = this.pathTraveled.peek();
+				this.pathTraveled.pop();
+				oldNode.setIsOccupied(false);
+				oldNode.isDeadend(true);
+				this.currentSwarmNode = pathTraveled.peek();
+				this.currentSwarmNode.setIsOccupied(true);
+				this.steps++;
+				return oldNode;
+			}
+			else {
+				SwarmNode oldNode = pathTraveled.peek();
+				oldNode.isDeadend(true);
+				this.currentSwarmNode = oldNode;
+				return oldNode;
+			}
 		}
 				
 	else if (nodeSet.size() == 1) { // Neutral Node, it could be blocked. Also, could be start case. 
@@ -151,11 +160,19 @@ public class Robot {
 			for(String remove : toRemove){
 				nodeSet.remove(remove);
 			}
-			
+			//TODO check if all occupied
 			System.out.println("KeySet in 1 or 2 or 3: " + nodeSet.keySet());
 			List<String> directions = this.currentSwarmNode.leastTraveled(nodeSet.keySet());
 			System.out.println("directions have been set");
 			
+			if (directions.size() == 0) {	// If all possible paths are occupied
+				SwarmNode oldNode = pathTraveled.peek();
+				oldNode.setIsOccupied(true);
+				this.currentSwarmNode = oldNode;
+				this.currentSwarmNode.setIsOccupied(true);
+				this.steps++;
+				return oldNode;
+			}
 			
 			SwarmNode oldNode = this.pathTraveled.peek();
 			this.steps++;
@@ -167,6 +184,7 @@ public class Robot {
 				this.currentSwarmNode.setIsOccupied(true);
 				return oldNode;
 			}
+			
 			
 			else{
 				boolean newPath = false;
@@ -193,10 +211,10 @@ public class Robot {
 			}
 		}
 	}
-	public SwarmNode update(Map<String, SwarmNode> nodeSet) {
+	public SwarmNode update(Map<String, SwarmNode> nodeSet, boolean backTrackOccupied) {
 //		SwarmNode previousCurrentNode = this.currentSwarmNode;
 		// Choose a direction (all checks and whatnot) DFS & random
-		SwarmNode oldNode = chooseDirection(nodeSet);
+		SwarmNode oldNode = chooseDirection(nodeSet, backTrackOccupied);
 		System.out.println("Exited choose direction");
 		if(this.currentSwarmNode.getIsEndNode()){
 			this.atEnd = true;
@@ -208,29 +226,74 @@ public class Robot {
 //		this.currentSwarmNode.setIsOccupied(true);
 		return oldNode;
 	}
-	public SwarmNode moveToEnd() {
+	public SwarmNode moveToEnd(boolean b) {
 		// TODO Auto-generated method stub
-		SwarmNode oldNode = pathTraveled.peek();
-		pathTraveled.pop();
-		oldNode.setIsOccupied(false);	// Exit old node
-		
-		this.currentSwarmNode = pathTraveled.peek();	// Set new node
-		this.currentSwarmNode.setIsOccupied(true);	// Set new node to occupied
-		this.steps++;
-		return oldNode;
+		System.out.println("MoveToEnd: " + b);
+		if(b == false){
+			System.out.println("Not occupied");
+			SwarmNode oldNode = pathTraveled.peek();
+			pathTraveled.pop();
+			oldNode.setIsOccupied(false);	// Exit old node
+			
+			this.currentSwarmNode = pathTraveled.peek();	// Set new node
+			this.currentSwarmNode.setIsOccupied(true);	// Set new node to occupied
+			this.steps++;
+			return oldNode;
+		}
+		else{
+			System.out.println("Occupied don't move");
+			SwarmNode oldNode = pathTraveled.peek();
+			this.currentSwarmNode = oldNode;
+			return oldNode;
+		}
 	}
-	public SwarmNode continueOnEnd(Stack<SwarmNode> stackToEnd, ArrayList<SwarmNode> neighbors) {
+	public SwarmNode continueOnEnd(Stack<SwarmNode> stackToEnd, HashMap<Pair, SwarmNode> neighbor) {
 		// TODO Auto-generated method stub
+		//If you're not on the pathToEnd yet, backtrack
+		System.out.println("entered continueOnEnd");
 		SwarmNode oldNode = pathTraveled.peek();
-		
-		oldNode.setIsOccupied(false);
-		
-		for(SwarmNode node : neighbors){
-			if(stackToEnd.contains(node) && this.pathTraveled.contains(node)== false){
-				this.currentSwarmNode = node;
-				this.currentSwarmNode.setIsOccupied(true);
+		if(stackToEnd.contains(this.currentSwarmNode) == false){
+			System.out.println("need to backTrack");
+			pathTraveled.pop();//oldNode will equal the one just popped.
+			System.out.println("the node backtracking to: " + pathTraveled.peek().getXYCoords());
+			System.out.println("the neighbors: " + neighbor);
+			//Let's check if the one you're going to backtrack to is occupied. 
+			if(neighbor.get(pathTraveled.peek().getXYCoords()).isOccupied()){
+				System.out.println("occupied");
+				pathTraveled.push(oldNode);
+				this.currentSwarmNode = oldNode;
+				return oldNode;
+			}
+			else{
+				System.out.println("not occupied");
+				oldNode.setIsOccupied(false);
+				this.currentSwarmNode = pathTraveled.peek();	// Set new node
+				this.currentSwarmNode.setIsOccupied(true);	// Set new node to occupied
 				this.steps++;
-				this.pathTraveled.push(node);
+				return oldNode;
+			}
+		}
+		else{
+		//Otherwise traverse. 
+				
+			for(SwarmNode node : neighbor.values()){
+				if(stackToEnd.contains(node) && this.pathTraveled.contains(node)== false){
+					System.out.println("continueOnEnd: " + node.isOccupied());
+					if(node.isOccupied() == false){
+						oldNode.setIsOccupied(false);
+						this.currentSwarmNode = node;
+						this.currentSwarmNode.setIsOccupied(true);
+						this.steps++;
+						this.pathTraveled.push(node);
+						if(this.currentSwarmNode.getIsEndNode()){
+							this.currentSwarmNode.setIsOccupied(false);
+						}
+					}
+					else{
+						this.currentSwarmNode = oldNode;
+						return oldNode;
+					}
+				}
 			}
 		}
 		
