@@ -426,6 +426,11 @@ public class SimulatorUI {
 		lstMazeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		btnCompleteAll = new JButton("Complete All Maze Statistics");
+		btnCompleteAll.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				completeMazes();
+			}
+		});
 		btnCompleteAll.setBounds(10, 153, 318, 23);
 		pnlStatisticsBackround.add(btnCompleteAll);
 		
@@ -537,11 +542,7 @@ public class SimulatorUI {
 			protected Void doInBackground() throws Exception 
 			{
 				do
-				{	
-					
-//					simulationComplete = (boolean) swarmUpdate.get(0);	// index 0 will always be the boolean
-//					swarm.getRobotSet() = (ArrayList<Robot>) swarmUpdate.get(1);	// index 1 will always be the set of updated robot movements
-					
+				{						
 					// Apply a simulation speed until an instant simulation finish is requested (btnFinish)
 					if(!simulationFinish)
 					{
@@ -580,8 +581,6 @@ public class SimulatorUI {
 					// Run a simulation step one time per second and return the simulation status.
 					if(tenMillis % 10 == 0) // Clock runs in .1ms = 1step/sec
 						simulationComplete = swarm.update();
-						//generateMazeGrid();
-						//simulationComplete = !stepSimulation();
 				
 				}while(!simulationComplete);
 				
@@ -638,19 +637,6 @@ public class SimulatorUI {
 			hours = 0;
 	}
 	
-	private boolean stepSimulation()
-	{
-		/*System.out.println(
-			(hours>9?Integer.toString(hours):"0"+Integer.toString(hours)) + ":" +
-			(minutes>9?Integer.toString(minutes):"0"+Integer.toString(minutes)) + ":" +
-			(seconds>9?Integer.toString(seconds):"0"+Integer.toString(seconds)) + ":" +
-			Integer.toString(tenMillis)
-		);*/
-		if(minutes == 1)
-			simulationComplete = true;
-		return !simulationComplete;
-	}
-	
 	private void recordSimulation()
 	{
 		Result result = new Result(sdrRobotCount.getValue(), (hours*60*60) + (minutes * 60)+ seconds);
@@ -692,7 +678,6 @@ public class SimulatorUI {
 					catDataset.addValue(total/resultAverages.get(i).size(), "x", Integer.toString(i));
 				}
 			}
-			System.out.println(catDataset.toString());
 			
 			// Create the graph using the dataset
 			jfcGraph = ChartFactory.createBarChart(
@@ -820,5 +805,112 @@ public class SimulatorUI {
 			pnlGrid.add(j);
 		}
 		pnlGrid.repaint();
+	}
+	
+	public void completeMazes()
+	{
+		ArrayList<String> arrFilenames = new ArrayList<String>();
+		
+		// Get the file list
+		File o = new File(".");
+	    
+	    File[] yourFileList = o.listFiles(new FilenameFilter() {
+	    	@Override
+	    	public boolean accept(File dir, String name) {
+	    		return name.endsWith(".txt");
+	    	}
+	    });
+	    
+	    // Get all of the filenames
+	    for(File f : yourFileList) {
+	    	arrFilenames.add(f.getName());
+	    }
+	    
+	    // Complete each file
+	    for(String filename : arrFilenames)
+	    {
+	    	// Variables
+    		int currentRobotCount = 1;
+	    	int robotStablizationCount = 0;
+	    	int previousRobotStablizationTime = 0;
+	    	int currentRobotStablizationTime = 0;
+	    	int minimumCompletionTime = 0;
+    		int averageStabilizationCount = 0;
+    		int timeInSeconds = 0;
+    		Maze autoMaze = new Maze();
+    		Swarm autoSwarm;
+    		Result autoResult;
+    		
+    		// Continue until robot completion time increases 10 times in a row
+	    	while(robotStablizationCount < 6)
+	    	{
+	    		int newAvg = 0;
+	    		averageStabilizationCount = 0;
+	    		// Continue until average completion time is within +-1 10 times in a row
+	    		while(averageStabilizationCount < 20)
+	    		{
+	    			// Run a simulation and Evaluate
+	    			autoMaze = new Maze();
+	    			autoMaze.fromFile(filename);
+	    			autoSwarm = new Swarm(currentRobotCount,autoMaze.getNodeArray());
+	    			timeInSeconds = 0;
+	    			simulationComplete = false;
+	    			do
+	    			{
+	    				simulationComplete = autoSwarm.update();
+	    				timeInSeconds++;
+	    			}while(!simulationComplete);
+	    			autoResult = new Result(currentRobotCount,timeInSeconds);
+	    			int total = 0;
+	    			int prevAvg = 0;
+	    			ArrayList<Integer> resultAvg = new ArrayList<Integer>();
+	    			if(autoMaze.getResultArray().size() != 0)
+	    			{
+		    			// Get the average before the new result
+		    			for(Result r : autoMaze.getResultArray())
+		    				if(r.getRobotCount() == currentRobotCount)
+		    					resultAvg.add(r.getCompletionTime());
+		    			total = 0;
+		    			if(resultAvg.size() != 0)
+		    			{
+			    			for(int i : resultAvg)
+			    				total += i;
+			    			prevAvg = total/resultAvg.size();
+		    			}
+	    			}
+		    		// Add the new result to the to the file
+	    			autoMaze.getResultArray().add(autoResult);
+	    			autoMaze.toFile();
+	    			// Calculate the new average
+	    			resultAvg.add(timeInSeconds);
+	    			total = 0;
+	    			for(int i : resultAvg)
+	    				total += i;
+	    			newAvg = total/resultAvg.size();
+	    			// See if the newAvg is within +-1 of the prevAvg
+	    			if(newAvg == prevAvg)
+	    				averageStabilizationCount++;
+	    			else
+	    				averageStabilizationCount = 0;
+	    		}
+	    		currentRobotStablizationTime = newAvg;
+	    		if(previousRobotStablizationTime == 0)
+	    		{
+	    			previousRobotStablizationTime = currentRobotStablizationTime;
+	    			minimumCompletionTime = currentRobotStablizationTime;
+	    		}
+	    		else
+	    		{
+	    			if(currentRobotStablizationTime > minimumCompletionTime)
+	    				robotStablizationCount++;
+	    			else
+	    			{
+	    				minimumCompletionTime = currentRobotStablizationTime;
+	    				robotStablizationCount = 0;
+	    			}
+	    		}
+	    		currentRobotCount++;
+	    	}
+	    }
 	}
 }
