@@ -653,7 +653,9 @@ public class SimulatorUI {
 	
 	private void recordSimulation()
 	{
-		System.out.println("Simulation Results!!");
+		Result result = new Result(sdrRobotCount.getValue(), (hours*60*60) + (minutes * 60)+ seconds);
+		maze.getResultArray().add(result);
+		maze.toFile();
 	}
 	
 	private void refreshRvTChart()
